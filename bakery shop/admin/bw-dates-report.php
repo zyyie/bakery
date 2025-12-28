@@ -5,18 +5,24 @@ include("includes/header.php");
 
 $results = array();
 if(isset($_POST['fromDate']) && isset($_POST['toDate'])){
-  $fromDate = $_POST['fromDate'];
-  $toDate = $_POST['toDate'];
+  $fromDate = trim($_POST['fromDate']);
+  $toDate = trim($_POST['toDate']);
   
-  $query = "SELECT orders.*, 
-            (SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID) as totalAmount
-            FROM orders 
-            WHERE DATE(orderDate) BETWEEN '$fromDate' AND '$toDate' 
-            ORDER BY orderDate DESC";
-  
-  $result = executeQuery($query);
-  while($row = mysqli_fetch_assoc($result)){
-    $results[] = $row;
+  // Validate date format
+  if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $toDate)){
+    $query = "SELECT orders.*, 
+              (SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID) as totalAmount
+              FROM orders 
+              WHERE DATE(orderDate) BETWEEN ? AND ? 
+              ORDER BY orderDate DESC";
+    
+    $result = executePreparedQuery($query, "ss", [$fromDate, $toDate]);
+    
+    if($result){
+      while($row = mysqli_fetch_assoc($result)){
+        $results[] = $row;
+      }
+    }
   }
 }
 ?>

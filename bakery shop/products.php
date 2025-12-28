@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 include("includes/header.php");
 ?>
 
@@ -16,13 +15,12 @@ include("includes/header.php");
         <div class="list-group list-group-flush">
           <a href="products.php" class="list-group-item list-group-item-action">All Categories</a>
           <?php
-          $catQuery = "SELECT * FROM categories";
-          $catResult = executeQuery($catQuery);
-          while($cat = mysqli_fetch_assoc($catResult)):
+          $catResult = executePreparedQuery("SELECT * FROM categories", "", []);
+          while($catResult && ($cat = mysqli_fetch_assoc($catResult))):
           ?>
           <a href="products.php?category=<?php echo $cat['categoryID']; ?>" 
              class="list-group-item list-group-item-action">
-            <?php echo $cat['categoryName']; ?>
+            <?php echo e($cat['categoryName']); ?>
           </a>
           <?php endwhile; ?>
         </div>
@@ -33,33 +31,40 @@ include("includes/header.php");
     <div class="col-md-9">
       <div class="row">
         <?php
-        $categoryFilter = isset($_GET['category']) ? "AND items.categoryID = ".intval($_GET['category']) : "";
-        $query = "SELECT items.*, categories.categoryName FROM items 
-                  LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                  WHERE items.status = 'Active' $categoryFilter";
-        $result = executeQuery($query);
+        $categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
+        if ($categoryId > 0) {
+          $query = "SELECT items.*, categories.categoryName FROM items 
+                    LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                    WHERE items.status = 'Active' AND items.categoryID = ?";
+          $result = executePreparedQuery($query, "i", [$categoryId]);
+        } else {
+          $query = "SELECT items.*, categories.categoryName FROM items 
+                    LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                    WHERE items.status = 'Active'";
+          $result = executePreparedQuery($query, "", []);
+        }
         
-        if(mysqli_num_rows($result) > 0):
+        if($result && mysqli_num_rows($result) > 0):
           while($row = mysqli_fetch_assoc($result)):
         ?>
         <div class="col-md-4 mb-4">
           <div class="card product-card">
             <div class="position-relative">
-              <img src="<?php echo $row['itemImage'] ? 'uploads/'.$row['itemImage'] : 'https://via.placeholder.com/300x200'; ?>" 
-                   class="card-img-top" alt="<?php echo $row['packageName']; ?>">
-              <button class="btn btn-favorite" onclick="toggleFavorite(this, <?php echo $row['itemID']; ?>)">
+              <img src="<?php echo $row['itemImage'] ? 'uploads/' . e($row['itemImage']) : 'https://via.placeholder.com/300x200'; ?>" 
+                   class="card-img-top" alt="<?php echo e($row['packageName']); ?>">
+              <button class="btn btn-favorite" onclick="toggleFavorite(this, <?php echo (int)$row['itemID']; ?>)">
                 <i class="far fa-heart"></i>
               </button>
             </div>
             <div class="card-body">
-              <span class="category-badge"><?php echo $row['categoryName']; ?></span>
-              <h5 class="card-title mt-2"><?php echo $row['packageName']; ?></h5>
-              <p class="card-text text-muted"><?php echo substr($row['foodDescription'], 0, 60); ?>...</p>
-              <p class="price">₱<?php echo $row['price']; ?></p>
+              <span class="category-badge"><?php echo e($row['categoryName']); ?></span>
+              <h5 class="card-title mt-2"><?php echo e($row['packageName']); ?></h5>
+              <p class="card-text text-muted"><?php echo e(substr($row['foodDescription'], 0, 60)); ?>...</p>
+              <p class="price">₱<?php echo e($row['price']); ?></p>
               <div class="d-grid gap-2">
-                <a href="product-details.php?id=<?php echo $row['itemID']; ?>" class="btn btn-warning">View Details</a>
+                <a href="product-details.php?id=<?php echo (int)$row['itemID']; ?>" class="btn btn-warning">View Details</a>
                 <form method="POST" action="cart.php" class="mt-2">
-                  <input type="hidden" name="itemID" value="<?php echo $row['itemID']; ?>">
+                  <input type="hidden" name="itemID" value="<?php echo (int)$row['itemID']; ?>">
                   <div class="input-group">
                     <input type="number" class="form-control quantity-input" name="quantity" value="1" min="1">
                     <button type="submit" class="btn btn-outline-warning add-to-cart-btn">ADD TO CART</button>

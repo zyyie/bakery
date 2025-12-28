@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 include("includes/header.php");
 ?>
 

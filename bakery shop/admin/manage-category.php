@@ -5,8 +5,10 @@ include("includes/header.php");
 
 if(isset($_POST['deleteID'])){
   $deleteID = intval($_POST['deleteID']);
-  $query = "DELETE FROM categories WHERE categoryID = $deleteID";
-  executeQuery($query);
+  if($deleteID > 0){
+    $query = "DELETE FROM categories WHERE categoryID = ?";
+    executePreparedUpdate($query, "i", [$deleteID]);
+  }
   header("Location: manage-category.php");
   exit();
 }

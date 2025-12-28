@@ -5,25 +5,31 @@ include("includes/header.php");
 
 $results = array();
 if(isset($_POST['fromDate']) && isset($_POST['toDate'])){
-  $fromDate = $_POST['fromDate'];
-  $toDate = $_POST['toDate'];
-  $requestType = $_POST['requestType'];
+  $fromDate = trim($_POST['fromDate']);
+  $toDate = trim($_POST['toDate']);
+  $requestType = isset($_POST['requestType']) ? trim($_POST['requestType']) : 'Month wise';
   
-  if($requestType == 'Month wise'){
-    $query = "SELECT DATE_FORMAT(orderDate, '%Y-%m') as period, COUNT(*) as totalOrders, SUM((SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID)) as totalSales 
-              FROM orders 
-              WHERE DATE(orderDate) BETWEEN '$fromDate' AND '$toDate' 
-              GROUP BY DATE_FORMAT(orderDate, '%Y-%m')";
-  } else {
-    $query = "SELECT YEAR(orderDate) as period, COUNT(*) as totalOrders, SUM((SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID)) as totalSales 
-              FROM orders 
-              WHERE DATE(orderDate) BETWEEN '$fromDate' AND '$toDate' 
-              GROUP BY YEAR(orderDate)";
-  }
-  
-  $result = executeQuery($query);
-  while($row = mysqli_fetch_assoc($result)){
-    $results[] = $row;
+  // Validate date format
+  if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $toDate)){
+    if($requestType == 'Month wise'){
+      $query = "SELECT DATE_FORMAT(orderDate, '%Y-%m') as period, COUNT(*) as totalOrders, SUM((SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID)) as totalSales 
+                FROM orders 
+                WHERE DATE(orderDate) BETWEEN ? AND ? 
+                GROUP BY DATE_FORMAT(orderDate, '%Y-%m')";
+    } else {
+      $query = "SELECT YEAR(orderDate) as period, COUNT(*) as totalOrders, SUM((SELECT SUM(totalPrice) FROM order_items WHERE orderID = orders.orderID)) as totalSales 
+                FROM orders 
+                WHERE DATE(orderDate) BETWEEN ? AND ? 
+                GROUP BY YEAR(orderDate)";
+    }
+    
+    $result = executePreparedQuery($query, "ss", [$fromDate, $toDate]);
+    
+    if($result){
+      while($row = mysqli_fetch_assoc($result)){
+        $results[] = $row;
+      }
+    }
   }
 }
 ?>

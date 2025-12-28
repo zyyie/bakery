@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if(!isset($_SESSION['userID'])){
   header("Location: login.php");

@@ -1,28 +1,36 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 $success = "";
 $error = "";
 
 if(isset($_POST['name'])){
-  $name = $_POST['name'];
-  $email = $_POST['email'];
-  $mobileNumber = $_POST['mobileNumber'];
-  $message = $_POST['message'];
+  $name = trim($_POST['name']);
+  $email = trim($_POST['email']);
+  $mobileNumber = trim($_POST['mobileNumber']);
+  $message = trim($_POST['message']);
   
-  $query = "INSERT INTO enquiries (name, email, mobileNumber, message) 
-            VALUES ('$name', '$email', '$mobileNumber', '$message')";
-  
-  if(executeQuery($query)){
-    $success = "Your enquiry has been submitted successfully!";
+  // Input validation
+  if(empty($name) || empty($email) || empty($message)){
+    $error = "Name, email, and message are required!";
+  } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $error = "Invalid email format!";
   } else {
-    $error = "Failed to submit enquiry!";
+    $query = "INSERT INTO enquiries (name, email, mobileNumber, message) 
+              VALUES (?, ?, ?, ?)";
+    
+    $result = executePreparedUpdate($query, "ssss", [$name, $email, $mobileNumber, $message]);
+    
+    if($result !== false){
+      $success = "Your enquiry has been submitted successfully!";
+    } else {
+      $error = "Failed to submit enquiry!";
+    }
   }
 }
 
-$query = "SELECT * FROM pages WHERE pageType = 'contactus'";
-$result = executeQuery($query);
+$query = "SELECT * FROM pages WHERE pageType = ?";
+$result = executePreparedQuery($query, "s", ['contactus']);
 $page = mysqli_fetch_assoc($result);
 
 include("includes/header.php");
@@ -33,12 +41,12 @@ include("includes/header.php");
   <div class="row g-4">
     <div class="col-md-6">
       <div class="card shadow p-4">
-        <h3><?php echo $page['pageTitle']; ?></h3>
+        <h3><?php echo e($page['pageTitle']); ?></h3>
         <hr>
         <div class="contact-info">
-          <?php echo nl2br($page['pageDescription']); ?>
-          <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <?php echo $page['email']; ?></p>
-          <p><i class="fas fa-phone"></i> <strong>Phone:</strong> <?php echo $page['mobileNumber']; ?></p>
+          <?php echo nl2br(e($page['pageDescription'])); ?>
+          <p><i class="fas fa-envelope"></i> <strong>Email:</strong> <?php echo e($page['email']); ?></p>
+          <p><i class="fas fa-phone"></i> <strong>Phone:</strong> <?php echo e($page['mobileNumber']); ?></p>
         </div>
       </div>
     </div>

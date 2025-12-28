@@ -7,13 +7,20 @@ $success = "";
 $error = "";
 
 if(isset($_POST['categoryName'])){
-  $categoryName = $_POST['categoryName'];
-  $query = "INSERT INTO categories (categoryName) VALUES ('$categoryName')";
+  $categoryName = trim($_POST['categoryName']);
   
-  if(executeQuery($query)){
-    $success = "Category added successfully!";
+  if(empty($categoryName)){
+    $error = "Category name is required!";
   } else {
-    $error = "Failed to add category!";
+    $query = "INSERT INTO categories (categoryName) VALUES (?)";
+    
+    $result = executePreparedUpdate($query, "s", [$categoryName]);
+    
+    if($result !== false){
+      $success = "Category added successfully!";
+    } else {
+      $error = "Failed to add category!";
+    }
   }
 }
 ?>

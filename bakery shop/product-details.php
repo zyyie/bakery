@@ -1,12 +1,11 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 $itemID = intval($_GET['id']);
 $query = "SELECT items.*, categories.categoryName FROM items 
           LEFT JOIN categories ON items.categoryID = categories.categoryID 
-          WHERE items.itemID = $itemID AND items.status = 'Active'";
-$result = executeQuery($query);
+          WHERE items.itemID = ? AND items.status = 'Active'";
+$result = executePreparedQuery($query, "i", [$itemID]);
 $item = mysqli_fetch_assoc($result);
 
 if(!$item){

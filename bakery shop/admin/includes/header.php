@@ -1,11 +1,8 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-if(!isset($_SESSION['adminID'])){
-  header("Location: login.php");
-  exit();
-}
+require_once __DIR__ . '/bootstrap.php';
+requireAdminLogin();
+adminRegenerateSession();
+$notif = adminGetNotifications();
 ?>
 <!doctype html>
 <html lang="en">
@@ -30,17 +27,11 @@ if(!isset($_SESSION['adminID'])){
           <a class="nav-link" href="dashboard.php">
             <i class="fas fa-home"></i> Dashboard
           </a>
-          <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#categoryMenu">
-            <i class="fas fa-cog"></i> Item Category <i class="fas fa-chevron-right float-end"></i>
-          </a>
-          <div class="collapse" id="categoryMenu">
-            <a class="nav-link ps-5" href="add-category.php">Add Category</a>
-            <a class="nav-link ps-5" href="manage-category.php">Manage Category</a>
-          </div>
           <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#itemMenu">
             <i class="fas fa-list"></i> Items <i class="fas fa-chevron-right float-end"></i>
           </a>
           <div class="collapse" id="itemMenu">
+            <a class="nav-link ps-5" href="manage-category.php">Categories</a>
             <a class="nav-link ps-5" href="add-food-package.php">Add Food Package</a>
             <a class="nav-link ps-5" href="manage-food-package.php">Manage Food Package</a>
           </div>
@@ -56,31 +47,11 @@ if(!isset($_SESSION['adminID'])){
             <a class="nav-link ps-5" href="all-order.php">All Orders</a>
           </div>
           <a class="nav-link" href="read-enquiry.php">
-            <i class="fas fa-list"></i> Enquiry
+            <i class="fas fa-list"></i> Customer Messages
           </a>
-          <a class="nav-link" href="subscriber.php">
-            <i class="fas fa-chart-bar"></i> Subscribers
+          <a class="nav-link" href="account.php">
+            <i class="fas fa-user-cog"></i> Admin Account
           </a>
-          <a class="nav-link" href="reg-users.php">
-            <i class="fas fa-users"></i> Reg Users
-          </a>
-          <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#reportMenu">
-            <i class="fas fa-list"></i> Reports <i class="fas fa-chevron-right float-end"></i>
-          </a>
-          <div class="collapse" id="reportMenu">
-            <a class="nav-link ps-5" href="bw-dates-report.php">B/W Dates Report</a>
-            <a class="nav-link ps-5" href="sales-reports.php">Sales Reports</a>
-          </div>
-          <a class="nav-link" href="search-order.php">
-            <i class="fas fa-search"></i> Search Order
-          </a>
-          <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#pageMenu">
-            <i class="fas fa-check-square"></i> Page <i class="fas fa-chevron-right float-end"></i>
-          </a>
-          <div class="collapse" id="pageMenu">
-            <a class="nav-link ps-5" href="aboutus.php">About Us</a>
-            <a class="nav-link ps-5" href="contactus.php">Contact Us</a>
-          </div>
           <a class="nav-link" href="logout.php">
             <i class="fas fa-sign-out-alt"></i> Logout
           </a>
@@ -93,14 +64,40 @@ if(!isset($_SESSION['adminID'])){
            <div class="d-flex justify-content-between align-items-center">
              <div>
                <h4 class="mb-0" style="color: #8B4513; font-weight: 600;"><?php echo date('D M d Y H:i:s'); ?></h4>
-             </div>
-             <div>
-               <select class="form-select d-inline-block" style="width: auto;">
-                 <option>Select Language</option>
-               </select>
-               <i class="fas fa-bell ms-3"></i> <span class="badge bg-danger">3</span>
-               <i class="fas fa-user ms-3"></i> Guest (2)
-             </div>
-           </div>
-         </div>
+            </div>
+            <div>
+              <div class="dropdown d-inline-block">
+                <a class="text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-bell"></i>
+                  <?php if (!empty($notif['total'])): ?>
+                    <span class="badge bg-danger"><?php echo (int)$notif['total']; ?></span>
+                  <?php endif; ?>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <?php if (empty($notif['items'])): ?>
+                    <li><span class="dropdown-item-text">No notifications</span></li>
+                  <?php else: ?>
+                    <?php foreach ($notif['items'] as $n): ?>
+                      <li>
+                        <a class="dropdown-item" href="<?php echo htmlspecialchars($n['url']); ?>">
+                          <?php echo htmlspecialchars($n['label']); ?>
+                          <span class="badge bg-danger ms-2"><?php echo (int)$n['count']; ?></span>
+                        </a>
+                      </li>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                </ul>
+              </div>
 
+              <div class="dropdown d-inline-block ms-3">
+                <a class="text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['adminUsername'] ?? 'Admin'); ?>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="account.php">Account</a></li>
+                  <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>

@@ -7,20 +7,26 @@ $success = "";
 $error = "";
 
 if(isset($_POST['pageTitle'])){
-  $pageTitle = $_POST['pageTitle'];
-  $pageDescription = $_POST['pageDescription'];
+  $pageTitle = trim($_POST['pageTitle']);
+  $pageDescription = trim($_POST['pageDescription']);
   
-  $query = "UPDATE pages SET pageTitle = '$pageTitle', pageDescription = '$pageDescription' WHERE pageType = 'aboutus'";
-  
-  if(executeQuery($query)){
-    $success = "Page updated successfully!";
+  if(empty($pageTitle) || empty($pageDescription)){
+    $error = "Page title and description are required!";
   } else {
-    $error = "Failed to update page!";
+    $query = "UPDATE pages SET pageTitle = ?, pageDescription = ? WHERE pageType = 'aboutus'";
+    
+    $result = executePreparedUpdate($query, "ss", [$pageTitle, $pageDescription]);
+    
+    if($result !== false){
+      $success = "Page updated successfully!";
+    } else {
+      $error = "Failed to update page!";
+    }
   }
 }
 
-$query = "SELECT * FROM pages WHERE pageType = 'aboutus'";
-$result = executeQuery($query);
+$query = "SELECT * FROM pages WHERE pageType = ?";
+$result = executePreparedQuery($query, "s", ['aboutus']);
 $page = mysqli_fetch_assoc($result);
 ?>
 

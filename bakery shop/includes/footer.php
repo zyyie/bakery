@@ -17,6 +17,7 @@
           <li><a href="index.php" class="text-muted text-decoration-none">Home</a></li>
           <li><a href="login.php" class="text-muted text-decoration-none">Login</a></li>
           <li><a href="products.php" class="text-muted text-decoration-none">Food Packages</a></li>
+          <li><a href="admin/login.php" class="text-muted text-decoration-none">Admin Login</a></li>
         </ul>
       </div>
       <div class="col-md-4">

@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 // Add to cart
 if(isset($_POST['itemID']) && isset($_POST['quantity'])){
@@ -65,22 +64,23 @@ include("includes/header.php");
           $total = 0;
           $totalQty = 0;
           foreach($_SESSION['cart'] as $itemID => $quantity):
-            $query = "SELECT * FROM items WHERE itemID = $itemID";
-            $result = executeQuery($query);
-            if($row = mysqli_fetch_assoc($result)):
+            $itemID = intval($itemID);
+            $quantity = intval($quantity);
+            $result = executePreparedQuery("SELECT * FROM items WHERE itemID = ?", "i", [$itemID]);
+            if($result && ($row = mysqli_fetch_assoc($result))):
               $subtotal = $row['price'] * $quantity;
               $total += $subtotal;
               $totalQty += $quantity;
           ?>
           <tr>
             <td>
-              <img src="<?php echo $row['itemImage'] ? 'uploads/'.$row['itemImage'] : 'https://via.placeholder.com/100'; ?>" 
-                   alt="<?php echo $row['packageName']; ?>" style="width: 80px; height: 80px; object-fit: cover;">
+              <img src="<?php echo $row['itemImage'] ? 'uploads/' . e($row['itemImage']) : 'https://via.placeholder.com/100'; ?>" 
+                   alt="<?php echo e($row['packageName']); ?>" style="width: 80px; height: 80px; object-fit: cover;">
             </td>
-            <td><?php echo $row['packageName']; ?></td>
-            <td><?php echo $row['itemID']; ?></td>
+            <td><?php echo e($row['packageName']); ?></td>
+            <td><?php echo e($row['itemID']); ?></td>
             <td><?php echo $quantity; ?></td>
-            <td>₱<?php echo $row['price']; ?></td>
+            <td>₱<?php echo e($row['price']); ?></td>
             <td>₱<?php echo number_format($subtotal, 2); ?></td>
             <td>
               <form method="POST">

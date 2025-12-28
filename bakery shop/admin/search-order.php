@@ -5,11 +5,17 @@ include("includes/header.php");
 
 $orders = array();
 if(isset($_POST['orderNumber'])){
-  $orderNumber = $_POST['orderNumber'];
-  $query = "SELECT * FROM orders WHERE orderNumber = '$orderNumber'";
-  $result = executeQuery($query);
-  while($row = mysqli_fetch_assoc($result)){
-    $orders[] = $row;
+  $orderNumber = trim($_POST['orderNumber']);
+  
+  if(!empty($orderNumber)){
+    $query = "SELECT * FROM orders WHERE orderNumber = ?";
+    $result = executePreparedQuery($query, "s", [$orderNumber]);
+    
+    if($result){
+      while($row = mysqli_fetch_assoc($result)){
+        $orders[] = $row;
+      }
+    }
   }
 }
 ?>

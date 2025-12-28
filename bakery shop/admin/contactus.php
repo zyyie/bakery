@@ -7,23 +7,31 @@ $success = "";
 $error = "";
 
 if(isset($_POST['pageTitle'])){
-  $pageTitle = $_POST['pageTitle'];
-  $pageDescription = $_POST['pageDescription'];
-  $email = $_POST['email'];
-  $mobileNumber = $_POST['mobileNumber'];
+  $pageTitle = trim($_POST['pageTitle']);
+  $pageDescription = trim($_POST['pageDescription']);
+  $email = trim($_POST['email']);
+  $mobileNumber = trim($_POST['mobileNumber']);
   
-  $query = "UPDATE pages SET pageTitle = '$pageTitle', pageDescription = '$pageDescription', 
-            email = '$email', mobileNumber = '$mobileNumber' WHERE pageType = 'contactus'";
-  
-  if(executeQuery($query)){
-    $success = "Page updated successfully!";
+  if(empty($pageTitle) || empty($pageDescription) || empty($email) || empty($mobileNumber)){
+    $error = "All fields are required!";
+  } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+    $error = "Invalid email format!";
   } else {
-    $error = "Failed to update page!";
+    $query = "UPDATE pages SET pageTitle = ?, pageDescription = ?, 
+              email = ?, mobileNumber = ? WHERE pageType = 'contactus'";
+    
+    $result = executePreparedUpdate($query, "ssss", [$pageTitle, $pageDescription, $email, $mobileNumber]);
+    
+    if($result !== false){
+      $success = "Page updated successfully!";
+    } else {
+      $error = "Failed to update page!";
+    }
   }
 }
 
-$query = "SELECT * FROM pages WHERE pageType = 'contactus'";
-$result = executeQuery($query);
+$query = "SELECT * FROM pages WHERE pageType = ?";
+$result = executePreparedQuery($query, "s", ['contactus']);
 $page = mysqli_fetch_assoc($result);
 ?>
 

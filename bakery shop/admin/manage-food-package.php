@@ -5,8 +5,10 @@ include("includes/header.php");
 
 if(isset($_POST['deleteID'])){
   $deleteID = intval($_POST['deleteID']);
-  $query = "DELETE FROM items WHERE itemID = $deleteID";
-  executeQuery($query);
+  if($deleteID > 0){
+    $query = "DELETE FROM items WHERE itemID = ?";
+    executePreparedUpdate($query, "i", [$deleteID]);
+  }
   header("Location: manage-food-package.php");
   exit();
 }

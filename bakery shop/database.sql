@@ -105,7 +105,10 @@ CREATE TABLE IF NOT EXISTS pages (
 );
 
 -- Insert default admin
-INSERT INTO admin (username, password) VALUES ('admin', MD5('hotdog12345678'));
+-- Note: Password is stored as MD5 for initial setup. It will be automatically upgraded to bcrypt
+-- on first successful login. Default credentials: admin / admin123
+-- To manually update to bcrypt, run: UPDATE admin SET password = '$2y$10$...' WHERE username = 'admin';
+INSERT INTO admin (username, password) VALUES ('admin', MD5('admin123'));
 
 -- Insert bread categories
 INSERT INTO categories (categoryName) VALUES 

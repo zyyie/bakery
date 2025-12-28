@@ -1,14 +1,14 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if(!isset($_SESSION['userID'])){
   header("Location: login.php");
   exit();
 }
 
-$query = "SELECT * FROM orders WHERE userID = '".$_SESSION['userID']."' ORDER BY orderDate DESC";
-$result = executeQuery($query);
+$userID = intval($_SESSION['userID']);
+$query = "SELECT * FROM orders WHERE userID = ? ORDER BY orderDate DESC";
+$result = executePreparedQuery($query, "i", [$userID]);
 
 include("includes/header.php");
 ?>

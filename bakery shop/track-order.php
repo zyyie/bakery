@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if(!isset($_SESSION['userID'])){
   header("Location: login.php");
@@ -8,8 +7,9 @@ if(!isset($_SESSION['userID'])){
 }
 
 $orderID = intval($_GET['orderID']);
-$orderQuery = "SELECT * FROM orders WHERE orderID = $orderID AND userID = '".$_SESSION['userID']."'";
-$orderResult = executeQuery($orderQuery);
+$userID = intval($_SESSION['userID']);
+$orderQuery = "SELECT * FROM orders WHERE orderID = ? AND userID = ?";
+$orderResult = executePreparedQuery($orderQuery, "ii", [$orderID, $userID]);
 $order = mysqli_fetch_assoc($orderResult);
 
 if(!$order){

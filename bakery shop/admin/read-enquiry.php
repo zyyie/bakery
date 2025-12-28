@@ -1,21 +1,24 @@
 <?php
-session_start();
-include("../connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
+requireAdminLogin();
+adminRegenerateSession();
 include("includes/header.php");
 
 if(isset($_POST['markRead'])){
   $enquiryID = intval($_POST['enquiryID']);
-  $query = "UPDATE enquiries SET status = 'Read' WHERE enquiryID = $enquiryID";
-  executeQuery($query);
+  if($enquiryID > 0){
+    $query = "UPDATE enquiries SET status = 'Read' WHERE enquiryID = ?";
+    executePreparedUpdate($query, "i", [$enquiryID]);
+  }
   header("Location: read-enquiry.php");
   exit();
 }
 
 $query = "SELECT * FROM enquiries ORDER BY enquiryDate DESC";
-$result = executeQuery($query);
+$result = executePreparedQuery($query, "", []);
 ?>
 
-<h2 class="mb-4">Read Enquiry</h2>
+<h2 class="mb-4">Customer Messages</h2>
 
 <div class="card">
   <div class="card-body">
@@ -26,7 +29,7 @@ $result = executeQuery($query);
           <th>Name</th>
           <th>Email</th>
           <th>Mobile Number</th>
-          <th>Enquiry Date</th>
+          <th>Message Date</th>
           <th>Action</th>
         </tr>
       </thead>

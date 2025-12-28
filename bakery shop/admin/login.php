@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("../connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if(isset($_SESSION['adminID'])){
   header("Location: dashboard.php");
@@ -10,20 +9,64 @@ if(isset($_SESSION['adminID'])){
 $error = "";
 
 if(isset($_POST['username']) && isset($_POST['password'])){
-  $username = $_POST['username'];
-  $password = md5($_POST['password']);
+  $username = trim($_POST['username']);
+  $password = $_POST['password'];
   
-  $query = "SELECT * FROM admin WHERE username = '$username' AND password = '$password'";
-  $result = executeQuery($query);
-  
-  if(mysqli_num_rows($result) > 0){
-    $admin = mysqli_fetch_assoc($result);
-    $_SESSION['adminID'] = $admin['adminID'];
-    $_SESSION['adminUsername'] = $admin['username'];
-    header("Location: dashboard.php");
-    exit();
+  // Input validation
+  if(empty($username) || empty($password)){
+    $error = "Username and password are required!";
   } else {
-    $error = "Invalid username or password!";
+    // Use prepared statement to prevent SQL injection
+    $query = "SELECT * FROM admin WHERE username = ?";
+    $result = executePreparedQuery($query, "s", [$username]);
+    
+    if($result && mysqli_num_rows($result) > 0){
+      $admin = mysqli_fetch_assoc($result);
+      
+      // Verify password using password_verify (works with both MD5 legacy and bcrypt)
+      // Check if password is MD5 (legacy) or bcrypt (new)
+      if(strlen($admin['password']) == 32 && ctype_xdigit($admin['password'])){
+        // Legacy MD5 password - verify and optionally upgrade
+        if(md5($password) === $admin['password']){
+          // Upgrade to bcrypt on successful login
+          $newHash = password_hash($password, PASSWORD_BCRYPT);
+          $updateQuery = "UPDATE admin SET password = ? WHERE adminID = ?";
+          executePreparedUpdate($updateQuery, "si", [$newHash, $admin['adminID']]);
+          
+          session_regenerate_id(true);
+          $_SESSION['adminID'] = $admin['adminID'];
+          $_SESSION['adminUsername'] = $admin['username'];
+          header("Location: dashboard.php");
+          exit();
+        } else {
+          $error = "Invalid username or password!";
+        }
+      } else {
+        // New bcrypt password
+        if(password_verify($password, $admin['password'])){
+          session_regenerate_id(true);
+          $_SESSION['adminID'] = $admin['adminID'];
+          $_SESSION['adminUsername'] = $admin['username'];
+          header("Location: dashboard.php");
+          exit();
+        } elseif(hash_equals((string)$admin['password'], (string)$password)) {
+          // Legacy plain text password - upgrade to bcrypt on successful login
+          $newHash = password_hash($password, PASSWORD_BCRYPT);
+          $updateQuery = "UPDATE admin SET password = ? WHERE adminID = ?";
+          executePreparedUpdate($updateQuery, "si", [$newHash, $admin['adminID']]);
+
+          session_regenerate_id(true);
+          $_SESSION['adminID'] = $admin['adminID'];
+          $_SESSION['adminUsername'] = $admin['username'];
+          header("Location: dashboard.php");
+          exit();
+        } else {
+          $error = "Invalid username or password!";
+        }
+      }
+    } else {
+      $error = "Invalid username or password!";
+    }
   }
 }
 ?>

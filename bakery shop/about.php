@@ -1,9 +1,8 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
-$query = "SELECT * FROM pages WHERE pageType = 'aboutus'";
-$result = executeQuery($query);
+$query = "SELECT * FROM pages WHERE pageType = ?";
+$result = executePreparedQuery($query, "s", ['aboutus']);
 $page = mysqli_fetch_assoc($result);
 
 include("includes/header.php");
@@ -16,10 +15,10 @@ include("includes/header.php");
       <div class="col-lg-10">
         <div class="card">
           <div class="card-body">
-            <h2><?php echo $page['pageTitle']; ?></h2>
+            <h2><?php echo e($page['pageTitle']); ?></h2>
             <hr>
             <div class="about-content">
-              <?php echo nl2br($page['pageDescription']); ?>
+              <?php echo nl2br(e($page['pageDescription'])); ?>
             </div>
           </div>
         </div>

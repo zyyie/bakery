@@ -30,13 +30,23 @@ if(isset($_POST['packageName'])){
     }
   }
   
-  $query = "INSERT INTO items (packageName, foodDescription, itemContains, categoryID, itemImage, size, status, suitableFor, price) 
-            VALUES ('$packageName', '$foodDescription', '$itemContains', $categoryID, '$itemImage', '$size', '$status', $suitableFor, $price)";
-  
-  if(executeQuery($query)){
-    $success = "Food package added successfully!";
+  // Input validation
+  if(empty($packageName) || empty($price) || $categoryID <= 0){
+    $error = "Package name, price, and category are required!";
   } else {
-    $error = "Failed to add food package!";
+    $query = "INSERT INTO items (packageName, foodDescription, itemContains, categoryID, itemImage, size, status, suitableFor, price) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    $result = executePreparedUpdate($query, "sssisssid", [
+      $packageName, $foodDescription, $itemContains, $categoryID, $itemImage, 
+      $size, $status, $suitableFor, $price
+    ]);
+    
+    if($result !== false){
+      $success = "Food package added successfully!";
+    } else {
+      $error = "Failed to add food package!";
+    }
   }
 }
 

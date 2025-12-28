@@ -4,15 +4,15 @@ include("../connect.php");
 include("includes/header.php");
 
 $orderID = intval($_GET['viewid']);
-$orderQuery = "SELECT * FROM orders WHERE orderID = $orderID";
-$orderResult = executeQuery($orderQuery);
+$orderQuery = "SELECT * FROM orders WHERE orderID = ?";
+$orderResult = executePreparedQuery($orderQuery, "i", [$orderID]);
 $order = mysqli_fetch_assoc($orderResult);
 
 $itemsQuery = "SELECT order_items.*, items.packageName, items.itemImage 
                FROM order_items 
                LEFT JOIN items ON order_items.itemID = items.itemID 
-               WHERE order_items.orderID = $orderID";
-$itemsResult = executeQuery($itemsQuery);
+               WHERE order_items.orderID = ?";
+$itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
 ?>
 
 <h2 class="mb-4">View Order Details</h2>

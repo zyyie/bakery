@@ -1,6 +1,5 @@
 <?php
-session_start();
-include("connect.php");
+require_once __DIR__ . '/includes/bootstrap.php';
 
 if(!isset($_SESSION['userID'])){
   header("Location: login.php");
@@ -17,63 +16,87 @@ $success = "";
 
 // Place order
 if(isset($_POST['placeOrder'])){
-  $fullName = $_POST['fullName'];
-  $contactNumber = $_POST['contactNumber'];
-  $deliveryDate = $_POST['deliveryDate'];
-  $flatNumber = $_POST['flatNumber'];
-  $streetName = $_POST['streetName'];
-  $area = $_POST['area'];
-  $landmark = $_POST['landmark'];
-  $city = $_POST['city'];
-  $zipcode = $_POST['zipcode'];
-  $state = $_POST['state'];
+  $fullName = trim($_POST['fullName']);
+  $contactNumber = trim($_POST['contactNumber']);
+  $deliveryDate = trim($_POST['deliveryDate']);
+  $flatNumber = trim($_POST['flatNumber']);
+  $streetName = trim($_POST['streetName']);
+  $area = trim($_POST['area']);
+  $landmark = trim($_POST['landmark']);
+  $city = trim($_POST['city']);
+  $zipcode = trim($_POST['zipcode']);
+  $state = trim($_POST['state']);
+  $userID = intval($_SESSION['userID']);
   
-  // Generate order number
-  $orderNumber = rand(100000000, 999999999);
-  
-  // Insert order
-  $orderQuery = "INSERT INTO orders (orderNumber, userID, fullName, contactNumber, deliveryDate, 
-                flatNumber, streetName, area, landmark, city, zipcode, state, orderStatus) 
-                VALUES ('$orderNumber', '".$_SESSION['userID']."', '$fullName', '$contactNumber', 
-                '$deliveryDate', '$flatNumber', '$streetName', '$area', '$landmark', '$city', '$zipcode', '$state', 'Still Pending')";
-  
-  if(executeQuery($orderQuery)){
-    $orderID = mysqli_insert_id($GLOBALS['conn']);
-    
-    // Insert order items
-    foreach($_SESSION['cart'] as $itemID => $quantity){
-      $itemQuery = "SELECT price FROM items WHERE itemID = $itemID";
-      $itemResult = executeQuery($itemQuery);
-      $item = mysqli_fetch_assoc($itemResult);
-      
-      $unitPrice = $item['price'];
-      $totalPrice = $unitPrice * $quantity;
-      
-      $orderItemQuery = "INSERT INTO order_items (orderID, itemID, quantity, unitPrice, totalPrice) 
-                        VALUES ($orderID, $itemID, $quantity, $unitPrice, $totalPrice)";
-      executeQuery($orderItemQuery);
-    }
-    
-    // Clear cart
-    unset($_SESSION['cart']);
-    $success = "Order placed successfully! Order Number: $orderNumber";
+  // Input validation
+  if(empty($fullName) || empty($contactNumber) || empty($deliveryDate) || 
+     empty($flatNumber) || empty($streetName) || empty($area) || 
+     empty($city) || empty($zipcode) || empty($state)){
+    $error = "All fields are required!";
   } else {
-    $error = "Failed to place order!";
+    // Generate order number
+    $orderNumber = rand(100000000, 999999999);
+    
+    // Insert order using prepared statement
+    $orderQuery = "INSERT INTO orders (orderNumber, userID, fullName, contactNumber, deliveryDate, 
+                  flatNumber, streetName, area, landmark, city, zipcode, state, orderStatus) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Still Pending')";
+    
+    $orderResult = executePreparedUpdate($orderQuery, "sissssssssss", [
+      $orderNumber, $userID, $fullName, $contactNumber, $deliveryDate,
+      $flatNumber, $streetName, $area, $landmark, $city, $zipcode, $state
+    ]);
+    
+    if($orderResult !== false){
+      $orderID = mysqli_insert_id($GLOBALS['conn']);
+      
+      // Insert order items using prepared statements
+      foreach($_SESSION['cart'] as $itemID => $quantity){
+        $itemID = intval($itemID);
+        $quantity = intval($quantity);
+        
+        // Get item price using prepared statement
+        $itemQuery = "SELECT price FROM items WHERE itemID = ?";
+        $itemResult = executePreparedQuery($itemQuery, "i", [$itemID]);
+        
+        if($itemResult && mysqli_num_rows($itemResult) > 0){
+          $item = mysqli_fetch_assoc($itemResult);
+          $unitPrice = floatval($item['price']);
+          $totalPrice = $unitPrice * $quantity;
+          
+          // Insert order item using prepared statement
+          $orderItemQuery = "INSERT INTO order_items (orderID, itemID, quantity, unitPrice, totalPrice) 
+                            VALUES (?, ?, ?, ?, ?)";
+          executePreparedUpdate($orderItemQuery, "iiidd", [$orderID, $itemID, $quantity, $unitPrice, $totalPrice]);
+        }
+      }
+      
+      // Clear cart
+      unset($_SESSION['cart']);
+      $success = "Order placed successfully! Order Number: $orderNumber";
+    } else {
+      $error = "Failed to place order!";
+    }
   }
 }
 
-// Get user info
-$userQuery = "SELECT * FROM users WHERE userID = '".$_SESSION['userID']."'";
-$userResult = executeQuery($userQuery);
+// Get user info using prepared statement
+$userID = intval($_SESSION['userID']);
+$userQuery = "SELECT * FROM users WHERE userID = ?";
+$userResult = executePreparedQuery($userQuery, "i", [$userID]);
 $user = mysqli_fetch_assoc($userResult);
 
-// Calculate cart total
+// Calculate cart total using prepared statements
 $cartTotal = 0;
 foreach($_SESSION['cart'] as $itemID => $quantity){
-  $itemQuery = "SELECT price FROM items WHERE itemID = $itemID";
-  $itemResult = executeQuery($itemQuery);
-  $item = mysqli_fetch_assoc($itemResult);
-  $cartTotal += $item['price'] * $quantity;
+  $itemID = intval($itemID);
+  $itemQuery = "SELECT price FROM items WHERE itemID = ?";
+  $itemResult = executePreparedQuery($itemQuery, "i", [$itemID]);
+  
+  if($itemResult && mysqli_num_rows($itemResult) > 0){
+    $item = mysqli_fetch_assoc($itemResult);
+    $cartTotal += floatval($item['price']) * intval($quantity);
+  }
 }
 
 include("includes/header.php");
