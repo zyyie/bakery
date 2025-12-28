@@ -4,63 +4,51 @@ include("connect.php");
 include("includes/header.php");
 ?>
 
-<style>
-  body {
-    background-color: #E3D9CA;
-  }
-  .welcome-image-wrapper {
-    position: relative;
-  }
-  .welcome-image-wrapper img {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-  }
-</style>
-
 <!-- Hero Section Slideshow -->
-<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2500" data-bs-pause="false" style="height: 600px; position: relative;">
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="2500" data-bs-pause="false">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
     <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
   </div>
-  <div class="carousel-inner" style="height: 100%;">
-    <div class="carousel-item active" style="height: 100%;">
-      <div style="height: 100%; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('tinapay 1.jpg') center/cover; display: flex; align-items: center; justify-content: flex-end; padding-right: 100px;">
-        <div class="text-white" style="max-width: 500px;">
-          <h1 class="display-3 fw-bold mb-3">Welcome To KARNEEK Bakery</h1>
-          <a href="contact.php" class="btn btn-warning btn-lg">
-            <i class="fas fa-phone me-2"></i> Contact Us
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div class="carousel-bg carousel-bg-1">
+        <div class="text-white carousel-content">
+          <h1 class="hero-text">Welcome To<br><span>KARNEEK Bakery</span></h1>
+          <a href="contact.php" class="btn-contact">
+            <i class="fas fa-phone-alt"></i> Contact Us Now
           </a>
         </div>
       </div>
     </div>
-    <div class="carousel-item" style="height: 100%;">
-      <div style="height: 100%; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('tinapay 2.jpg') center/cover; display: flex; align-items: center; justify-content: flex-end; padding-right: 100px;">
-        <div class="text-white" style="max-width: 500px;">
-          <h1 class="display-3 fw-bold mb-3">Welcome To KARNEEK Bakery</h1>
-          <a href="contact.php" class="btn btn-warning btn-lg">
-            <i class="fas fa-phone me-2"></i> Contact Us
+    <div class="carousel-item">
+      <div class="carousel-bg carousel-bg-2">
+        <div class="text-white carousel-content">
+          <h1 class="hero-text">Welcome To<br><span>KARNEEK Bakery</span></h1>
+          <a href="contact.php" class="btn-contact">
+            <i class="fas fa-phone-alt"></i> Contact Us Now
           </a>
         </div>
       </div>
     </div>
-    <div class="carousel-item" style="height: 100%;">
-      <div style="height: 100%; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('tinapay 3.jpg') center/cover; display: flex; align-items: center; justify-content: flex-end; padding-right: 100px;">
-        <div class="text-white" style="max-width: 500px;">
-          <h1 class="display-3 fw-bold mb-3">Welcome To KARNEEK Bakery</h1>
-          <a href="contact.php" class="btn btn-warning btn-lg">
-            <i class="fas fa-phone me-2"></i> Contact Us
+    <div class="carousel-item">
+      <div class="carousel-bg carousel-bg-3">
+        <div class="text-white carousel-content">
+          <h1 class="hero-text">Welcome To<br><span>KARNEEK Bakery</span></h1>
+          <a href="contact.php" class="btn-contact">
+            <i class="fas fa-phone-alt"></i> Contact Us Now
           </a>
         </div>
       </div>
     </div>
-    <div class="carousel-item" style="height: 100%;">
-      <div style="height: 100%; background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('tinapay 4.jpg') center/cover; display: flex; align-items: center; justify-content: flex-end; padding-right: 100px;">
-        <div class="text-white" style="max-width: 500px;">
-          <h1 class="display-3 fw-bold mb-3">Welcome To KARNEEK Bakery</h1>
-          <a href="contact.php" class="btn btn-warning btn-lg">
-            <i class="fas fa-phone me-2"></i> Contact Us
+    <div class="carousel-item">
+      <div class="carousel-bg carousel-bg-4">
+        <div class="text-white carousel-content">
+          <h1 class="hero-text">Welcome To<br><span>KARNEEK Bakery</span></h1>
+          <a href="contact.php" class="btn-contact">
+            <i class="fas fa-phone-alt"></i> Contact Us Now
           </a>
         </div>
       </div>
@@ -77,20 +65,22 @@ include("includes/header.php");
 </div>
 
 <!-- Welcome Section -->
-<div class="container my-5 py-5" style="background-color: #CDBA96; padding: 60px 30px !important; border-radius: 25px;">
+<div class="container welcome-section">
   <div class="row align-items-center">
     <div class="col-md-6 mb-4 mb-md-0">
       <div class="welcome-image-wrapper">
-        <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600" class="img-fluid" alt="Baked Goods" style="height: 500px; object-fit: cover; width: 100%; border-radius: 20px;">
+        <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600" class="img-fluid" alt="Baked Goods">
       </div>
     </div>
     <div class="col-md-6 ps-md-5">
-      <h2 class="mb-3" style="color: #333; font-weight: 600;">Welcome to KARNEEK Bakery</h2>
-      <div class="mb-4" style="width: 80px; height: 3px; background-color: #d4a574;"></div>
-      <p class="text-muted mb-4" style="line-height: 1.8;">
-        Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise.
-      </p>
-      <a href="about.php" class="btn text-white" style="background-color: #8B4513; padding: 12px 30px; border-radius: 5px;">
+      <h2 class="section-title">Welcome to KARNEEK Bakery</h2>
+      <div class="section-divider"></div>
+      <div class="welcome-text">
+        <p>At Karneek Bakery, we believe premium baking is an art. Every loaf, pastry, and dessert we create is crafted with the finest ingredients, time-honored techniques, and an uncompromising commitment to quality.</p>
+        <p>Our bakery is dedicated to delivering premium goods that delight the senses—from rich flavors and delicate textures to beautiful presentation. We source high-quality ingredients and bake with care to ensure freshness, consistency, and excellence in every bite.</p>
+        <p>Whether it's a simple indulgence or a special celebration, Karneek Bakery delivers exceptional taste crafted to impress. Thank you for choosing us—we're honored to elevate your everyday and your most memorable moments.</p>
+      </div>
+      <a href="about.php" class="btn-about">
         About Us
       </a>
     </div>

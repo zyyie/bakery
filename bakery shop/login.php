@@ -1,5 +1,4 @@
 <?php
-session_start();
 include("connect.php");
 
 $error = "";
@@ -22,42 +21,35 @@ if(isset($_POST['email']) && isset($_POST['password'])){
   }
 }
 
-include("includes/header.php");
+include("includes/login-header.php");
 ?>
 
-
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow rounded-4 p-5">
-        <h2 class="mb-4">Login to your account</h2>
-        
-        <?php if($error): ?>
-        <div class="alert alert-danger"><?php echo $error; ?></div>
-        <?php endif; ?>
-        
-        <form method="POST">
-          <div class="mb-3">
-            <label class="form-label">Email*</label>
-            <input type="email" class="form-control" name="email" placeholder="Enter Email" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Password*</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" required>
-          </div>
-          <div class="mb-3">
-            <a href="#" class="text-primary">Forgot password?</a>
-          </div>
-          <button type="submit" class="btn btn-warning w-100">Login</button>
-        </form>
-        
-        <div class="mt-3 text-center">
-          <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
-        </div>
-      </div>
+<div class="login-container">
+  <h2 class="text-center mb-4">Login to your account</h2>
+  
+  <?php if($error): ?>
+  <div class="alert alert-danger"><?php echo $error; ?></div>
+  <?php endif; ?>
+  
+  <form method="POST">
+    <div class="mb-3">
+      <label class="form-label">Email*</label>
+      <input type="email" class="form-control" name="email" placeholder="Enter Email" required>
     </div>
+    <div class="mb-3">
+      <label class="form-label">Password*</label>
+      <input type="password" class="form-control" name="password" placeholder="Password" required>
+    </div>
+    <div class="mb-3">
+      <a href="#" class="text-primary">Forgot password?</a>
+    </div>
+    <button type="submit" class="btn btn-warning w-100">Login</button>
+  </form>
+  
+  <div class="mt-3 text-center">
+    <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
   </div>
 </div>
 
-<?php include("includes/footer.php"); ?>
+<?php include("includes/login-footer.php"); ?>
 
