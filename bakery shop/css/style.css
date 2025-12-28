@@ -102,6 +102,22 @@
   background-blend-mode: overlay;
 }
 
+.carousel-bg-1 {
+  background-image: url('../tinapay 1.jpg');
+}
+
+.carousel-bg-2 {
+  background-image: url('../tinapay 2.jpg');
+}
+
+.carousel-bg-3 {
+  background-image: url('../tinapay 3.jpg');
+}
+
+.carousel-bg-4 {
+  background-image: url('../tinapay 4.jpg');
+}
+
 .carousel-content {
   max-width: 600px;
   padding: 40px;
