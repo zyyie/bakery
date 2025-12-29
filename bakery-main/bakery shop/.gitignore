@@ -1,8 +1,0 @@
-uploads/*
-!uploads/.gitkeep
-
-vendor/
-config/email.php
-test-email.php
-download-phpmailer.ps1
-
