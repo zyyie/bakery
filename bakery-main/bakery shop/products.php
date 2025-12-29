@@ -50,7 +50,7 @@ include("includes/header.php");
         <div class="col-md-4 mb-4">
           <div class="card product-card">
             <div class="position-relative">
-              <img src="<?php echo getProductImage($row['itemImage'], $row['packageName']); ?>" 
+              <img src="<?php echo getProductImage($row['itemImage'], $row['packageName'], '300x200', $row['categoryName']); ?>" 
                    class="card-img-top" alt="<?php echo e($row['packageName']); ?>">
               <button class="btn btn-favorite" onclick="toggleFavorite(this, <?php echo (int)$row['itemID']; ?>)">
                 <i class="far fa-heart"></i>

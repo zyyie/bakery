@@ -91,13 +91,15 @@ include("includes/header.php");
   <h2 class="text-center mb-5" style="color: #333; font-weight: 600;">Featured Products</h2>
   <div class="row">
     <?php
-    $query = "SELECT * FROM items WHERE status = 'Active' LIMIT 4";
+    $query = "SELECT items.*, categories.categoryName FROM items 
+              LEFT JOIN categories ON items.categoryID = categories.categoryID 
+              WHERE items.status = 'Active' LIMIT 4";
     $result = executeQuery($query);
     while($row = mysqli_fetch_assoc($result)):
     ?>
     <div class="col-md-3 mb-4">
       <div class="card product-card shadow border-0" style="overflow: hidden;">
-        <img src="<?php echo getProductImage($row['itemImage'], $row['packageName']); ?>" 
+        <img src="<?php echo getProductImage($row['itemImage'], $row['packageName'], '300x200', $row['categoryName']); ?>" 
              class="card-img-top" alt="<?php echo $row['packageName']; ?>" style="height: 250px; object-fit: cover; transition: transform 0.3s;">
         <div class="card-body">
           <h5 class="card-title fw-bold"><?php echo $row['packageName']; ?></h5>

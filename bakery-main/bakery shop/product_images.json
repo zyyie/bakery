@@ -1,0 +1,13 @@
+{
+    "Classic & Basic Bread": {
+        "Pandesal (plain)": "bread_images/classic_bread/pandesal_solo.png",
+        "Buttered pandesal": "bread_images/classic_bread/buttered_pandesal_solo.png",
+        "Malunggay pandesal": "bread_images/classic_bread/malunggay_pandesal_solo.png",
+        "Wheat pandesal": "bread_images/classic_bread/wheat_bread_solo.png",
+        "Spanish bread": "bread_images/classic_bread/spanish_bread_solo.png",
+        "Cheese bread": "bread_images/classic_bread/cheese_bread_solo.png"
+    },
+    "Sweet Bread": {
+        "Chocolate bread / Choco roll": "bread_images/sweet_bread/choco_roll_solo.png"
+    }
+}

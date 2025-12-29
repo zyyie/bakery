@@ -20,7 +20,7 @@ include("includes/header.php");
 <div class="container my-5">
   <div class="row">
     <div class="col-md-6 mb-4">
-      <img src="<?php echo getProductImage($item['itemImage'], $item['packageName'], '600x400'); ?>" 
+      <img src="<?php echo getProductImage($item['itemImage'], $item['packageName'], '600x400', $item['categoryName']); ?>" 
            class="img-fluid rounded shadow" alt="<?php echo $item['packageName']; ?>">
     </div>
     <div class="col-md-6">

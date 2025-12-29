@@ -35,7 +35,7 @@ function set_app_cookie($name, $value, $expires) {
     setcookie($name, $value, $options);
 }
 
-function getProductImage($itemImage, $packageName, $defaultSize = '300x200') {
+function getProductImage($itemImage, $packageName, $defaultSize = '300x200', $categoryName = null) {
     if ($itemImage && file_exists(__DIR__ . '/../uploads/' . $itemImage)) {
         return 'uploads/' . $itemImage;
     }
@@ -48,10 +48,22 @@ function getProductImage($itemImage, $packageName, $defaultSize = '300x200') {
         $imageMap = json_decode($jsonContent, true) ?? [];
     }
     
-    if (isset($imageMap[$packageName])) {
-        $imagePath = $imageMap[$packageName];
+    // Search for product in nested structure
+    // If category name is provided, check that category first
+    if ($categoryName && isset($imageMap[$categoryName]) && isset($imageMap[$categoryName][$packageName])) {
+        $imagePath = $imageMap[$categoryName][$packageName];
         if (file_exists(__DIR__ . '/../' . $imagePath)) {
             return $imagePath;
+        }
+    }
+    
+    // Otherwise, search through all categories
+    foreach ($imageMap as $category => $products) {
+        if (is_array($products) && isset($products[$packageName])) {
+            $imagePath = $products[$packageName];
+            if (file_exists(__DIR__ . '/../' . $imagePath)) {
+                return $imagePath;
+            }
         }
     }
     
