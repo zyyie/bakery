@@ -33,7 +33,11 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     mobileNumber VARCHAR(20) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    regDate DATETIME DEFAULT CURRENT_TIMESTAMP
+    social_id VARCHAR(255) NULL,
+    social_provider VARCHAR(50) NULL,
+    regDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_social_id (social_id),
+    INDEX idx_social_provider (social_provider)
 );
 
 -- Admin Table
@@ -104,70 +108,114 @@ CREATE TABLE IF NOT EXISTS pages (
     pageType VARCHAR(50) UNIQUE NOT NULL
 );
 
+-- Product Reviews Table
+CREATE TABLE IF NOT EXISTS product_reviews (
+    reviewID INT AUTO_INCREMENT PRIMARY KEY,
+    itemID INT NOT NULL,
+    userID INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    reviewDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'Approved',
+    FOREIGN KEY (itemID) REFERENCES items(itemID) ON DELETE CASCADE,
+    FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE CASCADE,
+    INDEX idx_itemID (itemID),
+    INDEX idx_userID (userID),
+    INDEX idx_reviewDate (reviewDate)
+);
+
 -- Insert default admin
 -- Note: Password is stored as MD5 for initial setup. It will be automatically upgraded to bcrypt
 -- on first successful login. Default credentials: admin / admin123
 -- To manually update to bcrypt, run: UPDATE admin SET password = '$2y$10$...' WHERE username = 'admin';
 INSERT INTO admin (username, password) VALUES ('admin', MD5('admin123'));
 
--- Insert bread categories
+-- Insert all categories
 INSERT INTO categories (categoryName) VALUES 
 ('Classic & Basic Bread'),
 ('Sweet Bread'),
 ('Filled / Stuffed Bread'),
 ('Buns & Rolls'),
 ('Bread–Cake Combo'),
-('Special (Budget-Friendly)');
+('Special (Budget-Friendly)'),
+('Cookies'),
+('Crinkles'),
+('Brownies');
 
 -- Insert bread items
--- Classic & Basic Bread (categoryID = 1)
+-- Classic & Basic Bread
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Pandesal (plain)', 'Classic Filipino bread roll, 3-5 pcs per pack', 'Flour, Yeast, Sugar, Salt', 1, 50.00, 'Active'),
-('Buttered pandesal', 'Soft pandesal with butter spread', 'Flour, Yeast, Sugar, Salt, Butter', 1, 60.00, 'Active'),
-('Malunggay pandesal', 'Nutritious pandesal with malunggay leaves', 'Flour, Yeast, Sugar, Salt, Malunggay', 1, 55.00, 'Active'),
-('Wheat pandesal', 'Healthy whole wheat pandesal', 'Whole Wheat Flour, Yeast, Sugar, Salt', 1, 60.00, 'Active'),
-('Spanish bread', 'Sweet bread roll with butter and sugar filling', 'Flour, Yeast, Sugar, Butter', 1, 45.00, 'Active'),
-('Cheese bread', 'Soft bread with cheese filling', 'Flour, Yeast, Sugar, Cheese', 1, 55.00, 'Active');
+('Pandesal (plain)', 'Classic Filipino bread roll, 3-5 pcs per pack', 'Flour, Yeast, Sugar, Salt', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 50.00, 'Active'),
+('Buttered pandesal', 'Soft pandesal with butter spread', 'Flour, Yeast, Sugar, Salt, Butter', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 60.00, 'Active'),
+('Malunggay pandesal', 'Nutritious pandesal with malunggay leaves', 'Flour, Yeast, Sugar, Salt, Malunggay', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 55.00, 'Active'),
+('Wheat pandesal', 'Healthy whole wheat pandesal', 'Whole Wheat Flour, Yeast, Sugar, Salt', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 60.00, 'Active'),
+('Spanish bread', 'Sweet bread roll with butter and sugar filling', 'Flour, Yeast, Sugar, Butter', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 45.00, 'Active'),
+('Cheese bread', 'Soft bread with cheese filling', 'Flour, Yeast, Sugar, Cheese', (SELECT categoryID FROM categories WHERE categoryName = 'Classic & Basic Bread'), 55.00, 'Active');
 
--- Sweet Bread (categoryID = 2)
+-- Sweet Bread
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Ensaymada (mini)', 'Mini sweet bread topped with butter, sugar, and cheese', 'Flour, Yeast, Sugar, Butter, Cheese', 2, 40.00, 'Active'),
-('Ube cheese bread', 'Purple yam bread with cheese topping', 'Flour, Yeast, Ube, Cheese', 2, 50.00, 'Active'),
-('Chocolate bread / Choco roll', 'Sweet bread with chocolate filling', 'Flour, Yeast, Sugar, Chocolate', 2, 45.00, 'Active'),
-('Cream bread', 'Soft bread with sweet cream filling', 'Flour, Yeast, Sugar, Cream', 2, 50.00, 'Active'),
-('Custard bread', 'Bread filled with creamy custard', 'Flour, Yeast, Sugar, Custard', 2, 50.00, 'Active'),
-('Monggo bread', 'Sweet bread with mung bean filling', 'Flour, Yeast, Sugar, Mung Beans', 2, 45.00, 'Active'),
-('Strawberry bread', 'Bread with strawberry jam filling', 'Flour, Yeast, Sugar, Strawberry Jam', 2, 50.00, 'Active'),
-('Pineapple bread', 'Bread with pineapple filling', 'Flour, Yeast, Sugar, Pineapple', 2, 50.00, 'Active');
+('Ensaymada (mini)', 'Mini sweet bread topped with butter, sugar, and cheese', 'Flour, Yeast, Sugar, Butter, Cheese', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 40.00, 'Active'),
+('Ube cheese bread', 'Purple yam bread with cheese topping', 'Flour, Yeast, Ube, Cheese', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 50.00, 'Active'),
+('Chocolate bread / Choco roll', 'Sweet bread with chocolate filling', 'Flour, Yeast, Sugar, Chocolate', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 45.00, 'Active'),
+('Cream bread', 'Soft bread with sweet cream filling', 'Flour, Yeast, Sugar, Cream', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 50.00, 'Active'),
+('Custard bread', 'Bread filled with creamy custard', 'Flour, Yeast, Sugar, Custard', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 50.00, 'Active'),
+('Monggo bread', 'Sweet bread with mung bean filling', 'Flour, Yeast, Sugar, Mung Beans', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 45.00, 'Active'),
+('Strawberry bread', 'Bread with strawberry jam filling', 'Flour, Yeast, Sugar, Strawberry Jam', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 50.00, 'Active'),
+('Pineapple bread', 'Bread with pineapple filling', 'Flour, Yeast, Sugar, Pineapple', (SELECT categoryID FROM categories WHERE categoryName = 'Sweet Bread'), 50.00, 'Active');
 
--- Filled / Stuffed Bread (categoryID = 3)
+-- Filled / Stuffed Bread
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Ham & cheese bread', 'Bread stuffed with ham and cheese', 'Flour, Yeast, Ham, Cheese', 3, 65.00, 'Active'),
-('Hotdog roll', 'Soft roll with hotdog filling', 'Flour, Yeast, Hotdog', 3, 45.00, 'Active'),
-('Sausage roll', 'Bread roll with sausage', 'Flour, Yeast, Sausage', 3, 50.00, 'Active'),
-('Tuna bread', 'Bread filled with tuna spread', 'Flour, Yeast, Tuna, Mayonnaise', 3, 55.00, 'Active'),
-('Chicken bread', 'Bread stuffed with chicken filling', 'Flour, Yeast, Chicken', 3, 60.00, 'Active'),
-('Cheese stick bread', 'Bread with cheese stick filling', 'Flour, Yeast, Cheese', 3, 50.00, 'Active');
+('Ham & cheese bread', 'Bread stuffed with ham and cheese', 'Flour, Yeast, Ham, Cheese', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 65.00, 'Active'),
+('Hotdog roll', 'Soft roll with hotdog filling', 'Flour, Yeast, Hotdog', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 45.00, 'Active'),
+('Sausage roll', 'Bread roll with sausage', 'Flour, Yeast, Sausage', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 50.00, 'Active'),
+('Tuna bread', 'Bread filled with tuna spread', 'Flour, Yeast, Tuna, Mayonnaise', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 55.00, 'Active'),
+('Chicken bread', 'Bread stuffed with chicken filling', 'Flour, Yeast, Chicken', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 60.00, 'Active'),
+('Cheese stick bread', 'Bread with cheese stick filling', 'Flour, Yeast, Cheese', (SELECT categoryID FROM categories WHERE categoryName = 'Filled / Stuffed Bread'), 50.00, 'Active');
 
--- Buns & Rolls (categoryID = 4)
+-- Buns & Rolls
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Mini burger bun (with filling)', 'Small burger bun with filling', 'Flour, Yeast, Sugar, Filling', 4, 40.00, 'Active'),
-('Dinner rolls', 'Soft dinner rolls, 3-4 pcs per pack', 'Flour, Yeast, Sugar, Butter', 4, 55.00, 'Active'),
-('Soft roll bread', 'Soft and fluffy bread rolls', 'Flour, Yeast, Sugar, Milk', 4, 45.00, 'Active');
+('Mini burger bun (with filling)', 'Small burger bun with filling', 'Flour, Yeast, Sugar, Filling', (SELECT categoryID FROM categories WHERE categoryName = 'Buns & Rolls'), 40.00, 'Active'),
+('Dinner rolls', 'Soft dinner rolls, 3-4 pcs per pack', 'Flour, Yeast, Sugar, Butter', (SELECT categoryID FROM categories WHERE categoryName = 'Buns & Rolls'), 55.00, 'Active'),
+('Soft roll bread', 'Soft and fluffy bread rolls', 'Flour, Yeast, Sugar, Milk', (SELECT categoryID FROM categories WHERE categoryName = 'Buns & Rolls'), 45.00, 'Active');
 
--- Bread–Cake Combo (categoryID = 5)
+-- Bread–Cake Combo
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Mini banana bread slice', 'Moist banana bread slice', 'Flour, Banana, Sugar, Eggs', 5, 35.00, 'Active'),
-('Mini chiffon cake slice', 'Light and airy chiffon cake slice', 'Flour, Eggs, Sugar, Oil', 5, 40.00, 'Active'),
-('Mini pound cake', 'Rich and buttery pound cake', 'Flour, Butter, Sugar, Eggs', 5, 45.00, 'Active'),
-('Cupcake', 'Delicious cupcakes, 1-2 pcs per pack', 'Flour, Sugar, Eggs, Frosting', 5, 50.00, 'Active');
+('Mini banana bread slice', 'Moist banana bread slice', 'Flour, Banana, Sugar, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Bread–Cake Combo'), 35.00, 'Active'),
+('Mini chiffon cake slice', 'Light and airy chiffon cake slice', 'Flour, Eggs, Sugar, Oil', (SELECT categoryID FROM categories WHERE categoryName = 'Bread–Cake Combo'), 40.00, 'Active'),
+('Mini pound cake', 'Rich and buttery pound cake', 'Flour, Butter, Sugar, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Bread–Cake Combo'), 45.00, 'Active'),
+('Cupcake', 'Delicious cupcakes, 1-2 pcs per pack', 'Flour, Sugar, Eggs, Frosting', (SELECT categoryID FROM categories WHERE categoryName = 'Bread–Cake Combo'), 50.00, 'Active');
 
--- Special (Budget-Friendly) (categoryID = 6)
+-- Special (Budget-Friendly)
 INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
-('Garlic bread sticks', 'Crispy bread sticks with garlic butter', 'Flour, Yeast, Garlic, Butter', 6, 35.00, 'Active'),
-('Cheese garlic roll', 'Soft roll with cheese and garlic', 'Flour, Yeast, Cheese, Garlic', 6, 40.00, 'Active'),
-('Cinnamon roll (mini)', 'Sweet mini cinnamon rolls', 'Flour, Yeast, Cinnamon, Sugar', 6, 35.00, 'Active'),
-('Pandesal bites (assorted flavors)', 'Small pandesal bites in assorted flavors', 'Flour, Yeast, Sugar, Various Flavors', 6, 45.00, 'Active');
+('Garlic bread sticks', 'Crispy bread sticks with garlic butter', 'Flour, Yeast, Garlic, Butter', (SELECT categoryID FROM categories WHERE categoryName = 'Special (Budget-Friendly)'), 35.00, 'Active'),
+('Cheese garlic roll', 'Soft roll with cheese and garlic', 'Flour, Yeast, Cheese, Garlic', (SELECT categoryID FROM categories WHERE categoryName = 'Special (Budget-Friendly)'), 40.00, 'Active'),
+('Cinnamon roll (mini)', 'Sweet mini cinnamon rolls', 'Flour, Yeast, Cinnamon, Sugar', (SELECT categoryID FROM categories WHERE categoryName = 'Special (Budget-Friendly)'), 35.00, 'Active'),
+('Pandesal bites (assorted flavors)', 'Small pandesal bites in assorted flavors', 'Flour, Yeast, Sugar, Various Flavors', (SELECT categoryID FROM categories WHERE categoryName = 'Special (Budget-Friendly)'), 45.00, 'Active');
+
+-- Insert Cookies items
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Chocolate Chip Cookie', 'Classic chocolate chip cookies with rich chocolate chunks', 'Flour, Butter, Sugar, Chocolate Chips, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 75.00, 'Active'),
+('Black Velvet Chunky Cookie', 'Rich black cocoa cookie with chunky texture', 'Flour, Black Cocoa, Butter, Sugar, Chocolate Chunks, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 85.00, 'Active'),
+('Double Chocolate White Chunk Cookie', 'Double chocolate cookie with white chocolate chunks', 'Flour, Cocoa, Butter, Sugar, White Chocolate Chunks, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 80.00, 'Active'),
+('Black Cocoa and White Chocolate Chips', 'Dark black cocoa cookie with white chocolate chips', 'Flour, Black Cocoa, Butter, Sugar, White Chocolate Chips, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 80.00, 'Active'),
+('Dark Chocolate Mint Cookies', 'Dark chocolate cookies with refreshing mint flavor', 'Flour, Dark Cocoa, Butter, Sugar, Mint Extract, Chocolate Chips, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 85.00, 'Active'),
+('Assorted Cookies', 'Mix of assorted cookie flavors', 'Flour, Butter, Sugar, Chocolate Chips, Various Flavors, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Cookies'), 90.00, 'Active');
+
+-- Insert Crinkles items
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Chocolate Crinkles', 'Rich chocolate crinkles with powdered sugar coating', 'Flour, Cocoa, Butter, Sugar, Powdered Sugar, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 80.00, 'Active'),
+('Matcha Crinkles', 'Delicate matcha-flavored crinkles with powdered sugar', 'Flour, Matcha Powder, Butter, Sugar, Powdered Sugar, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 85.00, 'Active'),
+('Red Velvet Crinkles', 'Classic red velvet crinkles with cream cheese flavor', 'Flour, Cocoa, Red Food Color, Butter, Sugar, Powdered Sugar, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 85.00, 'Active'),
+('Ube Crinkles', 'Filipino ube-flavored crinkles with powdered sugar', 'Flour, Ube Extract, Butter, Sugar, Powdered Sugar, Eggs', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 85.00, 'Active'),
+('Vanilla Crinkles', 'Classic vanilla crinkles with powdered sugar coating', 'Flour, Butter, Sugar, Powdered Sugar, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 80.00, 'Active'),
+('Assorted Crinkles', 'Mix of assorted crinkles flavors', 'Flour, Cocoa, Matcha, Ube Extract, Butter, Sugar, Powdered Sugar, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Crinkles'), 90.00, 'Active');
+
+-- Insert Brownies items
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Fudge Brownie', 'Rich and fudgy chocolate brownie', 'Flour, Cocoa, Butter, Sugar, Chocolate, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Brownies'), 85.00, 'Active'),
+('Oreo Fudge Brownie', 'Fudgy brownie with Oreo cookie pieces', 'Flour, Cocoa, Butter, Sugar, Chocolate, Oreo Cookies, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Brownies'), 90.00, 'Active'),
+('Walnut Fudge Brownie', 'Fudgy brownie with crunchy walnuts', 'Flour, Cocoa, Butter, Sugar, Chocolate, Walnuts, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Brownies'), 90.00, 'Active'),
+('Assorted Brownies', 'Mix of assorted brownie flavors', 'Flour, Cocoa, Butter, Sugar, Chocolate, Various Toppings, Eggs, Vanilla', (SELECT categoryID FROM categories WHERE categoryName = 'Brownies'), 95.00, 'Active');
 
 -- Insert default pages
 INSERT INTO pages (pageTitle, pageDescription, email, mobileNumber, pageType) VALUES

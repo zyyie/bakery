@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="col-md-4 mb-4">
           <div class="card product-card shadow border-0" style="transition: all 0.3s; overflow: hidden;">
             <div class="position-relative">
-              <img src="${item.itemImage ? 'uploads/' + item.itemImage : 'https://via.placeholder.com/300x200'}" 
+              <img src="${item.itemImage ? 'bakery bread image/' + item.itemImage : 'https://via.placeholder.com/300x200'}" 
                    class="card-img-top" alt="${item.packageName}" style="height: 250px; object-fit: cover; transition: transform 0.3s;">
               <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle favorite-active" 
                       style="width: 40px; height: 40px; padding: 0; color: #dc3545;" 

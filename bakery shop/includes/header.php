@@ -17,6 +17,17 @@ if (session_status() === PHP_SESSION_NONE) {
 </head>
 <body>
 
+<!-- Loading Screen -->
+<div id="pageLoader" class="page-loader active">
+  <div class="loader-content">
+    <div class="logo-loader">
+      <img src="logo.png" alt="Bakery Logo" class="loader-logo">
+      <div class="loading-spinner"></div>
+    </div>
+    <p class="loader-text">Loading...</p>
+  </div>
+</div>
+
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-light">
   <div class="container">

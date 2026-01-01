@@ -77,11 +77,13 @@ include("includes/header.php");
           $grandTotal = 0;
           while($item = mysqli_fetch_assoc($itemsResult)):
             $grandTotal += $item['totalPrice'];
+            // Resolve image path
+            $itemImagePath = $item['itemImage'] ? resolveImagePath('bakery bread image/'.$item['itemImage']) : 'https://via.placeholder.com/80';
           ?>
           <tr>
             <td><?php echo $count++; ?></td>
             <td>
-              <img src="<?php echo $item['itemImage'] ? 'uploads/'.$item['itemImage'] : 'https://via.placeholder.com/80'; ?>" 
+              <img src="<?php echo imageUrl($itemImagePath); ?>" 
                    style="width: 80px; height: 80px; object-fit: cover;">
             </td>
             <td><?php echo $item['packageName']; ?></td>

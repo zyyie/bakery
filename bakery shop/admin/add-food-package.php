@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../connect.php");
+include("../config/connect.php");
 include("includes/header.php");
 
 $success = "";
@@ -19,7 +19,7 @@ if(isset($_POST['packageName'])){
   // Handle image upload
   $itemImage = "";
   if(isset($_FILES['itemImage']) && $_FILES['itemImage']['error'] == 0){
-    $uploadDir = "../uploads/";
+    $uploadDir = "../bakery bread image/";
     if(!is_dir($uploadDir)){
       mkdir($uploadDir, 0777, true);
     }

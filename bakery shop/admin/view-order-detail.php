@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../connect.php");
+include("../config/connect.php");
 include("includes/header.php");
 
 $orderID = intval($_GET['viewid']);
@@ -69,11 +69,13 @@ $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
         $grandTotal = 0;
         while($item = mysqli_fetch_assoc($itemsResult)):
           $grandTotal += $item['totalPrice'];
+          // Resolve image path (note: admin folder uses ../ prefix)
+          $itemImagePath = $item['itemImage'] ? resolveImagePath('../bakery bread image/'.$item['itemImage']) : 'https://via.placeholder.com/80';
         ?>
         <tr>
           <td><?php echo $count++; ?></td>
           <td>
-            <img src="<?php echo $item['itemImage'] ? '../uploads/'.$item['itemImage'] : 'https://via.placeholder.com/80'; ?>" 
+            <img src="<?php echo imageUrl($itemImagePath); ?>" 
                  style="width: 80px; height: 80px; object-fit: cover;">
           </td>
           <td><?php echo $item['packageName']; ?></td>

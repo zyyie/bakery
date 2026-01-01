@@ -1,6 +1,14 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 
+// Load product images mapping from JSON file
+$imagesMap = [];
+$imagesJsonPath = __DIR__ . '/product-images.json';
+if (file_exists($imagesJsonPath)) {
+  $imagesJson = file_get_contents($imagesJsonPath);
+  $imagesMap = json_decode($imagesJson, true) ?: [];
+}
+
 $itemID = intval($_GET['id']);
 $query = "SELECT items.*, categories.categoryName FROM items 
           LEFT JOIN categories ON items.categoryID = categories.categoryID 
@@ -13,6 +21,19 @@ if(!$item){
   exit();
 }
 
+// Get image from JSON mapping, fallback to database, then placeholder
+$productImage = 'https://via.placeholder.com/600x400';
+$packageName = $item['packageName'];
+
+if (isset($imagesMap[$packageName])) {
+  $productImage = $imagesMap[$packageName];
+} elseif (!empty($item['itemImage'])) {
+  $productImage = 'bakery bread image/' . $item['itemImage'];
+}
+
+// Resolve the actual image path
+$productImage = resolveImagePath($productImage);
+
 include("includes/header.php");
 ?>
 
@@ -20,8 +41,8 @@ include("includes/header.php");
 <div class="container my-5">
   <div class="row">
     <div class="col-md-6 mb-4">
-      <img src="<?php echo $item['itemImage'] ? 'uploads/'.$item['itemImage'] : 'https://via.placeholder.com/600x400'; ?>" 
-           class="img-fluid rounded shadow" alt="<?php echo $item['packageName']; ?>">
+      <img src="<?php echo imageUrl($productImage); ?>" 
+           class="img-fluid rounded shadow" alt="<?php echo e($item['packageName']); ?>">
     </div>
     <div class="col-md-6">
       <div class="d-flex justify-content-between align-items-start mb-3">

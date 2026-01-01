@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../connect.php");
+include("../config/connect.php");
 include("includes/header.php");
 
 if(isset($_POST['deleteID'])){
@@ -39,11 +39,13 @@ $result = executeQuery($query);
         <?php
         $count = 1;
         while($row = mysqli_fetch_assoc($result)):
+          // Resolve image path (note: admin folder uses ../ prefix)
+          $itemImagePath = $row['itemImage'] ? resolveImagePath('../bakery bread image/'.$row['itemImage']) : 'https://via.placeholder.com/80';
         ?>
         <tr>
           <td><?php echo $count++; ?></td>
           <td>
-            <img src="<?php echo $row['itemImage'] ? '../uploads/'.$row['itemImage'] : 'https://via.placeholder.com/80'; ?>" 
+            <img src="<?php echo imageUrl($itemImagePath); ?>" 
                  alt="<?php echo $row['packageName']; ?>" style="width: 80px; height: 80px; object-fit: cover;">
           </td>
           <td><?php echo $row['packageName']; ?></td>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../connect.php");
+include("../config/connect.php");
 include("includes/header.php");
 
 $success = "";

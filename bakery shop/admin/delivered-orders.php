@@ -1,6 +1,6 @@
 <?php
 session_start();
-include("../connect.php");
+include("../config/connect.php");
 include("includes/header.php");
 
 $query = "SELECT * FROM orders WHERE orderStatus = 'Delivered' ORDER BY orderDate DESC";

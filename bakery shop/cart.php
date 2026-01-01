@@ -16,7 +16,12 @@ if(isset($_POST['itemID']) && isset($_POST['quantity'])){
     $_SESSION['cart'][$itemID] = $quantity;
   }
   
-  header("Location: cart.php");
+  // Check if buy now was clicked
+  if(isset($_POST['buy_now']) || isset($_GET['buy_now'])){
+    header("Location: checkout.php");
+  } else {
+    header("Location: cart.php");
+  }
   exit();
 }
 
@@ -61,6 +66,14 @@ include("includes/header.php");
         </thead>
         <tbody>
           <?php
+          // Load product images mapping from JSON file
+          $imagesMap = [];
+          $imagesJsonPath = __DIR__ . '/product-images.json';
+          if (file_exists($imagesJsonPath)) {
+            $imagesJson = file_get_contents($imagesJsonPath);
+            $imagesMap = json_decode($imagesJson, true) ?: [];
+          }
+          
           $total = 0;
           $totalQty = 0;
           foreach($_SESSION['cart'] as $itemID => $quantity):
@@ -71,11 +84,25 @@ include("includes/header.php");
               $subtotal = $row['price'] * $quantity;
               $total += $subtotal;
               $totalQty += $quantity;
+              
+              // Get product image from JSON mapping, fallback to database, then placeholder
+              $productImage = 'https://via.placeholder.com/100';
+              $packageName = $row['packageName'];
+              
+              if (isset($imagesMap[$packageName])) {
+                $productImage = $imagesMap[$packageName];
+              } elseif (!empty($row['itemImage'])) {
+                $productImage = 'bakery bread image/' . $row['itemImage'];
+              }
+              
+              // Resolve the actual image path
+              $productImage = resolveImagePath($productImage);
           ?>
           <tr>
             <td>
-              <img src="<?php echo $row['itemImage'] ? 'uploads/' . e($row['itemImage']) : 'https://via.placeholder.com/100'; ?>" 
-                   alt="<?php echo e($row['packageName']); ?>" style="width: 80px; height: 80px; object-fit: cover;">
+              <img src="<?php echo imageUrl($productImage); ?>" 
+                   alt="<?php echo e($row['packageName']); ?>" 
+                   style="width: 80px; height: 80px; object-fit: cover; border-radius: 5px;">
             </td>
             <td><?php echo e($row['packageName']); ?></td>
             <td><?php echo e($row['itemID']); ?></td>
@@ -101,6 +128,13 @@ include("includes/header.php");
           </tr>
         </tbody>
       </table>
+      
+      <!-- Free Shipping Badge -->
+      <div class="alert alert-success d-flex align-items-center mb-4">
+        <i class="fas fa-truck me-2"></i>
+        <strong>Free Shipping</strong>
+        <span class="ms-2">on all orders!</span>
+      </div>
       
       <div class="mt-4">
         <a href="products.php" class="btn btn-secondary">CONTINUE SHOPPING</a>

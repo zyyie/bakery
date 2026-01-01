@@ -64,7 +64,8 @@ include("includes/header.php");
 </div>
 
 <!-- Welcome Section -->
-<div class="container welcome-section">
+<div class="container-fluid d-flex justify-content-center px-0">
+  <div class="welcome-section w-100">
   <div class="row align-items-center">
     <div class="col-md-6 mb-4 mb-md-0">
       <div class="welcome-image-wrapper">
@@ -80,8 +81,9 @@ include("includes/header.php");
         <p>Whether it's a simple indulgence or a special celebration, Karneek Bakery delivers exceptional taste crafted to impress. Thank you for choosing us—we're honored to elevate your everyday and your most memorable moments.</p>
       </div>
       <a href="about.php" class="btn-about">
-        About Us
+          <span class="btn-dot"></span>About Us
       </a>
+      </div>
     </div>
   </div>
 </div>
@@ -91,61 +93,177 @@ include("includes/header.php");
   <h2 class="text-center mb-5" style="color: #333; font-weight: 600;">Featured Products</h2>
   <div class="row">
     <?php
-    $query = "SELECT * FROM items WHERE status = 'Active' LIMIT 4";
-    $result = executeQuery($query);
-    while($row = mysqli_fetch_assoc($result)):
+    // Load product images mapping from JSON file
+    $imagesMap = [];
+    $imagesJsonPath = __DIR__ . '/product-images.json';
+    if (file_exists($imagesJsonPath)) {
+      $imagesJson = file_get_contents($imagesJsonPath);
+      $imagesMap = json_decode($imagesJson, true) ?: [];
+    }
+    
+    // Get one product from each category
+    $categoriesQuery = "SELECT categoryID FROM categories ORDER BY categoryID";
+    $categoriesResult = executeQuery($categoriesQuery);
+    $featuredProducts = [];
+    
+    while($cat = mysqli_fetch_assoc($categoriesResult)):
+      $catId = $cat['categoryID'];
+      $productQuery = "SELECT i.*, c.categoryName 
+                       FROM items i
+                       INNER JOIN categories c ON i.categoryID = c.categoryID
+                       WHERE i.status = 'Active' AND i.categoryID = ?
+                       LIMIT 1";
+      $productResult = executePreparedQuery($productQuery, "i", [$catId]);
+      if($productResult && ($product = mysqli_fetch_assoc($productResult))):
+        $featuredProducts[] = $product;
+      endif;
+    endwhile;
+    
+    // Estimated shipping / delivery dates (vary based on user's location)
+    $shipDate = new DateTime(); // Ship out today
+    $estimateStart = (clone $shipDate)->modify('+3 days');
+    $estimateEnd   = (clone $shipDate)->modify('+7 days');
+
+    if(isset($_SESSION['userID'])) {
+      $homeUserID = intval($_SESSION['userID']);
+      $homeUserQuery = "SELECT city, zipcode FROM users WHERE userID = ?";
+      $homeUserResult = executePreparedQuery($homeUserQuery, "i", [$homeUserID]);
+      if($homeUserResult && ($homeUser = mysqli_fetch_assoc($homeUserResult))) {
+        $userCity = strtolower(trim($homeUser['city'] ?? ''));
+        $userZip  = trim($homeUser['zipcode'] ?? '');
+
+        // Assume store is in Alaminos, Laguna 4001 (near area)
+        $isSameCity = ($userCity === 'alaminos' || $userCity === 'laguna') && $userZip === '4001';
+        $isSameProvince = (strpos($userCity, 'laguna') !== false || strpos($userCity, 'batangas') !== false);
+
+        if($isSameCity) {
+          // Very near: 1–3 days
+          $estimateStart = (clone $shipDate)->modify('+1 day');
+          $estimateEnd   = (clone $shipDate)->modify('+3 days');
+        } elseif($isSameProvince) {
+          // Same province / nearby: 2–5 days
+          $estimateStart = (clone $shipDate)->modify('+2 days');
+          $estimateEnd   = (clone $shipDate)->modify('+5 days');
+        } else {
+          // Far provinces: 4–9 days
+          $estimateStart = (clone $shipDate)->modify('+4 days');
+          $estimateEnd   = (clone $shipDate)->modify('+9 days');
+        }
+      }
+    }
+
+    foreach($featuredProducts as $row):
+      // Get image from JSON mapping, fallback to database, then placeholder
+      $productImage = 'https://via.placeholder.com/300x200';
+      $packageName = $row['packageName'];
+      
+      if (isset($imagesMap[$packageName])) {
+        $productImage = $imagesMap[$packageName];
+      } elseif (!empty($row['itemImage'])) {
+        $productImage = 'bakery bread image/' . $row['itemImage'];
+      }
+      
+      // Resolve the actual image path
+      $productImage = resolveImagePath($productImage);
     ?>
     <div class="col-md-3 mb-4">
       <div class="card product-card shadow border-0" style="overflow: hidden;">
-        <img src="<?php echo $row['itemImage'] ? 'uploads/'.$row['itemImage'] : 'https://via.placeholder.com/300x200'; ?>" 
-             class="card-img-top" alt="<?php echo $row['packageName']; ?>" style="height: 250px; object-fit: cover; transition: transform 0.3s;">
+        <a href="products.php?product=<?php echo (int)$row['itemID']; ?>" style="text-decoration: none; display: block;">
+          <img src="<?php echo imageUrl($productImage); ?>" 
+               class="card-img-top" alt="<?php echo e($row['packageName']); ?>" 
+               style="height: 250px; object-fit: cover; transition: transform 0.3s; cursor: pointer;"
+               onmouseover="this.style.transform='scale(1.05)'"
+               onmouseout="this.style.transform='scale(1)'">
+        </a>
         <div class="card-body">
           <h5 class="card-title fw-bold"><?php echo $row['packageName']; ?></h5>
           <p class="card-text text-muted small"><?php echo substr($row['foodDescription'], 0, 60); ?>...</p>
-          <p class="h5 text-warning fw-bold mb-3">₱<?php echo $row['price']; ?></p>
-          <a href="products.php" class="btn btn-warning w-100">View Details</a>
+          <p class="h5 text-warning fw-bold mb-1">₱<?php echo $row['price']; ?></p>
+          <p class="text-muted small mb-0">
+            <i class="fas fa-shipping-fast me-1"></i>
+            Ships out <strong><?php echo $shipDate->format('M d'); ?></strong>,
+            Est. delivery <strong><?php echo $estimateStart->format('M d'); ?></strong>
+            - <strong><?php echo $estimateEnd->format('M d'); ?></strong>
+          </p>
         </div>
       </div>
     </div>
-    <?php endwhile; ?>
+    <?php endforeach; ?>
   </div>
+</div>
+
+<!-- Separator Line -->
+<div class="container">
+  <hr class="my-5" style="border-top: 2px solid #dee2e6;">
 </div>
 
 <!-- Categories -->
 <div class="container my-5">
   <div class="row">
-    <div class="col-md-4 mb-4">
-      <div class="card shadow">
-        <div class="card-body text-center">
-          <i class="fas fa-birthday-cake fa-3x text-warning mb-3"></i>
-          <h4>Cakes</h4>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus diam et dui cursus facilisis.</p>
-          <a href="products.php" class="btn btn-warning">READ MORE</a>
+    <?php
+    // Define exact category order as specified
+    $categoryOrder = [
+      'Bread–Cake Combo',
+      'Brownies',
+      'Buns & Rolls',
+      'Classic & Basic Bread',
+      'Cookies',
+      'Crinkles',
+      'Filled - Stuffed Bread',
+      'Special (Budget-Friendly)',
+      'Sweet Bread'
+    ];
+    
+    // Get all categories from database
+    $categoriesQuery = "SELECT * FROM categories";
+    $categoriesResult = executeQuery($categoriesQuery);
+    
+    // Map category names to Font Awesome icons - specific icons for each category
+    $categoryIcons = [
+      'Classic & Basic Bread' => 'fa-bread-slice',
+      'Sweet Bread' => 'fa-cookie',
+      'Filled / Stuffed Bread' => 'fa-layer-group',
+      'Filled - Stuffed Bread' => 'fa-layer-group',
+      'Buns & Rolls' => 'fa-circle',
+      'Bread–Cake Combo' => 'fa-birthday-cake',
+      'Special (Budget-Friendly)' => 'fa-tag',
+      'Cookies' => 'fa-cookie-bite',
+      'Crinkles' => 'fa-cookie-bite',
+      'Brownies' => 'fa-square'
+    ];
+    
+    // Build categories map
+    $categoriesMap = [];
+    if($categoriesResult && mysqli_num_rows($categoriesResult) > 0):
+      while($cat = mysqli_fetch_assoc($categoriesResult)):
+        $categoriesMap[$cat['categoryName']] = $cat;
+      endwhile;
+    endif;
+    
+    // Display categories in the specified order
+    foreach ($categoryOrder as $categoryName):
+      if (isset($categoriesMap[$categoryName])):
+        $cat = $categoriesMap[$categoryName];
+        // Get icon for category, default to bread icon if not found
+        $iconClass = isset($categoryIcons[$categoryName]) ? $categoryIcons[$categoryName] : 'fa-bread-slice';
+    ?>
+    <div class="col-md-3 mb-3">
+      <div class="card shadow-sm">
+        <div class="card-body text-center p-2">
+          <i class="fas <?php echo e($iconClass); ?> fa-lg text-warning mb-1"></i>
+          <h6 class="mb-1 fw-bold"><?php echo e($categoryName); ?></h6>
+          <p class="text-muted small mb-2" style="font-size: 0.75rem; line-height: 1.3;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <a href="products.php?category=<?php echo (int)$cat['categoryID']; ?>" class="btn btn-warning btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">READ MORE</a>
         </div>
       </div>
     </div>
-    <div class="col-md-4 mb-4">
-      <div class="card shadow">
-        <div class="card-body text-center">
-          <i class="fas fa-cookie fa-3x text-warning mb-3"></i>
-          <h4>Cupcakes</h4>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus diam et dui cursus facilisis.</p>
-          <a href="products.php" class="btn btn-warning">READ MORE</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4 mb-4">
-      <div class="card shadow">
-        <div class="card-body text-center">
-          <i class="fas fa-cookie-bite fa-3x text-warning mb-3"></i>
-          <h4>Pies</h4>
-          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus diam et dui cursus facilisis.</p>
-          <a href="products.php" class="btn btn-warning">READ MORE</a>
-        </div>
-      </div>
-    </div>
+    <?php 
+      endif;
+    endforeach;
+    ?>
   </div>
 </div>
 
 <?php include("includes/footer.php"); ?>
+
 

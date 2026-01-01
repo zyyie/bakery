@@ -6,8 +6,8 @@
         <img src="logo.png" alt="Bakery Logo" style="height: 50px;">
         <p class="text-muted">PREMIUM GOODS</p>
         <p class="text-muted">Your Business Address Here</p>
-        <p class="text-muted">Phone: +63 XXX XXX XXXX</p>
-        <p class="text-muted">Email: your-email@example.com</p>
+        <p class="text-muted">Phone: 964-9885-950</p>
+        <p class="text-muted">Email: karneekbakery@gmail.com</p>
       </div>
       <div class="col-md-4">
         <h5>Useful Links</h5>
@@ -47,6 +47,85 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
     crossorigin="anonymous"></script>
+
+<!-- Page Loading Script -->
+<script>
+(function() {
+  const loader = document.getElementById('pageLoader');
+  
+  // Hide loader when page is fully loaded
+  window.addEventListener('load', function() {
+    if (loader) {
+      loader.classList.remove('active');
+    }
+  });
+  
+  // Show loader when clicking on navigation links
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get all internal links
+    const links = document.querySelectorAll('a[href]:not([href^="#"]):not([href^="javascript:"]):not([href^="mailto:"]):not([href^="tel:"])');
+    
+    links.forEach(function(link) {
+      const href = link.getAttribute('href');
+      
+      // Only handle internal links (same domain)
+      if (href && !href.startsWith('http') && !href.startsWith('//')) {
+        link.addEventListener('click', function(e) {
+          // Don't show loader for dropdowns, modals, or forms
+          if (link.closest('.dropdown-menu') || 
+              link.hasAttribute('data-bs-toggle') || 
+              link.hasAttribute('data-bs-dismiss') ||
+              link.closest('form')) {
+            return;
+          }
+          
+          // Show loader
+          if (loader) {
+            loader.classList.add('active');
+          }
+          
+          // Fallback: hide loader after 5 seconds if page doesn't load
+          setTimeout(function() {
+            if (loader) {
+              loader.classList.remove('active');
+            }
+          }, 5000);
+        });
+      }
+    });
+    
+    // Handle form submissions
+    const forms = document.querySelectorAll('form');
+    forms.forEach(function(form) {
+      // Don't show loader for forms that navigate (like search, subscribe)
+      const action = form.getAttribute('action');
+      if (action && !action.includes('ajax') && !action.includes('cart.php')) {
+        form.addEventListener('submit', function() {
+          if (loader) {
+            loader.classList.add('active');
+          }
+          
+          setTimeout(function() {
+            if (loader) {
+              loader.classList.remove('active');
+            }
+          }, 5000);
+        });
+      }
+    });
+  });
+  
+  // Hide loader if page loads quickly
+  if (document.readyState === 'complete') {
+    setTimeout(function() {
+      if (loader) {
+        loader.classList.remove('active');
+      }
+    }, 300);
+  }
+})();
+</script>
+
 </body>
 </html>
 
