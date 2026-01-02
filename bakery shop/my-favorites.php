@@ -48,13 +48,17 @@ document.addEventListener('DOMContentLoaded', function() {
       
       container.innerHTML = data.map(item => `
         <div class="col-md-4 mb-4">
-          <div class="card product-card shadow border-0" style="transition: all 0.3s; overflow: hidden;">
+          <div class="card product-card shadow border-0" 
+               style="transition: all 0.3s; overflow: hidden; cursor: pointer; height: 100%;" 
+               onclick="if(!event.target.closest('a, button, input, form')) { window.location.href='product-details.php?id=${item.itemID}'; }">
             <div class="position-relative">
-              <img src="${item.itemImage ? 'bakery bread image/' + item.itemImage : 'https://via.placeholder.com/300x200'}" 
-                   class="card-img-top" alt="${item.packageName}" style="height: 250px; object-fit: cover; transition: transform 0.3s;">
+              <img src="${item.resolvedImage || 'https://via.placeholder.com/300x200'}" 
+                   class="card-img-top" alt="${item.packageName}" 
+                   style="height: 250px; object-fit: cover; transition: transform 0.3s;"
+                   onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=${encodeURIComponent(item.packageName)}';">
               <button class="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle favorite-active" 
-                      style="width: 40px; height: 40px; padding: 0; color: #dc3545;" 
-                      onclick="toggleFavorite(this, ${item.itemID})">
+                      style="width: 40px; height: 40px; padding: 0; color: #dc3545; z-index: 10;" 
+                      onclick="toggleFavorite(this, ${item.itemID}); event.stopPropagation();">
                 <i class="fas fa-heart"></i>
               </button>
             </div>
@@ -63,9 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
               <h5 class="card-title mt-2">${item.packageName}</h5>
               <p class="card-text text-muted">${item.foodDescription ? item.foodDescription.substring(0, 60) + '...' : ''}</p>
               <p class="h5 text-warning fw-bold mb-3">₱${item.price}</p>
-              <div class="d-grid gap-2">
-                <a href="product-details.php?id=${item.itemID}" class="btn btn-warning">View Details</a>
-                <form method="POST" action="cart.php" class="mt-2">
+              <div class="d-grid gap-2" onclick="event.stopPropagation();">
+                <a href="product-details.php?id=${item.itemID}" class="btn btn-warning" onclick="event.stopPropagation();">View Details</a>
+                <form method="POST" action="cart.php" class="mt-2" onclick="event.stopPropagation();">
                   <input type="hidden" name="itemID" value="${item.itemID}">
                   <div class="input-group">
                     <input type="number" class="form-control" name="quantity" value="1" min="1" style="max-width: 80px;">
