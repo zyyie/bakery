@@ -96,7 +96,18 @@ include("includes/header.php");
 </div>
 
 <script>
+// Check if user is logged in (passed from PHP)
+const isUserLoggedIn = <?php echo isset($_SESSION['userID']) ? 'true' : 'false'; ?>;
+
 function toggleFavorite(btn, itemID) {
+  // Check if user is logged in
+  if (!isUserLoggedIn) {
+    // Show login required modal
+    const loginModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+    loginModal.show();
+    return;
+  }
+  
   const icon = btn.querySelector('i');
   if (icon.classList.contains('far')) {
     icon.classList.remove('far');
@@ -137,6 +148,31 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
+
+<!-- Login Required Modal -->
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-2">
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <div class="mb-3">
+          <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+        </div>
+        <h5 class="modal-title mb-3" id="loginRequiredModalLabel">Login Required</h5>
+        <div class="mb-3">
+          <i class="fas fa-heart fa-4x text-danger"></i>
+        </div>
+        <p class="text-muted mb-4">Please log in or sign up first before adding this to your favorites.</p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+          <a href="login.php" class="btn btn-warning btn-lg px-4">LOG IN</a>
+          <a href="signup.php" class="btn btn-outline-secondary btn-lg px-4">SIGN UP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php include("includes/footer.php"); ?>
 
