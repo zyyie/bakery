@@ -167,26 +167,26 @@ include("includes/header.php");
       $productImage = resolveImagePath($productImage);
     ?>
     <div class="col-md-3 mb-4">
-      <div class="card product-card shadow border-0" style="overflow: hidden;">
-        <a href="products.php?product=<?php echo (int)$row['itemID']; ?>" style="text-decoration: none; display: block;">
+      <a href="products.php?product=<?php echo (int)$row['itemID']; ?>" style="text-decoration: none; color: inherit; display: block;">
+        <div class="card product-card shadow border-0" style="overflow: hidden; cursor: pointer; height: 100%;">
           <img src="<?php echo imageUrl($productImage); ?>" 
                class="card-img-top" alt="<?php echo e($row['packageName']); ?>" 
-               style="height: 250px; object-fit: cover; transition: transform 0.3s; cursor: pointer;"
+               style="height: 250px; object-fit: cover; transition: transform 0.3s;"
                onmouseover="this.style.transform='scale(1.05)'"
                onmouseout="this.style.transform='scale(1)'">
-        </a>
-        <div class="card-body">
-          <h5 class="card-title fw-bold"><?php echo $row['packageName']; ?></h5>
-          <p class="card-text text-muted small"><?php echo substr($row['foodDescription'], 0, 60); ?>...</p>
-          <p class="h5 text-warning fw-bold mb-1">₱<?php echo $row['price']; ?></p>
-          <p class="text-muted small mb-0">
-            <i class="fas fa-shipping-fast me-1"></i>
-            Ships out <strong><?php echo $shipDate->format('M d'); ?></strong>,
-            Est. delivery <strong><?php echo $estimateStart->format('M d'); ?></strong>
-            - <strong><?php echo $estimateEnd->format('M d'); ?></strong>
-          </p>
+          <div class="card-body">
+            <h5 class="card-title fw-bold"><?php echo $row['packageName']; ?></h5>
+            <p class="card-text text-muted small"><?php echo substr($row['foodDescription'], 0, 60); ?>...</p>
+            <p class="h5 text-warning fw-bold mb-1">₱<?php echo $row['price']; ?></p>
+            <p class="text-muted small mb-0">
+              <i class="fas fa-shipping-fast me-1"></i>
+              Ships out <strong><?php echo $shipDate->format('M d'); ?></strong>,
+              Est. delivery <strong><?php echo $estimateStart->format('M d'); ?></strong>
+              - <strong><?php echo $estimateEnd->format('M d'); ?></strong>
+            </p>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
     <?php endforeach; ?>
   </div>
@@ -209,7 +209,7 @@ include("includes/header.php");
       'Classic & Basic Bread',
       'Cookies',
       'Crinkles',
-      'Filled - Stuffed Bread',
+      'Filled / Stuffed Bread',
       'Special (Budget-Friendly)',
       'Sweet Bread'
     ];
@@ -232,6 +232,19 @@ include("includes/header.php");
       'Brownies' => 'fa-square'
     ];
     
+    // Map category names to descriptions
+    $categoryDescriptions = [
+      'Bread–Cake Combo' => 'Perfect combination of bread and cake in one delightful treat. Mini slices and combos for every occasion.',
+      'Brownies' => 'Rich, fudgy chocolate brownies with various flavors. Dense, moist, and irresistibly delicious.',
+      'Buns & Rolls' => 'Soft, fluffy buns and dinner rolls perfect for any meal. Freshly baked and always satisfying.',
+      'Classic & Basic Bread' => 'Traditional Filipino bread favorites like pandesal. Simple, timeless, and always fresh from the oven.',
+      'Cookies' => 'Crispy, chewy cookies in assorted flavors. Perfect for snacking or sharing with loved ones.',
+      'Crinkles' => 'Soft, crinkled cookies with powdered sugar coating. Available in various flavors like chocolate, ube, and matcha.',
+      'Filled / Stuffed Bread' => 'Bread filled with savory or sweet fillings. From ham and cheese to tuna, every bite is a surprise.',
+      'Special (Budget-Friendly)' => 'Affordable special treats that don\'t compromise on quality. Great value for your money.',
+      'Sweet Bread' => 'Sweetened bread varieties with delightful fillings and toppings. Perfect for dessert or merienda time.'
+    ];
+    
     // Build categories map
     $categoriesMap = [];
     if($categoriesResult && mysqli_num_rows($categoriesResult) > 0):
@@ -246,14 +259,20 @@ include("includes/header.php");
         $cat = $categoriesMap[$categoryName];
         // Get icon for category, default to bread icon if not found
         $iconClass = isset($categoryIcons[$categoryName]) ? $categoryIcons[$categoryName] : 'fa-bread-slice';
+        // Get description for category, default to generic description if not found
+        $categoryDescription = isset($categoryDescriptions[$categoryName]) ? $categoryDescriptions[$categoryName] : 'Discover our premium selection of freshly baked goods.';
     ?>
     <div class="col-md-3 mb-3">
-      <div class="card shadow-sm">
-        <div class="card-body text-center p-2">
-          <i class="fas <?php echo e($iconClass); ?> fa-lg text-warning mb-1"></i>
-          <h6 class="mb-1 fw-bold"><?php echo e($categoryName); ?></h6>
-          <p class="text-muted small mb-2" style="font-size: 0.75rem; line-height: 1.3;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-          <a href="products.php?category=<?php echo (int)$cat['categoryID']; ?>" class="btn btn-warning btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">READ MORE</a>
+      <div class="card shadow-sm category-card h-100">
+        <div class="card-body text-center p-3 d-flex flex-column">
+          <div class="mb-2">
+            <i class="fas <?php echo e($iconClass); ?> fa-lg text-warning mb-2"></i>
+          </div>
+          <h6 class="mb-2 fw-bold" style="min-height: 2.5rem; display: flex; align-items: center; justify-content: center;"><?php echo e($categoryName); ?></h6>
+          <p class="text-muted small mb-3 flex-grow-1" style="font-size: 0.75rem; line-height: 1.4;"><?php echo e($categoryDescription); ?></p>
+          <div class="mt-auto">
+            <a href="products.php?category=<?php echo (int)$cat['categoryID']; ?>" class="btn btn-warning btn-sm" style="font-size: 0.75rem; padding: 0.25rem 0.75rem;">READ MORE</a>
+          </div>
         </div>
       </div>
     </div>
