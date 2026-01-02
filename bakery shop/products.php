@@ -136,12 +136,14 @@ if (isset($_GET['product'])) {
       
       // Get all related images
       $allProductImages = getAllProductImages($productImage, $packageName);
+      // URL-encode all image paths for use in HTML/JavaScript
+      $allProductImagesEncoded = array_map('imageUrl', $allProductImages);
       
       $autoOpenProduct = [
         'itemID' => $product['itemID'],
         'packageName' => $product['packageName'],
-        'productImage' => $productImage,
-        'allImages' => $allProductImages,
+        'productImage' => imageUrl($productImage),
+        'allImages' => $allProductImagesEncoded,
         'price' => $product['price'],
         'foodDescription' => $product['foodDescription'],
         'itemContains' => $product['itemContains'] ?? '',
@@ -172,7 +174,7 @@ if (isset($_GET['product'])) {
             'Classic & Basic Bread',
             'Cookies',
             'Crinkles',
-            'Filled - Stuffed Bread',
+            'Filled / Stuffed Bread',
             'Special (Budget-Friendly)',
             'Sweet Bread'
           ];
@@ -246,15 +248,24 @@ if (isset($_GET['product'])) {
             
             // Get all related images
             $allProductImages = getAllProductImages($productImage, $packageName);
-            $allImagesJson = json_encode($allProductImages);
+            // URL-encode all image paths for use in HTML/JavaScript
+            $allProductImagesEncoded = array_map('imageUrl', $allProductImages);
+            // Ensure the first image matches the main product image (URL-encoded)
+            if (!empty($allProductImagesEncoded) && $allProductImagesEncoded[0] !== imageUrl($productImage)) {
+              // If first image doesn't match, prepend the main image
+              array_unshift($allProductImagesEncoded, imageUrl($productImage));
+            }
+            $allImagesJson = json_encode($allProductImagesEncoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         ?>
         <div class="col-md-4 mb-4">
-          <div class="card product-card">
+          <div class="card product-card" 
+               style="cursor: pointer; height: 100%;" 
+               onclick="if(!event.target.closest('button')) { const img = this.querySelector('img'); if(img) openProductModal(img); }">
             <div class="position-relative">
               <img src="<?php echo imageUrl($productImage); ?>" 
                    class="card-img-top" 
                    alt="<?php echo e($row['packageName']); ?>"
-                   style="cursor: pointer; transition: transform 0.3s; width: 100%; height: 250px; object-fit: cover;"
+                   style="transition: transform 0.3s; width: 100%; height: 250px; object-fit: cover;"
                    onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=<?php echo urlencode($row['packageName']); ?>';"
                    data-bs-toggle="modal" 
                    data-bs-target="#productModal"
@@ -266,10 +277,9 @@ if (isset($_GET['product'])) {
                    data-product-description="<?php echo e($row['foodDescription']); ?>"
                    data-product-contains="<?php echo e($row['itemContains'] ?? ''); ?>"
                    data-category-name="<?php echo e($row['categoryName']); ?>"
-                   onclick="openProductModal(this)"
                    onmouseover="this.style.transform='scale(1.05)'"
                    onmouseout="this.style.transform='scale(1)'">
-              <button class="btn btn-favorite" onclick="toggleFavorite(this, <?php echo (int)$row['itemID']; ?>); event.stopPropagation();">
+              <button class="btn btn-favorite" style="z-index: 10;" onclick="toggleFavorite(this, <?php echo (int)$row['itemID']; ?>); event.stopPropagation();">
                 <i class="far fa-heart"></i>
               </button>
             </div>
@@ -1156,11 +1166,11 @@ if (isset($_GET['product'])) {
               <button type="button" class="btn btn-chat-now btn-sm flex-grow-1" onclick="openChatWithSeller()">
                 <i class="fas fa-comments"></i>Chat Now
               </button>
-              <button type="submit" class="btn btn-outline-warning btn-sm flex-grow-1" onclick="setAction('add')">
-                ADD TO CART
+              <button type="button" class="btn btn-outline-warning btn-sm flex-grow-1" id="addToCartBtn" onclick="handleAddToCart()">
+                <i class="fas fa-shopping-cart me-1"></i>ADD TO CART
               </button>
-              <button type="submit" class="btn btn-warning btn-sm flex-grow-1" onclick="setAction('buy')">
-                BUY NOW
+              <button type="button" class="btn btn-warning btn-sm flex-grow-1" id="buyNowBtn" onclick="handleBuyNow()">
+                <i class="fas fa-bolt me-1"></i>BUY NOW
               </button>
             </div>
           </div>
@@ -1204,11 +1214,23 @@ function openProductModal(button) {
       const parsed = JSON.parse(productImagesJson);
       if (Array.isArray(parsed) && parsed.length > 0) {
         allImages = parsed;
+        // Ensure productImage is in the array and is first
+        const mainImageIndex = allImages.indexOf(productImage);
+        if (mainImageIndex > 0) {
+          // Move main image to first position
+          allImages.splice(mainImageIndex, 1);
+          allImages.unshift(productImage);
+        } else if (mainImageIndex === -1) {
+          // Main image not in array, add it first
+          allImages.unshift(productImage);
+        }
       }
     }
   } catch (e) {
-    console.error('Error parsing product images:', e);
+    console.error('Error parsing product images:', e, 'JSON:', productImagesJson);
   }
+  
+  console.log('Product images loaded:', allImages.length, allImages);
   
   // Store images globally for lightbox and modal navigation
   window.currentProductImages = allImages;
@@ -1263,6 +1285,10 @@ function openProductModal(button) {
       const imgEl = document.createElement('img');
       imgEl.src = img;
       imgEl.alt = productName;
+      imgEl.onerror = function() {
+        console.error('Failed to load image:', img);
+        this.style.display = 'none';
+      };
       thumb.appendChild(imgEl);
       galleryContainer.appendChild(thumb);
     });
@@ -1313,6 +1339,21 @@ function openProductModal(button) {
   document.getElementById('packageBox').checked = true;
   document.getElementById('modalPackageType').value = 'Per Box';
   
+  // Reset buttons
+  const addBtn = document.getElementById('addToCartBtn');
+  const buyBtn = document.getElementById('buyNowBtn');
+  if (addBtn) {
+    addBtn.disabled = false;
+    addBtn.innerHTML = '<i class="fas fa-shopping-cart me-1"></i>ADD TO CART';
+  }
+  if (buyBtn) {
+    buyBtn.disabled = false;
+    buyBtn.innerHTML = '<i class="fas fa-bolt me-1"></i>BUY NOW';
+  }
+  
+  // Reset action
+  document.getElementById('modalAction').value = 'add';
+  
   // Set review item ID and load reviews
   document.getElementById('reviewItemID').value = itemID;
   loadReviews(itemID);
@@ -1329,15 +1370,46 @@ function openChatWithSeller() {
 }
 
 function toggleModalFavorite(btn) {
+  // Check if user is logged in
+  if (!isUserLoggedIn) {
+    // Close product modal first
+    const productModal = bootstrap.Modal.getInstance(document.getElementById('productModal'));
+    if (productModal) {
+      productModal.hide();
+    }
+    // Show login required modal
+    setTimeout(() => {
+      const loginModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+      loginModal.show();
+    }, 300);
+    return;
+  }
+  
   const icon = btn.querySelector('i');
   if (icon.classList.contains('far')) {
     icon.classList.remove('far');
     icon.classList.add('fas');
     btn.style.color = '#dc3545';
+    // Get itemID from modal
+    const itemID = document.getElementById('modalItemID')?.value;
+    if (itemID) {
+      let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      if (!favorites.includes(parseInt(itemID))) {
+        favorites.push(parseInt(itemID));
+      }
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
   } else {
     icon.classList.remove('fas');
     icon.classList.add('far');
     btn.style.color = '#ccc';
+    // Get itemID from modal
+    const itemID = document.getElementById('modalItemID')?.value;
+    if (itemID) {
+      let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      favorites = favorites.filter(id => id !== parseInt(itemID));
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+    }
   }
 }
 
@@ -1405,24 +1477,114 @@ function setAction(action) {
   document.getElementById('modalAction').value = action;
 }
 
+// Handle Add to Cart button click
+function handleAddToCart() {
+  const form = document.getElementById('modalCartForm');
+  const itemID = document.getElementById('modalItemID').value;
+  const quantity = document.getElementById('modalQuantity').value;
+  
+  if (!itemID) {
+    alert('Please select a product');
+    return;
+  }
+  
+  if (!quantity || quantity < 1) {
+    alert('Please enter a valid quantity');
+    return;
+  }
+  
+  // Set action to add
+  setAction('add');
+  
+  // Sync form values
+  syncFormValues();
+  
+  // Disable buttons to prevent double submission
+  const addBtn = document.getElementById('addToCartBtn');
+  const buyBtn = document.getElementById('buyNowBtn');
+  const originalAddText = addBtn.innerHTML;
+  
+  addBtn.disabled = true;
+  buyBtn.disabled = true;
+  addBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Adding...';
+  
+  // Submit form
+  form.submit();
+}
+
+// Handle Buy Now button click
+function handleBuyNow() {
+  const form = document.getElementById('modalCartForm');
+  const itemID = document.getElementById('modalItemID').value;
+  const quantity = document.getElementById('modalQuantity').value;
+  
+  if (!itemID) {
+    alert('Please select a product');
+    return;
+  }
+  
+  if (!quantity || quantity < 1) {
+    alert('Please enter a valid quantity');
+    return;
+  }
+  
+  // Check if user is logged in
+  <?php if (!isset($_SESSION['userID'])): ?>
+    alert('Please log in to proceed with checkout');
+    window.location.href = 'login.php';
+    return;
+  <?php endif; ?>
+  
+  // Set action to buy
+  setAction('buy');
+  
+  // Sync form values
+  syncFormValues();
+  
+  // Disable buttons to prevent double submission
+  const addBtn = document.getElementById('addToCartBtn');
+  const buyBtn = document.getElementById('buyNowBtn');
+  const originalBuyText = buyBtn.innerHTML;
+  
+  addBtn.disabled = true;
+  buyBtn.disabled = true;
+  buyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Processing...';
+  
+  // Submit form
+  form.submit();
+}
+
+// Sync form values before submission
+function syncFormValues() {
+  const quantity = document.getElementById('modalQuantity').value;
+  document.getElementById('modalQuantityHidden').value = quantity;
+  
+  const packageType = document.querySelector('input[name="packageType"]:checked');
+  if (packageType) {
+    document.getElementById('modalPackageType').value = packageType.value;
+  }
+}
+
 // Update form before submission and sync values
 document.addEventListener('DOMContentLoaded', function() {
   const cartForm = document.getElementById('modalCartForm');
   if (cartForm) {
     cartForm.addEventListener('submit', function(e) {
-      // Sync quantity before submit
-      const quantity = document.getElementById('modalQuantity').value;
-      document.getElementById('modalQuantityHidden').value = quantity;
+      // Prevent default submission if buttons are handling it
+      // The buttons now handle submission directly
       
-      // Sync package type before submit
-      const packageType = document.querySelector('input[name="packageType"]:checked');
-      if (packageType) {
-        document.getElementById('modalPackageType').value = packageType.value;
-      }
+      // Sync quantity before submit
+      syncFormValues();
       
       // If buy now action, add buy_now parameter
       const action = document.getElementById('modalAction').value;
       if (action === 'buy') {
+        // Remove existing buy_now input if any
+        const existingBuyNow = this.querySelector('input[name="buy_now"]');
+        if (existingBuyNow) {
+          existingBuyNow.remove();
+        }
+        
         const buyNowInput = document.createElement('input');
         buyNowInput.type = 'hidden';
         buyNowInput.name = 'buy_now';
@@ -1441,7 +1603,18 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Check if user is logged in (passed from PHP)
+const isUserLoggedIn = <?php echo isset($_SESSION['userID']) ? 'true' : 'false'; ?>;
+
 function toggleFavorite(btn, itemID) {
+  // Check if user is logged in
+  if (!isUserLoggedIn) {
+    // Show login required modal
+    const loginModal = new bootstrap.Modal(document.getElementById('loginRequiredModal'));
+    loginModal.show();
+    return;
+  }
+  
   const icon = btn.querySelector('i');
   if (icon.classList.contains('far')) {
     icon.classList.remove('far');
@@ -1952,6 +2125,31 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <?php endif; ?>
+
+<!-- Login Required Modal -->
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-2">
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <div class="mb-3">
+          <i class="fas fa-exclamation-triangle fa-3x text-warning"></i>
+        </div>
+        <h5 class="modal-title mb-3" id="loginRequiredModalLabel">Login Required</h5>
+        <div class="mb-3">
+          <i class="fas fa-heart fa-4x text-danger"></i>
+        </div>
+        <p class="text-muted mb-4">Please log in or sign up first before adding this to your favorites.</p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+          <a href="login.php" class="btn btn-warning btn-lg px-4">LOG IN</a>
+          <a href="signup.php" class="btn btn-outline-secondary btn-lg px-4">SIGN UP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <?php include("includes/footer.php"); ?>
 
