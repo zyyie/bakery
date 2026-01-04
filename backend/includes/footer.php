@@ -67,9 +67,9 @@
         });
         </script>
         <div class="mt-3">
-          <a href="#" class="text-dark me-2"><i class="fab fa-facebook fa-2x"></i></a>
-          <a href="#" class="text-dark me-2"><i class="fab fa-instagram fa-2x"></i></a>
-          <a href="#" class="text-dark me-2"><i class="fab fa-twitter fa-2x"></i></a>
+          <a href="https://www.facebook.com/share/1GSuha14s5/" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-facebook fa-2x"></i></a>
+          <a href="https://www.instagram.com/karneek_bakery/" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-instagram fa-2x"></i></a>
+          <a href="https://x.com/karneekbakery_" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-twitter fa-2x"></i></a>
           <a href="#" class="text-dark"><i class="fab fa-pinterest fa-2x"></i></a>
         </div>
       </div>
