@@ -174,3 +174,9 @@ INSERT INTO pages (pageTitle, pageDescription, email, mobileNumber, pageType) VA
 ('About Us', 'We are known as the best catering company in Seattle for good reason. Our dedication and commitment to quality and sustainability has earned us a loyal following among our clientele, one that continues to grow based on enthusiastic referrals. For nearly two decades, we have bridged the gap between the land, the sea, and your table. We leverage the best ingredients Washington has to offer, preparing them mindfully and always from scratch.', '', '', 'aboutus'),
 ('Contact Us', 'Your Business Address Here', 'your-email@example.com', '+63 XXX XXX XXXX', 'contactus');
 
+
+-- Add userID to enquiries and FK to users
+ALTER TABLE enquiries 
+    ADD COLUMN userID INT NULL,
+    ADD FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE SET NULL;
+
