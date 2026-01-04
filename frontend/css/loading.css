@@ -1,0 +1,69 @@
+/* KARNEEK Loading Animation */
+.bakery-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px;
+}
+
+.bakery-loading-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--brown-primary);
+  border-radius: 50%;
+  animation: bakery-loading-bounce 1.4s ease-in-out infinite both;
+}
+
+.bakery-loading-dot:nth-child(1) { animation-delay: -0.32s; }
+.bakery-loading-dot:nth-child(2) { animation-delay: -0.16s; }
+.bakery-loading-dot:nth-child(3) { animation-delay: 0; }
+
+@keyframes bakery-loading-bounce {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Fullscreen loading overlay */
+.bakery-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bakery-loading-overlay .bakery-loading {
+  transform: scale(2);
+}
+
+.bakery-loading-text {
+  color: var(--brown-primary);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Inline loading for modals/cards */
+.bakery-loading-inline {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--brown-primary);
+  font-size: 13px;
+}
