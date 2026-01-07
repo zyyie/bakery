@@ -15,7 +15,8 @@ include(__DIR__ . "/includes/header.php");
         <div class="list-group list-group-flush">
           <a href="products.php" class="list-group-item list-group-item-action <?php echo !isset($_GET['category']) ? 'active' : ''; ?>">All Categories</a>
           <?php
-          $catResult = executePreparedQuery("SELECT * FROM categories", "", []);
+          // Get unique categories, using MIN(categoryID) to keep the first occurrence if duplicates exist
+          $catResult = executePreparedQuery("SELECT MIN(categoryID) as categoryID, categoryName, MIN(creationDate) as creationDate FROM categories GROUP BY categoryName ORDER BY MIN(categoryID) ASC", "", []);
           while($catResult && ($cat = mysqli_fetch_assoc($catResult))):
           ?>
           <a href="products.php?category=<?php echo $cat['categoryID']; ?>" 
@@ -32,20 +33,50 @@ include(__DIR__ . "/includes/header.php");
       <div class="row">
         <?php
         $categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
+        
+        // Check if inventory table exists
+        $hasInventory = false;
+        try {
+            $invCheck = executePreparedQuery("SHOW TABLES LIKE 'inventory'", "", []);
+            $hasInventory = ($invCheck && mysqli_num_rows($invCheck) > 0);
+        } catch (Exception $e) {
+            $hasInventory = false;
+        }
+        
         if ($categoryId > 0) {
-          $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
-                    FROM items 
-                    LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                    LEFT JOIN inventory inv ON inv.itemID = items.itemID
-                    WHERE items.status = 'Active' AND items.categoryID = ?";
+          if ($hasInventory) {
+            $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
+                      FROM items 
+                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                      LEFT JOIN inventory inv ON inv.itemID = items.itemID
+                      WHERE items.status = 'Active' AND items.categoryID = ?";
+          } else {
+            $query = "SELECT items.*, categories.categoryName, 0 as stock_qty 
+                      FROM items 
+                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                      WHERE items.status = 'Active' AND items.categoryID = ?";
+          }
           $result = executePreparedQuery($query, "i", [$categoryId]);
         } else {
-          $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
-                    FROM items 
-                    LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                    LEFT JOIN inventory inv ON inv.itemID = items.itemID
-                    WHERE items.status = 'Active'";
+          if ($hasInventory) {
+            $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
+                      FROM items 
+                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                      LEFT JOIN inventory inv ON inv.itemID = items.itemID
+                      WHERE items.status = 'Active'";
+          } else {
+            $query = "SELECT items.*, categories.categoryName, 0 as stock_qty 
+                      FROM items 
+                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                      WHERE items.status = 'Active'";
+          }
           $result = executePreparedQuery($query, "", []);
+        }
+        
+        // Debug: Check for query errors
+        if ($result === false) {
+          $dbError = isset($GLOBALS['db_last_error']) ? $GLOBALS['db_last_error'] : 'Unknown database error';
+          echo '<div class="col-12"><div class="alert alert-danger">Database Error: ' . htmlspecialchars($dbError) . '</div></div>';
         }
         
         if($result && mysqli_num_rows($result) > 0):
@@ -771,7 +802,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       } catch (e) {
         if (qvBody) {
-          qvBody.innerHTML = `<div class="alert alert-danger">Failed to load product details. Please try again.</div>`;
+          const errorMsg = e.message || 'Failed to load product details. Please try again.';
+          qvBody.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${errorMsg}</div>`;
+          console.error('Error loading product details:', e);
         }
       }
     });

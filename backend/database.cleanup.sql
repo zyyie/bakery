@@ -52,7 +52,23 @@ DELETE FROM items WHERE packageName NOT IN (
     'Garlic bread sticks',
     'Cheese garlic roll',
     'Cinnamon roll (mini)',
-    'Pandesal bites (assorted flavors)'
+    'Pandesal bites (assorted flavors)',
+    'Assorted Crinkles',
+    'Chocolate Crinkles',
+    'Matcha Crinkles',
+    'Red Velvet Crinkles',
+    'Ube Crinkles',
+    'Vanilla Crinkles',
+    'Assorted Brownies',
+    'Fudge Brownie',
+    'Oreo Fudge Brownie',
+    'Walnut Fudge Brownie',
+    'Assorted Cookies',
+    'Black Cocoa and White Chocolate Chips',
+    'Black Velvet Chunky Cookie',
+    'Chocolate Chip Cookie',
+    'Dark Chocolate Mint Cookies',
+    'Double Chocolate White Chunk Cookie'
 );
 
 -- Keep only the curated bread categories
@@ -62,5 +78,8 @@ DELETE FROM categories WHERE categoryName NOT IN (
     'Filled / Stuffed Bread',
     'Buns & Rolls',
     'Bread–Cake Combo',
-    'Special (Budget-Friendly)'
+    'Special (Budget-Friendly)',
+    'Crinkles',
+    'Brownies',
+    'Cookies'
 );

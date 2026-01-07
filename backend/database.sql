@@ -117,7 +117,10 @@ INSERT INTO categories (categoryName) VALUES
 ('Filled / Stuffed Bread'),
 ('Buns & Rolls'),
 ('Bread–Cake Combo'),
-('Special (Budget-Friendly)');
+('Special (Budget-Friendly)'),
+('Crinkles'),
+('Brownies'),
+('Cookies');
 
 -- Insert bread items
 -- Classic & Basic Bread (categoryID = 1)
@@ -168,6 +171,31 @@ INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price
 ('Cheese garlic roll', 'Soft roll with cheese and garlic', 'Flour, Yeast, Cheese, Garlic', 6, 40.00, 'Active'),
 ('Cinnamon roll (mini)', 'Sweet mini cinnamon rolls', 'Flour, Yeast, Cinnamon, Sugar', 6, 35.00, 'Active'),
 ('Pandesal bites (assorted flavors)', 'Small pandesal bites in assorted flavors', 'Flour, Yeast, Sugar, Various Flavors', 6, 45.00, 'Active');
+
+-- Crinkles (categoryID = 7)
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Assorted Crinkles', 'Mix of different crinkle flavors: Chocolate, Matcha, Red Velvet, Ube, and Vanilla', 'Flour, Cocoa Powder, Matcha Powder, Red Velvet, Ube, Vanilla, Sugar, Eggs, Butter', 7, 180.00, 'Active'),
+('Chocolate Crinkles', 'Rich chocolate cookies with powdered sugar coating', 'Flour, Cocoa Powder, Sugar, Eggs, Butter, Powdered Sugar', 7, 120.00, 'Active'),
+('Matcha Crinkles', 'Japanese green tea flavored cookies with powdered sugar', 'Flour, Matcha Powder, Sugar, Eggs, Butter, Powdered Sugar', 7, 130.00, 'Active'),
+('Red Velvet Crinkles', 'Red velvet cookies with classic crinkle appearance', 'Flour, Cocoa Powder, Red Food Color, Sugar, Eggs, Butter, Powdered Sugar', 7, 125.00, 'Active'),
+('Ube Crinkles', 'Purple yam flavored cookies with powdered sugar coating', 'Flour, Ube Powder, Sugar, Eggs, Butter, Powdered Sugar', 7, 130.00, 'Active'),
+('Vanilla Crinkles', 'Classic vanilla cookies with powdered sugar coating', 'Flour, Vanilla Extract, Sugar, Eggs, Butter, Powdered Sugar', 7, 115.00, 'Active');
+
+-- Brownies (categoryID = 8)
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Assorted Brownies', 'Mix of different brownie flavors: Fudge, Oreo Fudge, and Walnut Fudge', 'Flour, Cocoa Powder, Chocolate, Oreo Cookies, Walnuts, Sugar, Eggs, Butter', 8, 200.00, 'Active'),
+('Fudge Brownie', 'Rich and fudgy chocolate brownies', 'Flour, Cocoa Powder, Chocolate, Sugar, Eggs, Butter, Vanilla', 8, 140.00, 'Active'),
+('Oreo Fudge Brownie', 'Fudgy brownies with crushed Oreo cookies', 'Flour, Cocoa Powder, Chocolate, Oreo Cookies, Sugar, Eggs, Butter', 8, 160.00, 'Active'),
+('Walnut Fudge Brownie', 'Fudgy brownies with crunchy walnuts', 'Flour, Cocoa Powder, Chocolate, Walnuts, Sugar, Eggs, Butter, Vanilla', 8, 150.00, 'Active');
+
+-- Cookies (categoryID = 9)
+INSERT INTO items (packageName, foodDescription, itemContains, categoryID, price, status) VALUES
+('Assorted Cookies', 'Mix of different cookie flavors: Black Cocoa White Chocolate, Black Velvet Chunky, Chocolate Chip, Dark Chocolate Mint, and Double Chocolate', 'Flour, Cocoa Powder, Chocolate Chips, White Chocolate, Mint, Sugar, Eggs, Butter, Vanilla', 9, 220.00, 'Active'),
+('Black Cocoa and White Chocolate Chips', 'Dark black cocoa cookies with white chocolate chips', 'Flour, Black Cocoa Powder, White Chocolate Chips, Sugar, Eggs, Butter', 9, 145.00, 'Active'),
+('Black Velvet Chunky Cookie', 'Dark and rich black velvet cookies with chunks', 'Flour, Black Cocoa Powder, Chocolate Chunks, Sugar, Eggs, Butter', 9, 150.00, 'Active'),
+('Chocolate Chip Cookie', 'Classic cookies with chocolate chips', 'Flour, Chocolate Chips, Sugar, Eggs, Butter, Vanilla, Baking Soda', 9, 130.00, 'Active'),
+('Dark Chocolate Mint Cookies', 'Rich dark chocolate cookies with refreshing mint flavor', 'Flour, Dark Cocoa Powder, Chocolate Chips, Mint Extract, Sugar, Eggs, Butter', 9, 145.00, 'Active'),
+('Double Chocolate White Chunk Cookie', 'Double chocolate cookies with white chocolate chunks', 'Flour, Cocoa Powder, Chocolate Chips, White Chocolate Chunks, Sugar, Eggs, Butter', 9, 155.00, 'Active');
 
 -- Insert default pages
 INSERT INTO pages (pageTitle, pageDescription, email, mobileNumber, pageType) VALUES
