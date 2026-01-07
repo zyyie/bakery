@@ -18,20 +18,22 @@ if(isset($_POST['sendMessage'])){
   $mobileNumber = trim($_POST['mobileNumber']);
   $message = trim($_POST['message']);
   
-  if(empty($name) || empty($email) || empty($message)){
+  // Email-only validation and send
+  if (empty($name) || empty($email) || empty($message)) {
     $error = "Name, email, and message are required!";
-  } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $error = "Invalid email format!";
   } else {
     $query = "INSERT INTO enquiries (userID, name, email, mobileNumber, message, enquiryDate, status) 
               VALUES (?, ?, ?, ?, ?, NOW(), 'Unread')";
-    
     $result = executePreparedUpdate($query, "issss", [$userID, $name, $email, $mobileNumber, $message]);
-    
     if($result !== false){
-      $success = "Message sent successfully! We'll get back to you soon.";
+      require_once __DIR__ . '/includes/Email.php';
+      $mailer = new Email();
+      $mailer->sendContactMessage($name, $email, $mobileNumber, $message);
+      $success = "Your inquiry has been submitted successfully! We'll get back to you soon.";
     } else {
-      $error = "Failed to send message. Please try again.";
+      $error = "Failed to submit enquiry!";
     }
   }
 }

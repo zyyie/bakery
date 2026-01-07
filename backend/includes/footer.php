@@ -6,8 +6,8 @@
         <img src="../frontend/images/logo.png" alt="Bakery Logo" style="height: 50px;">
         <p class="text-muted">PREMIUM GOODS</p>
         <p class="text-muted">Your Business Address Here</p>
-        <p class="text-muted">Phone: +63 XXX XXX XXXX</p>
-        <p class="text-muted">Email: your-email@example.com</p>
+        <p class="text-muted">Phone: 964-9885-950</p>
+        <p class="text-muted">Email: karneekbakery@gmail.com</p>
       </div>
       <div class="col-md-4">
         <h5>Useful Links</h5>
@@ -70,7 +70,6 @@
           <a href="https://www.facebook.com/share/1GSuha14s5/" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-facebook fa-2x"></i></a>
           <a href="https://www.instagram.com/karneek_bakery/" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-instagram fa-2x"></i></a>
           <a href="https://x.com/karneekbakery_" target="_blank" rel="noopener noreferrer" class="text-dark me-2"><i class="fab fa-twitter fa-2x"></i></a>
-          <a href="#" class="text-dark"><i class="fab fa-pinterest fa-2x"></i></a>
         </div>
       </div>
     </div>
