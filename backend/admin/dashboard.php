@@ -2,6 +2,16 @@
 require_once __DIR__ . '/includes/bootstrap.php';
 requireAdminLogin();
 adminRegenerateSession();
+
+// Auto-deliver orders: Check and update orders with delivery date today or past
+$today = date('Y-m-d');
+$autoDeliverQuery = "UPDATE orders 
+                     SET orderStatus = 'Delivered' 
+                     WHERE deliveryDate IS NOT NULL 
+                     AND DATE(deliveryDate) <= ? 
+                     AND orderStatus = 'On The Way'";
+executePreparedUpdate($autoDeliverQuery, "s", [$today]);
+
 include(__DIR__ . "/includes/header.php");
 
 // Get statistics

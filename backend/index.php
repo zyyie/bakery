@@ -154,67 +154,88 @@ include(__DIR__ . "/includes/header.php");
     </div>
     <div class="row g-4 mb-5">
       <?php
-      $query = "SELECT * FROM items WHERE status = 'Active' LIMIT 4";
+      // Show one active product per category
+      $query = "
+        SELECT i.*
+        FROM items i
+        INNER JOIN (
+          SELECT categoryID, MIN(itemID) AS itemID
+          FROM items
+          WHERE status = 'Active'
+          GROUP BY categoryID
+        ) pick ON pick.itemID = i.itemID
+        WHERE i.status = 'Active'
+        ORDER BY i.categoryID
+      ";
       $result = executeQuery($query);
       while($row = mysqli_fetch_assoc($result)):
       ?>
       <div class="col-lg-3 col-md-6">
         <div class="card product-card h-100 shadow-sm border-0">
-          <div class="product-image-wrapper">
+          <div class="product-image-wrapper js-quickview" data-itemid="<?php echo (int)$row['itemID']; ?>" style="cursor: pointer;">
             <img src="<?php echo product_image_url($row, 1); ?>" 
                  class="card-img-top" alt="<?php echo htmlspecialchars($row['packageName']); ?>">
-            <div class="product-overlay">
-              <button type="button" class="btn btn-brown btn-sm js-quickview" data-itemid="<?php echo (int)$row['itemID']; ?>">
-                <i class="fas fa-eye"></i> View Details
-              </button>
-              <button type="button" class="btn btn-favorite btn-sm" onclick="toggleFavorite(this, <?php echo (int)$row['itemID']; ?>)">
-                <i class="far fa-heart"></i>
-              </button>
-            </div>
           </div>
           <div class="card-body d-flex flex-column p-4">
             <h5 class="card-title fw-bold mb-3"><?php echo htmlspecialchars($row['packageName']); ?></h5>
             <p class="card-text text-muted small flex-grow-1 mb-3"><?php echo htmlspecialchars(substr($row['foodDescription'], 0, 80)); ?><?php echo strlen($row['foodDescription']) > 80 ? '...' : ''; ?></p>
             <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top">
               <p class="h5 text-brown fw-bold mb-0">₱<?php echo number_format($row['price'], 2); ?></p>
-              <button type="button" class="btn btn-outline-brown btn-sm js-quickview" data-itemid="<?php echo (int)$row['itemID']; ?>">
-                <i class="fas fa-shopping-cart"></i>
-              </button>
             </div>
           </div>
         </div>
       </div>
       <?php endwhile; ?>
     </div>
-    <div class="text-center mt-5">
-      <a href="products.php" class="btn btn-brown btn-lg">
-        <i class="fas fa-th me-2"></i>View All Products
-      </a>
-    </div>
   </div>
 </section>
 
 <!-- Categories Section -->
-<section class="categories-section py-5 my-5">
-  <div class="container">
-    <div class="text-center mb-5">
+<section class="categories-section py-4 my-4">
+  <div class="container" style="max-width: 1200px;">
+    <style>
+      /* Landscape/rectangle layout for categories */
+      .categories-section { padding: 60px 0 !important; }
+      .categories-section .category-icon { width: 54px; height: 54px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 10px; }
+      .categories-section .category-icon i { font-size: 22px; }
+      .categories-section .category-card { padding: 20px 15px; min-height: auto; }
+      .categories-section .category-title { font-size: 1.1rem; margin-bottom: 8px; }
+      .categories-section .category-description { font-size: 0.85rem; min-height: 50px; margin-bottom: 12px; line-height: 1.5; }
+      .categories-section .btn-outline-brown { padding: 6px 12px; font-size: 0.85rem; }
+      .categories-section .section-divider { margin-bottom: 30px !important; }
+    </style>
+    <div class="text-center mb-4">
       <span class="section-label">Our Categories</span>
-      <h2 class="section-title mb-3">What We Offer</h2>
+      <h2 class="section-title mb-2">What We Offer</h2>
       <p class="section-subtitle">Explore our wide range of delicious baked goods</p>
-      <div class="section-divider mx-auto mb-5"></div>
+      <div class="section-divider mx-auto mb-4"></div>
     </div>
-    <div class="row g-4">
+    <div class="row g-3">
       <?php
-      $catResult = executePreparedQuery("SELECT * FROM categories LIMIT 3", "", []);
-      $counter = 0;
-      while($catResult && ($cat = mysqli_fetch_assoc($catResult)) && $counter < 3):
-        $categoryIcons = ['fa-birthday-cake', 'fa-cookie', 'fa-bread-slice', 'fa-pizza-slice', 'fa-ice-cream', 'fa-coffee'];
-        $iconIndex = $counter % count($categoryIcons);
+      // Show all categories and map a specific icon for each by name
+      $catResult = executePreparedQuery("SELECT * FROM categories", "", []);
+      $iconMap = [
+        // breads (distinct icons per category)
+        'classic & basic bread' => 'fa-bread-slice',
+        'sweet bread' => 'fa-cake-candles',
+        'filled / stuffed bread' => 'fa-stroopwafel',
+        'buns & rolls' => 'fa-hamburger',
+        'bread–cake combo' => 'fa-cake-candles',
+        'bread-cake combo' => 'fa-cake-candles', // fallback for hyphen variant
+        'special (budget-friendly)' => 'fa-star',
+        // sweets
+        'cookies' => 'fa-cookie-bite',
+        'crinkles' => 'fa-cookie',
+        'brownies' => 'fa-square'
+      ];
+      while($catResult && ($cat = mysqli_fetch_assoc($catResult))):
+        $key = strtolower(trim($cat['categoryName']));
+        $icon = isset($iconMap[$key]) ? $iconMap[$key] : 'fa-bread-slice';
       ?>
-      <div class="col-lg-4 col-md-6">
+      <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="category-card text-center h-100">
           <div class="category-icon">
-            <i class="fas <?php echo $categoryIcons[$iconIndex]; ?>"></i>
+            <i class="fas <?php echo $icon; ?>"></i>
           </div>
           <h4 class="category-title"><?php echo e($cat['categoryName']); ?></h4>
           <p class="category-description">Discover our delicious <?php echo strtolower(e($cat['categoryName'])); ?> made with premium ingredients and traditional methods.</p>
@@ -223,15 +244,7 @@ include(__DIR__ . "/includes/header.php");
           </a>
         </div>
       </div>
-      <?php 
-      $counter++;
-      endwhile; 
-      ?>
-    </div>
-    <div class="text-center mt-5">
-      <a href="products.php" class="btn btn-brown btn-lg">
-        <i class="fas fa-th me-2"></i>View All Categories
-      </a>
+      <?php endwhile; ?>
     </div>
   </div>
 </section>
@@ -406,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentItemId = 0;
   let currentImages = [];
   let currentImageIdx = 0;
+  let currentUnitPrice = 0; // base price per item/pack
 
   function setPackageType(type) {
     const qvTypeBox = document.getElementById('qvTypeBox');
@@ -444,6 +458,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (img) img.src = currentImages[currentImageIdx];
   }
 
+  function updateDisplayedPrice() {
+    const priceEl = document.getElementById('qvPrice');
+    const qtyEl = document.getElementById('qvQty');
+    if (!priceEl || !qtyEl || !currentUnitPrice) return;
+    let qty = parseInt(qtyEl.value || '1', 10);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    const total = currentUnitPrice * qty;
+    priceEl.textContent = `₱${total.toFixed(2)}`;
+  }
+
   if (qvQtyPresets) {
     qvQtyPresets.innerHTML = presets.map(n => `<button type="button" class="btn btn-outline-brown btn-sm qv-preset" data-n="${n}">${n} pcs</button>`).join('');
     qvQtyPresets.addEventListener('click', (e) => {
@@ -453,16 +477,19 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!btn) return;
       const n = parseInt(btn.getAttribute('data-n') || '1', 10);
       if (qvQtyInput) qvQtyInput.value = String(Math.max(1, n));
+      updateDisplayedPrice();
     });
   }
 
   if (qvMinus) qvMinus.addEventListener('click', () => {
     const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
     if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v - 1));
+    updateDisplayedPrice();
   });
   if (qvPlus) qvPlus.addEventListener('click', () => {
     const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
     if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v + 1));
+    updateDisplayedPrice();
   });
   if (qvTypeBox) qvTypeBox.addEventListener('click', () => setPackageType('box'));
   if (qvTypePack) qvTypePack.addEventListener('click', () => setPackageType('pack'));
@@ -492,10 +519,73 @@ document.addEventListener('DOMContentLoaded', function() {
     return data;
   }
 
+  // Minimal image lightbox (initialized once)
+  if (!window._bakeryLightboxInit) {
+    window._bakeryLightboxInit = true;
+    const style = document.createElement('style');
+    style.textContent = `
+      .lb-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:2000}
+      .lb-overlay.is-open{display:flex}
+      .lb-content{position:relative;max-width:90vw;max-height:90vh}
+      .lb-img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+      .lb-close,.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+      .lb-close{top:12px;right:12px;transform:none}
+      .lb-prev{left:12px}
+      .lb-next{right:12px}
+      @media (max-width: 768px){.lb-prev{left:8px}.lb-next{right:8px}}
+    `;
+    document.head.appendChild(style);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'lb-overlay';
+    overlay.innerHTML = `
+      <div class="lb-content">
+        <button type="button" class="lb-close" aria-label="Close">✕</button>
+        <button type="button" class="lb-prev" aria-label="Previous">❮</button>
+        <img class="lb-img" alt="" />
+        <button type="button" class="lb-next" aria-label="Next">❯</button>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    let imgs = [];
+    let idx = 0;
+    function setSrc(i){
+      idx = (i+imgs.length)%imgs.length;
+      const img = overlay.querySelector('.lb-img');
+      if (img) img.src = imgs[idx] || '';
+    }
+    function openLightbox(images, startIdx){
+      imgs = Array.isArray(images)? images.slice(): [];
+      if (!imgs.length) return;
+      setSrc(startIdx||0);
+      overlay.classList.add('is-open');
+      document.addEventListener('keydown', keyNav);
+    }
+    function close(){
+      overlay.classList.remove('is-open');
+      document.removeEventListener('keydown', keyNav);
+    }
+    function keyNav(e){
+      if (e.key === 'Escape') return close();
+      if (e.key === 'ArrowLeft') return setSrc(idx-1);
+      if (e.key === 'ArrowRight') return setSrc(idx+1);
+    }
+    overlay.querySelector('.lb-close')?.addEventListener('click', close);
+    overlay.querySelector('.lb-prev')?.addEventListener('click', () => setSrc(idx-1));
+    overlay.querySelector('.lb-next')?.addEventListener('click', () => setSrc(idx+1));
+    overlay.addEventListener('click', (e)=>{ if (e.target === overlay) close(); });
+
+    // expose
+    window.openBakeryLightbox = openLightbox;
+  }
+
   document.querySelectorAll('.js-quickview').forEach(btn => {
     btn.addEventListener('click', async () => {
       const itemId = parseInt(btn.getAttribute('data-itemid') || '0', 10);
       if (!itemId || !qvModal) return;
+      // Capture the image src that was clicked (if the trigger contains an <img>)
+      const clickedImgEl = btn.querySelector('img');
+      const desiredSrc = clickedImgEl ? clickedImgEl.src : '';
 
       currentItemId = itemId;
       if (qvQtyInput) qvQtyInput.value = '1';
@@ -624,7 +714,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (nameEl) nameEl.textContent = item.packageName || '';
         if (catEl) catEl.textContent = item.categoryName || '';
-        if (priceEl) priceEl.textContent = `₱${item.price || ''}`;
+        // Store base unit price and show initial total based on quantity
+        currentUnitPrice = parseFloat(item.price || '0') || 0;
+        if (priceEl) {
+          updateDisplayedPrice();
+        }
         if (descEl) descEl.textContent = item.foodDescription || '';
         if (contEl) contEl.textContent = item.itemContains || '';
         if (titleEl) titleEl.textContent = item.packageName || 'Product Details';
@@ -651,7 +745,22 @@ document.addEventListener('DOMContentLoaded', function() {
             thumbsWrap.appendChild(thumb);
           });
         }
-        setMainImage(0);
+        // If the opener had an image, try to start with that image
+        let initIdx = 0;
+        if (desiredSrc) {
+          const foundIdx = currentImages.findIndex(src => src === desiredSrc);
+          if (foundIdx >= 0) initIdx = foundIdx;
+        }
+        setMainImage(initIdx);
+
+        // Click main image to open lightbox with arrows (no need to click thumbnails one by one)
+        const mainImgEl = document.getElementById('qvMainImg');
+        if (mainImgEl) {
+          mainImgEl.style.cursor = 'zoom-in';
+          mainImgEl.addEventListener('click', () => {
+            if (window.openBakeryLightbox) window.openBakeryLightbox(currentImages, currentImageIdx);
+          });
+        }
 
         // Re-attach quantity presets
         const qvQtyPresetsEl = document.getElementById('qvQtyPresets');
@@ -665,6 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const n = parseInt(btn.getAttribute('data-n') || '1', 10);
             const qvQtyInputNew = document.getElementById('qvQty');
             if (qvQtyInputNew) qvQtyInputNew.value = String(Math.max(1, n));
+            updateDisplayedPrice();
             // Update active state
             qvQtyPresetsEl.querySelectorAll('.quantity-preset').forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
@@ -678,12 +788,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const qvTypePackNew = document.getElementById('qvTypePack');
 
         if (qvMinusNew) qvMinusNew.addEventListener('click', () => {
-          const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
-          if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v - 1));
+          // Get fresh reference to quantity input
+          const qtyInputEl = document.getElementById('qvQty');
+          const v = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
+          if (qtyInputEl) qtyInputEl.value = String(Math.max(1, v - 1));
+          updateDisplayedPrice();
         });
         if (qvPlusNew) qvPlusNew.addEventListener('click', () => {
-          const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
-          if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v + 1));
+          // Get fresh reference to quantity input
+          const qtyInputEl = document.getElementById('qvQty');
+          const v = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
+          if (qtyInputEl) qtyInputEl.value = String(Math.max(1, v + 1));
+          updateDisplayedPrice();
         });
         if (qvTypeBoxNew) qvTypeBoxNew.addEventListener('click', () => setPackageType('box'));
         if (qvTypePackNew) qvTypePackNew.addEventListener('click', () => setPackageType('pack'));
@@ -716,7 +832,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const qvBuyNew = document.getElementById('qvBuy');
 
         if (qvAddNew) qvAddNew.addEventListener('click', async () => {
-          const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+          // Get fresh reference to quantity input from the dynamically loaded modal
+          const qtyInputEl = document.getElementById('qvQty');
+          const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
           const btn = qvAddNew;
           const originalText = btn.innerHTML;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
@@ -737,7 +855,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (qvBuyNew) qvBuyNew.addEventListener('click', async () => {
-          const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+          // Get fresh reference to quantity input from the dynamically loaded modal
+          const qtyInputEl = document.getElementById('qvQty');
+          const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
           const btn = qvBuyNew;
           const originalText = btn.innerHTML;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
@@ -915,7 +1035,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const qvBuy = document.getElementById('qvBuy');
 
   if (qvAdd) qvAdd.addEventListener('click', async () => {
-    const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+    // Get fresh reference to quantity input
+    const qtyInputEl = document.getElementById('qvQty');
+    const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
     try {
       await apiAddToCart(currentItemId, Math.max(1, qty));
       window.location.href = 'cart.php';
@@ -925,7 +1047,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   if (qvBuy) qvBuy.addEventListener('click', async () => {
-    const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+    // Get fresh reference to quantity input
+    const qtyInputEl = document.getElementById('qvQty');
+    const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
     try {
       await apiAddToCart(currentItemId, Math.max(1, qty));
       window.location.href = 'checkout.php';

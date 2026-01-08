@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../connect.php';
 require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/validation.php';
 
 function is_https() {
     return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
@@ -21,6 +22,25 @@ function current_base_url() {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $dir = rtrim(dirname($_SERVER['PHP_SELF'] ?? '/'), '/\\');
     return $scheme . '://' . $host . ($dir ? '/' . $dir : '');
+}
+
+function get_google_redirect_uri() {
+    $scheme = is_https() ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // Get the base path - this should be the backend directory
+    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/backend');
+    
+    // Normalize the path - remove trailing slashes and ensure proper format
+    $scriptPath = rtrim($scriptPath, '/');
+    if (empty($scriptPath) || $scriptPath === '/') {
+        $scriptPath = '/backend';
+    }
+    
+    // Build the redirect URI
+    $redirectUri = $scheme . '://' . $host . $scriptPath . '/google-callback.php';
+    
+    return $redirectUri;
 }
 
 function set_app_cookie($name, $value, $expires) {
@@ -88,12 +108,37 @@ function product_image_url(array $itemRow, int $depth = 0): string {
         // Try to find any image in the detected folder
         $baseDir = realpath(__DIR__ . '/../../frontend/images/' . $folder);
         if ($baseDir && is_dir($baseDir)) {
+            // Products that should avoid box images
+            $avoidBoxProducts = ['Wheat pandesal', 'Ube cheese bread'];
+            $shouldAvoidBox = in_array($name, $avoidBoxProducts, true);
+            
+            $preferredImages = [];
+            $otherImages = [];
+            
             $it = new FilesystemIterator($baseDir, FilesystemIterator::SKIP_DOTS);
             foreach ($it as $fileInfo) {
                 if (!$fileInfo->isFile()) continue;
                 $ext = strtolower($fileInfo->getExtension());
                 if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) continue;
-                return $prefix . 'frontend/images/' . $folder . '/' . $fileInfo->getFilename();
+                
+                $fileName = strtolower($fileInfo->getFilename());
+                
+                // For products that should avoid box images, skip files with "box" in name
+                if ($shouldAvoidBox && strpos($fileName, 'box') !== false) {
+                    $otherImages[] = $fileInfo->getFilename();
+                    continue;
+                }
+                
+                // Prefer images without "box" in the name
+                $preferredImages[] = $fileInfo->getFilename();
+            }
+            
+            // Return preferred image (non-box) first, fallback to others if needed
+            if (!empty($preferredImages)) {
+                return $prefix . 'frontend/images/' . $folder . '/' . $preferredImages[0];
+            } elseif (!empty($otherImages)) {
+                // Only use box images if no other images available
+                return $prefix . 'frontend/images/' . $folder . '/' . $otherImages[0];
             }
         }
     }
@@ -117,14 +162,42 @@ function product_image_urls(array $itemRow, int $depth = 0, int $max = 3): array
     if ($folder !== null) {
         $baseDir = realpath(__DIR__ . '/../../frontend/images/' . $folder);
         if ($baseDir && is_dir($baseDir)) {
+            // Products that should avoid box images
+            $avoidBoxProducts = ['Wheat pandesal', 'Ube cheese bread'];
+            $shouldAvoidBox = in_array($name, $avoidBoxProducts, true);
+            
+            $preferredImages = [];
+            $otherImages = [];
+            
             $it = new FilesystemIterator($baseDir, FilesystemIterator::SKIP_DOTS);
             foreach ($it as $fileInfo) {
                 if (!$fileInfo->isFile()) continue;
                 $ext = strtolower($fileInfo->getExtension());
                 if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) continue;
+                
+                $fileName = strtolower($fileInfo->getFilename());
                 $rel = $folder . '/' . $fileInfo->getFilename();
-                $urls[] = $prefix . 'frontend/images/' . $rel;
+                
+                // For products that should avoid box images, prioritize non-box images
+                if ($shouldAvoidBox && strpos($fileName, 'box') !== false) {
+                    $otherImages[] = $prefix . 'frontend/images/' . $rel;
+                } else {
+                    $preferredImages[] = $prefix . 'frontend/images/' . $rel;
+                }
+            }
+            
+            // Add preferred images first, then others if needed
+            foreach ($preferredImages as $img) {
+                $urls[] = $img;
                 if (count($urls) >= $max) break;
+            }
+            
+            // Add other images if we haven't reached max yet
+            if (count($urls) < $max) {
+                foreach ($otherImages as $img) {
+                    $urls[] = $img;
+                    if (count($urls) >= $max) break;
+                }
             }
         }
     }

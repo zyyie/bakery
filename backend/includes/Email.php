@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../../vendor/autoload.php';
+$__autoload = __DIR__ . '/../../vendor/autoload.php';
+if (file_exists($__autoload)) {
+    require_once $__autoload;
+}
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
@@ -8,14 +11,22 @@ use PHPMailer\PHPMailer\Exception;
 class Email {
     private $mailer;
     private $config;
+    private $enabled = true;
 
     public function __construct() {
         $this->config = require __DIR__ . '/../config/email.php';
+        // If PHPMailer is not available (composer not installed), disable gracefully
+        if (!class_exists('PHPMailer\\PHPMailer\\PHPMailer')) {
+            $this->enabled = false;
+            error_log('Email: PHPMailer not installed. Run "composer install" to enable email sending.');
+            return;
+        }
         $this->mailer = new PHPMailer(true);
         $this->configureMailer();
     }
 
     private function configureMailer() {
+        if (!$this->enabled) { return; }
         // Server settings
         $this->mailer->isSMTP();
         $this->mailer->Host = $this->config['host'];
@@ -33,7 +44,45 @@ class Email {
         };
     }
 
+    public function sendContactMessage($fromName, $fromEmail, $mobileNumber, $userMessage) {
+        if (!$this->enabled) { return false; }
+        try {
+            $this->mailer->clearAddresses();
+            $this->mailer->clearAttachments();
+
+            $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
+            // send to the shop inbox configured in email.php
+            $this->mailer->addAddress($this->config['from_email'], $this->config['from_name']);
+
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = 'New Customer Message';
+
+            $safeName = htmlspecialchars($fromName, ENT_QUOTES, 'UTF-8');
+            $safeEmail = htmlspecialchars($fromEmail, ENT_QUOTES, 'UTF-8');
+            $safeMobile = htmlspecialchars($mobileNumber, ENT_QUOTES, 'UTF-8');
+            $safeMsg = nl2br(htmlspecialchars($userMessage, ENT_QUOTES, 'UTF-8'));
+
+            $body = "<div style='font-family:Arial,sans-serif;font-size:14px;color:#333'>"
+                  . "<h3 style='margin-top:0'>New Customer Message</h3>"
+                  . "<p><strong>Name:</strong> {$safeName}</p>"
+                  . "<p><strong>Email:</strong> {$safeEmail}</p>"
+                  . "<p><strong>Mobile:</strong> {$safeMobile}</p>"
+                  . "<p><strong>Message:</strong><br>{$safeMsg}</p>"
+                  . "</div>";
+
+            $this->mailer->Body = $body;
+            $this->mailer->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $body));
+
+            $this->mailer->send();
+            return true;
+        } catch (Exception $e) {
+            error_log("Contact email could not be sent. Mailer Error: {$this->mailer->ErrorInfo}");
+            return false;
+        }
+    }
+
     public function sendPasswordReset($toEmail, $toName, $resetLink) {
+        if (!$this->enabled) { return false; }
         try {
             // Recipients
             $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
@@ -56,6 +105,7 @@ class Email {
     }
 
     public function sendNewsletterWelcome($toEmail) {
+        if (!$this->enabled) { return false; }
         try {
             $this->mailer->clearAddresses();
             $this->mailer->clearAttachments();

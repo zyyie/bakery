@@ -9,6 +9,33 @@ if(isset($_SESSION['userID'])) {
     exit();
 }
 
+// Function to get Google OAuth login URL
+function getGoogleLoginUrl() {
+    $config = require __DIR__ . '/config/google-oauth.php';
+    
+    // Check if Google OAuth is configured
+    if($config['client_id'] === 'YOUR_GOOGLE_CLIENT_ID_HERE' || empty($config['client_id'])) {
+        return null; // Google OAuth not configured
+    }
+    
+    // Use the helper function for consistent redirect URI
+    $redirectUri = get_google_redirect_uri();
+    
+    // Build Google OAuth URL
+    $params = [
+        'client_id' => $config['client_id'],
+        'redirect_uri' => $redirectUri,
+        'response_type' => 'code',
+        'scope' => implode(' ', $config['scopes']),
+        'access_type' => 'online',
+        'prompt' => 'select_account'
+    ];
+    
+    return 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
+}
+
+$googleLoginUrl = getGoogleLoginUrl();
+
 if(isset($_POST['login'])) {
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -143,15 +170,19 @@ include("includes/login-header.php");
     <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <form method="POST" class="auth-form">
+    <form method="POST" class="auth-form" id="loginForm">
       <div class="mb-3">
-        <label class="form-label">Email</label>
+        <label class="form-label">Email <span class="text-danger">*</span></label>
         <input type="email" class="form-control" name="email" placeholder="Enter Email" required 
+               maxlength="255"
                value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+        <div class="invalid-feedback">Please enter a valid email address.</div>
       </div>
       <div class="mb-2">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-control" name="password" placeholder="Password" required>
+        <label class="form-label">Password <span class="text-danger">*</span></label>
+        <input type="password" class="form-control" name="password" placeholder="Password" required
+               maxlength="255">
+        <div class="invalid-feedback">Please enter your password.</div>
       </div>
 
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -164,6 +195,61 @@ include("includes/login-header.php");
 
       <button type="submit" name="login" class="btn btn-brown w-100">Login</button>
     </form>
+
+    <script>
+    // Client-side form validation for login
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('loginForm');
+      
+      // Form submission validation
+      form.addEventListener('submit', function(e) {
+        if(!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      });
+      
+      // Real-time validation feedback
+      const inputs = form.querySelectorAll('input[required]');
+      inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+          if(!this.checkValidity()) {
+            this.classList.add('is-invalid');
+          } else {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+          }
+        });
+        
+        input.addEventListener('input', function() {
+          if(this.classList.contains('is-invalid') && this.checkValidity()) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+          }
+        });
+      });
+    });
+    </script>
+
+    <?php if($googleLoginUrl): ?>
+    <div class="text-center my-3">
+      <div class="d-flex align-items-center mb-3">
+        <hr class="flex-grow-1">
+        <span class="mx-2 text-muted">OR</span>
+        <hr class="flex-grow-1">
+      </div>
+      <a href="<?php echo htmlspecialchars($googleLoginUrl); ?>" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center">
+        <svg width="18" height="18" viewBox="0 0 18 18" class="me-2">
+          <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.96-2.184l-2.908-2.258c-.806.54-1.837.86-3.052.86-2.347 0-4.33-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/>
+          <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.951H.957C.348 6.173 0 7.55 0 9s.348 2.827.957 4.049l3.007-2.342z"/>
+          <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.951L3.964 7.293C4.67 5.163 6.653 3.58 9 3.58z"/>
+        </svg>
+        Sign in with Google
+      </a>
+    </div>
+    <?php endif; ?>
 
     <div class="auth-footer text-center mt-3">
       <div>Don't have an account? <a class="auth-link" href="signup.php">Sign Up</a></div>

@@ -46,12 +46,14 @@ if (session_status() === PHP_SESSION_NONE) {
             MY ACCOUNT
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="my-orders.php">My Order</a></li>
-            <li><a class="dropdown-item" href="cart.php">My Cart</a></li>
-            <li><a class="dropdown-item" href="my-favorites.php">My Favorites</a></li>
-            <li><a class="dropdown-item" href="customer-messages.php">My Messages</a></li>
+            <li><a class="dropdown-item" href="user-dashboard.php"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+            <li><a class="dropdown-item" href="my-orders.php"><i class="fas fa-receipt me-2"></i>My Orders</a></li>
+            <li><a class="dropdown-item" href="cart.php"><i class="fas fa-shopping-cart me-2"></i>My Cart</a></li>
+            <li><a class="dropdown-item" href="my-favorites.php"><i class="fas fa-heart me-2"></i>My Favorites</a></li>
+            <li><a class="dropdown-item" href="customer-messages.php"><i class="fas fa-envelope me-2"></i>My Messages</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
           </ul>
         </li>
         <?php else: ?>

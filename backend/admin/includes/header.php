@@ -34,7 +34,7 @@ $notif = adminGetNotifications();
             <a class="nav-link ps-5" href="manage-category.php">Categories</a>
             <a class="nav-link ps-5" href="add-food-package.php">Add Food Package</a>
             <a class="nav-link ps-5" href="manage-food-package.php">Manage Food Package</a>
-            <a class="nav-link ps-5" href="manage-inventory.php">Inventory</a>
+            <a class="nav-link ps-5" href="inventory-management.php">Inventory</a>
           </div>
           <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#orderMenu">
             <i class="fas fa-file-alt"></i> Orders <i class="fas fa-chevron-right float-end"></i>

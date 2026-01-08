@@ -52,7 +52,9 @@ include(__DIR__ . "/includes/header.php");
         <p><strong>Remark:</strong> <?php echo $order['remark']; ?></p>
         <?php endif; ?>
         <p><strong>Order Date:</strong> <?php echo $order['orderDate']; ?></p>
+        <?php if(!empty($order['deliveryDate']) && $order['orderStatus'] != 'Still Pending'): ?>
         <p><strong>Delivery Date:</strong> <?php echo $order['deliveryDate']; ?></p>
+        <?php endif; ?>
       </div>
       <a href="my-orders.php" class="btn btn-warning">Back to Orders</a>
     </div>

@@ -6,6 +6,14 @@ if(!isset($_SESSION['userID'])){
   exit();
 }
 
+// Check if user has valid mobile number
+$userID = intval($_SESSION['userID']);
+if(!userHasValidMobileNumber($userID)){
+  $_SESSION['redirect_after_mobile_update'] = 'checkout.php';
+  header("Location: update-mobile.php");
+  exit();
+}
+
 if(!isset($_SESSION['cart']) || empty($_SESSION['cart'])){
   header("Location: cart.php");
   exit();
@@ -14,33 +22,107 @@ if(!isset($_SESSION['cart']) || empty($_SESSION['cart'])){
 $error = "";
 $success = "";
 
+// Handle coupon selection (AJAX endpoint)
+if(isset($_POST['applyCoupon']) && isset($_POST['ajax'])){
+  header('Content-Type: application/json');
+  $couponCode = trim($_POST['couponCode'] ?? '');
+  if(!empty($couponCode)){
+    $_SESSION['selected_coupon'] = $couponCode;
+    echo json_encode(['success' => true, 'message' => 'Coupon applied successfully']);
+  } else {
+    unset($_SESSION['selected_coupon']);
+    echo json_encode(['success' => true, 'message' => 'Coupon removed']);
+  }
+  exit();
+}
+
+// Handle coupon selection (legacy POST redirect - for non-AJAX)
+if(isset($_POST['applyCoupon']) && !isset($_POST['ajax'])){
+  $couponCode = trim($_POST['couponCode'] ?? '');
+  if(!empty($couponCode)){
+    $_SESSION['selected_coupon'] = $couponCode;
+    // Redirect to refresh and validate coupon
+    header("Location: checkout.php");
+    exit();
+  } else {
+    unset($_SESSION['selected_coupon']);
+    header("Location: checkout.php");
+    exit();
+  }
+}
+
+// Handle coupon removal
+if(isset($_GET['removeCoupon'])){
+  unset($_SESSION['selected_coupon']);
+  header("Location: checkout.php");
+  exit();
+}
+
+// Define available coupons
+$availableCoupons = [
+  'FREESHIP50' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 50, 'description' => 'Free shipping on orders over ₱50'],
+  'FREESHIP100' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 100, 'description' => 'Free shipping on orders over ₱100'],
+  'FREESHIP200' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 200, 'description' => 'Free shipping on orders over ₱200'],
+];
+
+// Get selected coupon
+$selectedCouponCode = $_SESSION['selected_coupon'] ?? null;
+$selectedCoupon = null;
+$baseShippingFee = 50.00; // Default shipping fee before coupons
+$shippingFee = $baseShippingFee;
+
+if($selectedCouponCode && isset($availableCoupons[$selectedCouponCode])){
+  $selectedCoupon = $availableCoupons[$selectedCouponCode];
+  // Check if order meets minimum requirement
+  $cart = $_SESSION['cart'] ?? [];
+  $cartSubtotalCheck = 0;
+  $totalQuantity = 0;
+  foreach($cart as $itemID => $quantity){
+    $itemID = intval($itemID);
+    $quantity = intval($quantity);
+    $itemQuery = "SELECT price FROM items WHERE itemID = ?";
+    $itemResult = executePreparedQuery($itemQuery, "i", [$itemID]);
+    if($itemResult && mysqli_num_rows($itemResult) > 0){
+      $item = mysqli_fetch_assoc($itemResult);
+      $cartSubtotalCheck += floatval($item['price']) * $quantity;
+      $totalQuantity += $quantity;
+    }
+  }
+
+  // Rule 1: free shipping coupons require at least 3 items in cart (any coupon)
+  if($totalQuantity <= 2){
+    $error = "Free shipping coupons are only available when you purchase at least 3 items.";
+    $selectedCoupon = null;
+    unset($_SESSION['selected_coupon']);
+  }
+  // Rule 2: bigger coupons (FREESHIP100, FREESHIP200) only for very large orders (e.g. 100+ items)
+  elseif(in_array($selectedCouponCode, ['FREESHIP100','FREESHIP200'], true) && $totalQuantity < 100){
+    $error = "This shipping coupon is only available for bulk orders of at least 100 packs/boxes. For smaller orders, please use the ₱50 free-shipping coupon.";
+    $selectedCoupon = null;
+    unset($_SESSION['selected_coupon']);
+  }
+  // Rule 3: check minimum amount for any remaining valid coupon
+  elseif($cartSubtotalCheck >= $selectedCoupon['min_order']){
+    $shippingFee = 0; // Free shipping
+  } else {
+    // Coupon doesn't apply if minimum not met - show message
+    $error = "Coupon {$selectedCouponCode} requires a minimum order of ₱" . number_format($selectedCoupon['min_order'], 2) . ". Your current subtotal is ₱" . number_format($cartSubtotalCheck, 2) . ".";
+    $selectedCoupon = null; // Coupon doesn't apply if minimum not met
+    unset($_SESSION['selected_coupon']);
+  }
+}
+
 // Place order
 if(isset($_POST['placeOrder'])){
   $fullName = trim($_POST['fullName']);
   $contactNumber = trim($_POST['contactNumber']);
-  $deliveryDate = trim($_POST['deliveryDate']);
-  // Normalize delivery date to YYYY-MM-DD (supports 'YYYY-MM-DD' and 'dd/mm/yyyy')
-  if ($deliveryDate !== '') {
-    if (strpos($deliveryDate, '/') !== false) {
-      $dt = DateTime::createFromFormat('d/m/Y', $deliveryDate);
-      if ($dt instanceof DateTime) {
-        $deliveryDate = $dt->format('Y-m-d');
-      }
-    } else {
-      // Try to parse any other format and convert
-      $ts = strtotime($deliveryDate);
-      if ($ts !== false) {
-        $deliveryDate = date('Y-m-d', $ts);
-      }
-    }
-  }
+  // Delivery date will be set by admin, not by user
+  $deliveryDate = null;
   $flatNumber = trim($_POST['flatNumber']);
   $streetName = trim($_POST['streetName']);
-  $area = trim($_POST['area']);
   $landmark = trim($_POST['landmark']);
   $city = trim($_POST['city']);
   $zipcode = trim($_POST['zipcode']);
-  $state = trim($_POST['state']);
   $paymentMethod = trim($_POST['paymentMethod'] ?? '');
   $paypalOrderID = trim($_POST['paypalOrderID'] ?? '');
   $userID = intval($_SESSION['userID']);
@@ -50,16 +132,12 @@ if(isset($_POST['placeOrder'])){
   
   if(empty($fullName)) $errors[] = "Full name is required";
   if(empty($contactNumber)) $errors[] = "Contact number is required";
-  if(!preg_match('/^[\d\s\-\+\(\)]+$/', preg_replace('/\s/', '', $contactNumber))) $errors[] = "Invalid contact number format";
-  if(empty($deliveryDate)) $errors[] = "Delivery date is required";
-  if(!empty($deliveryDate) && strtotime($deliveryDate) < strtotime(date('Y-m-d'))) $errors[] = "Delivery date cannot be in the past";
+  if(!isValidMobileNumber($contactNumber)) $errors[] = "Please enter a valid mobile number (7-15 digits). It should not be an email address.";
   if(empty($flatNumber)) $errors[] = "Flat/Building number is required";
   if(empty($streetName)) $errors[] = "Street name is required";
-  if(empty($area)) $errors[] = "Area is required";
   if(empty($city)) $errors[] = "City is required";
   if(empty($zipcode)) $errors[] = "Zip code is required";
   if(!preg_match('/^\d{4,6}$/', preg_replace('/\s/', '', $zipcode))) $errors[] = "Invalid zip code format (4-6 digits)";
-  if(empty($state)) $errors[] = "State is required";
   if(empty($paymentMethod)) $errors[] = "Payment method is required";
   if($paymentMethod === 'paypal' && empty($paypalOrderID)) $errors[] = "PayPal payment is required";
   
@@ -124,14 +202,12 @@ if(isset($_POST['placeOrder'])){
       ['name'=>'userID','type'=>'i','value'=>$userID],
       ['name'=>'fullName','type'=>'s','value'=>$fullName],
       ['name'=>'contactNumber','type'=>'s','value'=>$contactNumber],
-      ['name'=>'deliveryDate','type'=>'s','value'=>$deliveryDate],
+      ['name'=>'deliveryDate','type'=>'s','value'=>$deliveryDate], // Will be set by admin later
       ['name'=>'flatNumber','type'=>'s','value'=>$flatNumber],
       ['name'=>'streetName','type'=>'s','value'=>$streetName],
-      ['name'=>'area','type'=>'s','value'=>$area],
       ['name'=>'landmark','type'=>'s','value'=>$landmark],
       ['name'=>'city','type'=>'s','value'=>$city],
       ['name'=>'zipcode','type'=>'s','value'=>$zipcode],
-      ['name'=>'state','type'=>'s','value'=>$state],
       ['name'=>'paymentMethod','type'=>'s','value'=>$paymentMethod],
       ['name'=>'paypalOrderID','type'=>'s','value'=>$paypalOrderID],
       ['name'=>'orderStatus','type'=>'s','value'=>'Still Pending'],
@@ -234,18 +310,24 @@ $userQuery = "SELECT * FROM users WHERE userID = ?";
 $userResult = executePreparedQuery($userQuery, "i", [$userID]);
 $user = mysqli_fetch_assoc($userResult);
 
-// Calculate cart total using prepared statements
+// Calculate cart total using prepared statements - ensure we use the actual cart
 $cartTotal = 0;
 $cart = $_SESSION['cart'] ?? [];
 
 foreach($cart as $itemID => $quantity){
   $itemID = intval($itemID);
-  $itemQuery = "SELECT price FROM items WHERE itemID = ?";
+  $quantity = intval($quantity);
+  
+  // Skip invalid entries
+  if($itemID <= 0 || $quantity <= 0) continue;
+  
+  $itemQuery = "SELECT price FROM items WHERE itemID = ? AND status = 'Active'";
   $itemResult = executePreparedQuery($itemQuery, "i", [$itemID]);
   
   if($itemResult && mysqli_num_rows($itemResult) > 0){
     $item = mysqli_fetch_assoc($itemResult);
-    $cartTotal += floatval($item['price']) * intval($quantity);
+    $unitPrice = floatval($item['price']);
+    $cartTotal += $unitPrice * $quantity;
   }
 }
 
@@ -281,10 +363,6 @@ include("includes/header.php");
               </div>
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label">Delivery Date</label>
-                  <input type="date" class="form-control" name="deliveryDate" required>
-                </div>
-                <div class="col-md-6">
                   <label class="form-label">Full Name</label>
                   <input type="text" class="form-control" name="fullName" value="<?php echo $user['fullName']; ?>" required>
                 </div>
@@ -309,10 +387,6 @@ include("includes/header.php");
                   <input type="text" class="form-control" name="streetName" required>
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Area</label>
-                  <input type="text" class="form-control" name="area" required>
-                </div>
-                <div class="col-md-6">
                   <label class="form-label">Landmark</label>
                   <input type="text" class="form-control" name="landmark" required>
                 </div>
@@ -324,10 +398,28 @@ include("includes/header.php");
                   <label class="form-label">Zip Code</label>
                   <input type="text" class="form-control" name="zipcode" required>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">State</label>
-                  <input type="text" class="form-control" name="state" required>
-                </div>
+              </div>
+            </div>
+
+            <!-- Shipping Coupons Section -->
+            <div class="form-section">
+              <div class="form-section-title">
+                <i class="fas fa-ticket-alt me-2"></i>Shipping Coupons
+              </div>
+              <div class="coupon-section mb-3">
+                <button type="button" class="btn btn-outline-brown" data-bs-toggle="modal" data-bs-target="#couponModal">
+                  <i class="fas fa-ticket-alt me-2"></i>
+                  <?php if($selectedCoupon): ?>
+                    Applied: <?php echo $selectedCoupon['name']; ?> - Free Shipping!
+                  <?php else: ?>
+                    Apply Shipping Coupon
+                  <?php endif; ?>
+                </button>
+                <?php if($selectedCoupon): ?>
+                  <a href="?removeCoupon=1" class="btn btn-sm btn-link text-danger ms-2">
+                    <i class="fas fa-times"></i> Remove
+                  </a>
+                <?php endif; ?>
               </div>
             </div>
             
@@ -372,23 +464,39 @@ include("includes/header.php");
         <div class="cart-summary-body">
           <?php
           $cartSubtotal = 0;
-          // Display cart items
+          // Display cart items - ensure we're using the actual cart from session
+          $cart = $_SESSION['cart'] ?? [];
+          if(empty($cart)) {
+            // If cart is empty, redirect to cart page
+            header("Location: cart.php");
+            exit();
+          }
+          
+          // Debug: Log cart contents (remove in production)
+          // error_log("Checkout Cart: " . print_r($cart, true));
+          
           foreach($cart as $itemID => $quantity):
             $itemID = intval($itemID);
-            $itemQuery = "SELECT * FROM items WHERE itemID = ?";
+            $quantity = intval($quantity);
+            
+            // Skip if invalid
+            if($itemID <= 0 || $quantity <= 0) continue;
+            
+            $itemQuery = "SELECT * FROM items WHERE itemID = ? AND status = 'Active'";
             $itemResult = executePreparedQuery($itemQuery, "i", [$itemID]);
             if($itemResult && mysqli_num_rows($itemResult) > 0):
               $item = mysqli_fetch_assoc($itemResult);
               $itemImage = product_image_url($item, 1);
               $unitPrice = floatval($item['price']);
-              $totalPrice = $unitPrice * intval($quantity);
+              $totalPrice = $unitPrice * $quantity;
               $cartSubtotal += $totalPrice;
           ?>
           <div class="cart-item">
-            <img src="<?php echo $itemImage; ?>" alt="<?php echo $item['packageName']; ?>" class="cart-item-image">
+            <img src="<?php echo $itemImage; ?>" alt="<?php echo htmlspecialchars($item['packageName'], ENT_QUOTES, 'UTF-8'); ?>" class="cart-item-image">
             <div class="cart-item-details">
-              <div class="cart-item-name"><?php echo $item['packageName']; ?></div>
-              <div class="cart-item-quantity">Quantity: <?php echo $quantity; ?></div>
+              <div class="cart-item-name"><?php echo htmlspecialchars($item['packageName'], ENT_QUOTES, 'UTF-8'); ?></div>
+              <div class="cart-item-quantity">Quantity: <?php echo $quantity; ?> pcs</div>
+              <div class="cart-item-unit-price text-muted small">₱<?php echo number_format($unitPrice, 2); ?> per pack</div>
             </div>
             <div class="cart-item-price">₱<?php echo number_format($totalPrice, 2); ?></div>
           </div>
@@ -401,9 +509,30 @@ include("includes/header.php");
             <span class="cart-summary-label">Subtotal</span>
             <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal, 2); ?></span>
           </div>
+          <?php
+          // Compute shipping discount compared to base fee
+          $shippingDiscount = max(0, $baseShippingFee - $shippingFee);
+          ?>
+          <?php if($shippingDiscount > 0 && $selectedCoupon): ?>
+          <div class="cart-summary-row" style="color: #28a745; font-weight: 600;">
+            <span class="cart-summary-label">
+              <i class="fas fa-ticket-alt me-1"></i><?php echo $selectedCoupon['name']; ?> (<?php echo $selectedCouponCode; ?>)
+            </span>
+            <span class="cart-summary-value">-₱<?php echo number_format($shippingDiscount, 2); ?></span>
+          </div>
+          <div class="cart-summary-row" style="color: #28a745;">
+            <span class="cart-summary-label">Shipping Fee</span>
+            <span class="cart-summary-value">Free</span>
+          </div>
+          <?php else: ?>
+          <div class="cart-summary-row">
+            <span class="cart-summary-label">Shipping Fee</span>
+            <span class="cart-summary-value">₱<?php echo number_format($shippingFee, 2); ?></span>
+          </div>
+          <?php endif; ?>
           <div class="cart-summary-row cart-summary-total">
             <span class="cart-summary-label">Total</span>
-            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal, 2); ?></span>
+            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal + $shippingFee, 2); ?></span>
           </div>
           
           <div class="payment-section">
@@ -423,6 +552,59 @@ include("includes/header.php");
   </div>
   
   <?php endif; ?>
+</div>
+
+<!-- Coupon Modal -->
+<div class="modal fade" id="couponModal" tabindex="-1" aria-labelledby="couponModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="couponModalLabel">
+          <i class="fas fa-ticket-alt me-2"></i>Available Shipping Coupons
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="couponForm">
+          <div class="coupon-list">
+            <?php foreach($availableCoupons as $code => $coupon): ?>
+            <div class="coupon-item mb-3 p-3 border rounded">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="couponCode" id="coupon<?php echo $code; ?>" 
+                       value="<?php echo $code; ?>" 
+                       <?php echo ($selectedCouponCode === $code) ? 'checked' : ''; ?>>
+                <label class="form-check-label w-100" for="coupon<?php echo $code; ?>">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong><?php echo $coupon['name']; ?></strong>
+                      <p class="mb-0 small text-muted"><?php echo $coupon['description']; ?></p>
+                    </div>
+                    <span class="badge bg-brown"><?php echo $code; ?></span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <?php endforeach; ?>
+            <div class="coupon-item mb-3 p-3 border rounded">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="couponCode" id="couponNone" value="" 
+                       <?php echo (!$selectedCouponCode) ? 'checked' : ''; ?>>
+                <label class="form-check-label" for="couponNone">
+                  No Coupon
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="applyCouponBtn" class="btn btn-brown">
+          <i class="fas fa-check me-2"></i>Apply Coupon
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <?php include("includes/footer.php"); ?>
@@ -485,6 +667,88 @@ function showToast(title, message, type = 'success') {
   const paypalSection = document.getElementById('paypalSection');
   const codSection = document.getElementById('codSection');
 
+  // Save form data to localStorage
+  function saveFormData() {
+    if (!form) return;
+    const formData = {};
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+      if (input.name && input.type !== 'file') {
+        formData[input.name] = input.value;
+      }
+    });
+    localStorage.setItem('checkoutFormData', JSON.stringify(formData));
+  }
+
+  // Restore form data from localStorage
+  function restoreFormData() {
+    if (!form) return;
+    const saved = localStorage.getItem('checkoutFormData');
+    if (saved) {
+      try {
+        const formData = JSON.parse(saved);
+        Object.keys(formData).forEach(name => {
+          const input = form.querySelector(`[name="${name}"]`);
+          if (input && input.type !== 'file') {
+            input.value = formData[name];
+          }
+        });
+      } catch (e) {
+        console.error('Error restoring form data:', e);
+      }
+    }
+  }
+
+  // Restore form data on page load
+  restoreFormData();
+
+  // Save form data on input change
+  if (form) {
+    form.addEventListener('input', saveFormData);
+    form.addEventListener('change', saveFormData);
+  }
+
+  // Clear saved form data after successful order
+  if (document.querySelector('.alert-success')) {
+    localStorage.removeItem('checkoutFormData');
+  }
+
+  // Handle coupon application via AJAX
+  const applyCouponBtn = document.getElementById('applyCouponBtn');
+  const couponForm = document.getElementById('couponForm');
+  const couponModal = document.getElementById('couponModal');
+  
+  if (applyCouponBtn && couponForm) {
+    applyCouponBtn.addEventListener('click', async function() {
+      const formData = new FormData(couponForm);
+      formData.append('applyCoupon', '1');
+      formData.append('ajax', '1');
+      
+      try {
+        const response = await fetch('checkout.php', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Close modal
+          const modalInstance = bootstrap.Modal.getInstance(couponModal);
+          if (modalInstance) modalInstance.hide();
+          
+          // Reload page to update order summary
+          window.location.reload();
+        } else {
+          showToast('Error', result.message || 'Failed to apply coupon', 'error');
+        }
+      } catch (error) {
+        console.error('Error applying coupon:', error);
+        showToast('Error', 'Failed to apply coupon. Please try again.', 'error');
+      }
+    });
+  }
+
   if (!form || !btnContainer) return;
 
   // Payment method handling
@@ -540,16 +804,6 @@ function showToast(title, message, type = 'success') {
         if (field.type === 'text' && field.name === 'zipcode') {
           const zipRegex = /^\d{4,6}$/;
           if (!zipRegex.test(field.value.replace(/\s/g, ''))) {
-            isValid = false;
-            field.classList.add('is-invalid');
-            if (!firstInvalidField) firstInvalidField = field;
-          }
-        }
-        if (field.type === 'date' && field.name === 'deliveryDate') {
-          const selectedDate = new Date(field.value);
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          if (selectedDate < today) {
             isValid = false;
             field.classList.add('is-invalid');
             if (!firstInvalidField) firstInvalidField = field;
