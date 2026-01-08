@@ -2,7 +2,26 @@
 $gateway_url = "http://192.168.1.101:8080";
 $username = "sms";
 $password = "1234567890";
-$recipient = "+639618709063";
+
+// Get recipient from URL parameter or form input
+$recipient = $_GET['phone'] ?? $_POST['phone'] ?? "";
+
+// Clean and validate phone number
+$recipient = trim($recipient);
+if (!empty($recipient) && !str_starts_with($recipient, '+')) {
+    $recipient = '+' . $recipient;
+}
+
+if (empty($recipient)) {
+    echo "<h3>SMS Sender</h3>";
+    echo "<form method='get' action=''>";
+    echo "<input type='text' name='phone' placeholder='Enter phone number (+63...)' required style='width: 300px; padding: 10px;'>";
+    echo "<button type='submit' style='padding: 10px 20px; margin-left: 10px;'>Send OTP</button>";
+    echo "</form>";
+    echo "<p><small>Example: +639123456789</small></p>";
+    exit;
+}
+
 $otp = rand(100000, 999999);
 $message = "Your OTP is $otp. Do not share this code with anyone.";
 
@@ -10,7 +29,8 @@ $url = rtrim($gateway_url, '/') . '/messages';
 
 $payload = [
     "phoneNumbers" => [$recipient],
-    "message" => $message
+    "textMessage" => ["text" => $message],
+    "withDeliveryReport" => true
 ];
 
 $options = [

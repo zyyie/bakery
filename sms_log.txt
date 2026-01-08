@@ -7,3 +7,24 @@
   "receivedStamp":1767854506364,
   "sim":"sim1"
 }
+[2026-01-08 07:53:27] {
+  "from":"SMART",
+  "text":" Stay always connected! Check your balance regularly and stay up-to-date with the latest offers via the Smart App!",
+  "sentStamp":1767855185000,
+  "receivedStamp":1767855188377,
+  "sim":"sim2"
+}
+[2026-01-08 07:53:43] {
+  "from":"SMART",
+  "text":"Your regular load is low on balance. Add Regular Load NOW to continue enjoying our promos and services.                                                        ",
+  "sentStamp":1767855185000,
+  "receivedStamp":1767855187509,
+  "sim":"sim2"
+}
+[2026-01-08 07:58:12] {
+  "from":"+639930152544",
+  "text":"yow",
+  "sentStamp":1767855490000,
+  "receivedStamp":1767855492148,
+  "sim":"sim2"
+}
