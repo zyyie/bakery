@@ -132,7 +132,8 @@ include(__DIR__ . "/includes/login-header.php");
     const res = await fetch(url, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      credentials: 'include'  // This is the key fix!
     });
     const txt = await res.text();
     try { return { ok: res.ok, status: res.status, data: JSON.parse(txt) }; }
