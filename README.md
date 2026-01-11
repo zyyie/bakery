@@ -29,15 +29,14 @@ A complete online bakery management system built with PHP, MySQL, and Bootstrap.
 ## Installation
 
 1. **Database Setup**
-   - Create a MySQL database named `DB_bakery`
-   - Import the `database.sql` file to create all tables
-   - Update database credentials in `connect.php` if needed
+   - Create a MySQL database named `db_bakery`
+   - Import the canonical schema/data: `backend/db_bakery.sql`
+   - Ensure `backend/connect.php` points to `db_bakery`
 
 2. **File Structure**
    ```
    bakery shop/
    ├── connect.php
-   ├── database.sql
    ├── index.php
    ├── products.php
    ├── login.php
@@ -60,6 +59,8 @@ A complete online bakery management system built with PHP, MySQL, and Bootstrap.
    │   ├── all-order.php
    │   ├── view-order-detail.php
    │   └── ... (other admin files)
+   ├── backend/
+   │   └── db_bakery.sql  (canonical database schema and seed data)
    └── uploads/ (for product images)
    ```
 

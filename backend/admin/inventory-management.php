@@ -11,17 +11,45 @@ if (!function_exists('e')) {
     }
 }
 
-// Create inventory table if it doesn't exist
-$createInventoryTable = "CREATE TABLE IF NOT EXISTS inventory (
-    inventoryID INT AUTO_INCREMENT PRIMARY KEY,
-    itemID INT NOT NULL UNIQUE,
-    stock_qty INT NOT NULL DEFAULT 0,
-    min_stock_level INT NOT NULL DEFAULT 10,
-    reorder_point INT NOT NULL DEFAULT 5,
-    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (itemID) REFERENCES items(itemID) ON DELETE CASCADE
-)";
-executeQuery($createInventoryTable);
+// Ensure inventory table and required columns exist (self-healing)
+function ensure_inventory_schema() {
+    // Create table if missing (minimal schema)
+    $createSql = "CREATE TABLE IF NOT EXISTS inventory (
+        inventoryID INT AUTO_INCREMENT PRIMARY KEY,
+        itemID INT NOT NULL UNIQUE,
+        stock_qty INT NOT NULL DEFAULT 0
+    )";
+    executeQuery($createSql);
+
+    // Add missing columns if needed
+    $cols = [
+        'min_stock_level' => "ALTER TABLE inventory ADD COLUMN IF NOT EXISTS min_stock_level INT NOT NULL DEFAULT 10",
+        'reorder_point'   => "ALTER TABLE inventory ADD COLUMN IF NOT EXISTS reorder_point INT NOT NULL DEFAULT 5",
+        'last_updated'    => "ALTER TABLE inventory ADD COLUMN IF NOT EXISTS last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+    ];
+
+    foreach ($cols as $col => $ddl) {
+        // Use non-prepared query for SHOW COLUMNS to avoid driver limitations
+        $rs = executeQuery("SHOW COLUMNS FROM inventory LIKE '" . $col . "'");
+        if (!$rs || mysqli_num_rows($rs) === 0) {
+            executeQuery($ddl);
+        }
+    }
+
+    // Ensure unique index on itemID
+    $idx = executeQuery("SHOW INDEX FROM inventory WHERE Key_name = 'uq_item'");
+    if (!$idx || mysqli_num_rows($idx) === 0) {
+        // Check if itemID already has a unique index
+        $idx2 = executeQuery("SHOW INDEX FROM inventory WHERE Column_name = 'itemID' AND Non_unique = 0");
+        if (!$idx2 || mysqli_num_rows($idx2) === 0) {
+            executeQuery("ALTER TABLE inventory ADD UNIQUE KEY uq_item (itemID)");
+        }
+    }
+}
+
+ensure_inventory_schema();
+
+// Schema is ensured by ensure_inventory_schema() above; no duplicate CREATE needed
 
 $success = "";
 $error = "";
@@ -87,21 +115,31 @@ if(isset($_POST['action'])){
                 $error = "Invalid data provided!";
             }
             break;
+        case 'sync':
+            // Ensure inventory rows exist for all items
+            $syncSql = "INSERT IGNORE INTO inventory (itemID, stock_qty, min_stock_level, reorder_point)
+                        SELECT i.itemID, 0, 10, 5 FROM items i";
+            $ok = executePreparedUpdate($syncSql, "", []);
+            if($ok !== false){
+                $success = "Inventory synced for all items (missing rows added).";
+            } else {
+                $error = "Failed to sync inventory!";
+            }
+            break;
     }
 }
 
 // Get selected category for filter (optional)
 $selectedCategoryID = isset($_GET['categoryID']) ? (int)$_GET['categoryID'] : 0;
 
-// Get inventory with item details
+// Get inventory with item details (show ALL items regardless of status)
 $query = "SELECT i.*, c.categoryID, c.categoryName, inv.stock_qty, inv.min_stock_level, inv.reorder_point, inv.last_updated 
           FROM items i 
           LEFT JOIN categories c ON i.categoryID = c.categoryID
-          LEFT JOIN inventory inv ON i.itemID = inv.itemID 
-          WHERE i.status = 'Active'";
+          LEFT JOIN inventory inv ON i.itemID = inv.itemID";
 
 if ($selectedCategoryID > 0) {
-    $query .= " AND i.categoryID = ?";
+    $query .= " WHERE i.categoryID = ?";
     $result = executePreparedQuery($query . " ORDER BY c.categoryName, i.packageName", "i", [$selectedCategoryID]);
 } else {
     $result = executePreparedQuery($query . " ORDER BY c.categoryName, i.packageName", "", []);
@@ -109,6 +147,7 @@ if ($selectedCategoryID > 0) {
 
 // Group products by category
 $productsByCategory = [];
+$usingFallbackSimple = false;
 if ($result && mysqli_num_rows($result) > 0) {
     while($row = mysqli_fetch_assoc($result)) {
         $categoryID = $row['categoryID'] ?? 0;
@@ -122,6 +161,18 @@ if ($result && mysqli_num_rows($result) > 0) {
         }
         
         $productsByCategory[$categoryID]['products'][] = $row;
+    }
+} else {
+    // Final fallback: fetch items without joins
+    $fallbackRs = executePreparedQuery("SELECT * FROM items ORDER BY packageName", "", []);
+    if ($fallbackRs && mysqli_num_rows($fallbackRs) > 0) {
+        $usingFallbackSimple = true;
+        $productsByCategory[0] = ['categoryName' => 'All Items', 'products' => []];
+        while($row = mysqli_fetch_assoc($fallbackRs)) {
+            $row['stock_qty'] = $row['stock_qty'] ?? 0;
+            $row['min_stock_level'] = $row['min_stock_level'] ?? 10;
+            $productsByCategory[0]['products'][] = $row;
+        }
     }
 }
 
@@ -150,9 +201,17 @@ include(__DIR__ . "/includes/header.php");
             </form>
         </div>
     </div>
-    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal">
-        <i class="fas fa-plus me-2"></i>Add Item to Inventory
-    </button>
+    <div class="d-flex gap-2">
+        <form method="POST" class="m-0">
+            <input type="hidden" name="action" value="sync">
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="fas fa-sync me-2"></i>Sync Inventory Rows
+            </button>
+        </form>
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            <i class="fas fa-plus me-2"></i>Add Item to Inventory
+        </button>
+    </div>
 </div>
 
 <?php if($success): ?>
@@ -168,6 +227,17 @@ include(__DIR__ . "/includes/header.php");
     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 <?php endif; ?>
+
+<?php if(!empty($usingFallbackSimple)): ?>
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    Showing items via a simplified fallback (no joins). Consider ensuring categories/inventory tables are populated.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="mt-1 small">Tip: Use "Sync Inventory Rows" to create missing inventory entries.</div>
+</div>
+<?php endif; ?>
+
+ 
 
 <?php if (!empty($productsByCategory)): ?>
     <?php foreach($productsByCategory as $categoryID => $categoryData): ?>
@@ -268,7 +338,7 @@ include(__DIR__ . "/includes/header.php");
                             <select class="form-select" name="itemID" id="itemSelect" required>
                                 <option value="">Choose an item...</option>
                                 <?php
-                                $itemsQuery = "SELECT itemID, packageName FROM items WHERE status = 'Active' AND itemID NOT IN (SELECT COALESCE(itemID, 0) FROM inventory WHERE itemID IS NOT NULL) ORDER BY packageName";
+                                $itemsQuery = "SELECT itemID, packageName FROM items WHERE itemID NOT IN (SELECT COALESCE(itemID, 0) FROM inventory WHERE itemID IS NOT NULL) ORDER BY packageName";
                                 $itemsResult = executePreparedQuery($itemsQuery, "", []);
                                 while($item = mysqli_fetch_assoc($itemsResult)):
                                 ?>

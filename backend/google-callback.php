@@ -1,7 +1,25 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
-// Vendor autoload is in the root directory, not backend
-require_once __DIR__ . '/../vendor/autoload.php';
+// Load Composer autoload if available; otherwise, show a friendly error.
+$autoloadPath = __DIR__ . '/../vendor/autoload.php';
+if (!file_exists($autoloadPath)) {
+    $error = "Google login is not available on this server: missing vendor/autoload.php. Please install dependencies with Composer (composer require google/apiclient) or disable the Google login button.";
+    include("includes/login-header.php");
+    ?>
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="text-center mb-4">
+          <img src="../frontend/images/logo.png" alt="Bakery Logo" class="auth-logo mb-3">
+          <h2 class="auth-title mb-1">Authentication Error</h2>
+        </div>
+        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+        <div class="text-center mt-3">
+          <a href="login.php" class="btn btn-brown">Back to Login</a>
+        </div>
+      </div>
+    </div>
+    <?php include("includes/login-footer.php"); exit(); }
+require_once $autoloadPath;
 
 use Google\Client;
 use Google\Service\Oauth2;

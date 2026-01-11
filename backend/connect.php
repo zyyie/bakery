@@ -3,7 +3,7 @@
   $dbhost = "localhost";
 	$dbuser = "root";
 	$dbpass = "";
-	$db = "DB_bakery";
+	$db = "db_bakery";
 
 	$conn = new mysqli($dbhost, $dbuser, $dbpass, $db);
 $GLOBALS['db_last_error'] = null;

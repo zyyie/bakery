@@ -1,10 +1,24 @@
 <?php
 
+$localSecrets = [];
+$localSecretsPath = __DIR__ . '/secrets.local.php';
+if (file_exists($localSecretsPath)) {
+    $maybe = require $localSecretsPath;
+    if (is_array($maybe)) {
+        $localSecrets = $maybe;
+    }
+}
+
+$clientId = getenv('PAYPAL_CLIENT_ID');
+$clientSecret = getenv('PAYPAL_CLIENT_SECRET');
+
 return [
-    'mode' => 'sandbox', // Change to 'live' for production
-    'client_id' => 'AUO2Jg_mZ6NDkQ24pRZvhOg9GmtGtTRine1LBgNQlivtJtZKo1nlrLSDzJQjBA-hEBxeW2lWVlIeyrbC', // Replace with your PayPal Sandbox Client ID
-    'client_secret' => 'EEtAHeM9_7VAtY3NlEvD4TwmNAuDWtNnctkuCsmQUGv6bK4ojIVa5o2KOIA6Ip47ZA1Dnjhm3H1D_lHO', // Replace with your PayPal Sandbox Client Secret
-    'currency' => 'PHP',
+    'mode' => getenv('PAYPAL_MODE') ?: 'sandbox', // Change to 'live' for production
+    'client_id' => ($localSecrets['paypal_client_id'] ?? null)
+        ?: (($clientId && trim($clientId) !== '') ? $clientId : 'YOUR_PAYPAL_CLIENT_ID_HERE'),
+    'client_secret' => ($localSecrets['paypal_client_secret'] ?? null)
+        ?: (($clientSecret && trim($clientSecret) !== '') ? $clientSecret : 'YOUR_PAYPAL_CLIENT_SECRET_HERE'),
+    'currency' => getenv('PAYPAL_CURRENCY') ?: 'PHP',
 ];
 
 /*

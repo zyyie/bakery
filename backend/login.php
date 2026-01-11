@@ -17,6 +17,11 @@ function getGoogleLoginUrl() {
     if($config['client_id'] === 'YOUR_GOOGLE_CLIENT_ID_HERE' || empty($config['client_id'])) {
         return null; // Google OAuth not configured
     }
+    // Hide button if composer dependencies are not installed
+    $autoloadPath = __DIR__ . '/../vendor/autoload.php';
+    if (!file_exists($autoloadPath)) {
+        return null;
+    }
     
     // Use the helper function for consistent redirect URI
     $redirectUri = get_google_redirect_uri();

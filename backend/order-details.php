@@ -17,6 +17,118 @@ if(!$order){
   exit();
 }
 
+$addr = [
+  'flatNumber' => null,
+  'streetName' => null,
+  'area' => null,
+  'landmark' => null,
+  'city' => null,
+  'state' => null,
+  'zipcode' => null,
+];
+$addressLabel = null;
+
+if (!empty($order['shippingAddressID'])) {
+  $addrQuery = "SELECT label, flatNumber, streetName, area, landmark, city, state, zipcode FROM addresses WHERE addressID = ?";
+  $addrResult = executePreparedQuery($addrQuery, "i", [intval($order['shippingAddressID'])]);
+  $addrRow = mysqli_fetch_assoc($addrResult);
+  if ($addrRow) {
+    $addressLabel = $addrRow['label'] ?? null;
+    unset($addrRow['label']);
+    $addr = array_merge($addr, $addrRow);
+  } else {
+    // Fallback to legacy order columns if address record not found
+    $addr['flatNumber'] = $order['flatNumber'] ?? null;
+    $addr['streetName'] = $order['streetName'] ?? null;
+    $addr['area'] = $order['area'] ?? null;
+    $addr['landmark'] = $order['landmark'] ?? null;
+    $addr['city'] = $order['city'] ?? null;
+    $addr['state'] = $order['state'] ?? null;
+    $addr['zipcode'] = $order['zipcode'] ?? null;
+  }
+} else {
+  $addr['flatNumber'] = $order['flatNumber'] ?? null;
+  $addr['streetName'] = $order['streetName'] ?? null;
+  $addr['area'] = $order['area'] ?? null;
+  $addr['landmark'] = $order['landmark'] ?? null;
+  $addr['city'] = $order['city'] ?? null;
+  $addr['state'] = $order['state'] ?? null;
+  $addr['zipcode'] = $order['zipcode'] ?? null;
+}
+
+$line1Parts = array_values(array_filter([
+  $addr['flatNumber'],
+  $addr['streetName']
+], function($v){ return !is_null($v) && $v !== ''; }));
+$line2Parts = array_values(array_filter([
+  $addr['area'],
+  $addr['landmark']
+], function($v){ return !is_null($v) && $v !== ''; }));
+$line3LeftParts = array_values(array_filter([
+  $addr['city'],
+  $addr['state']
+], function($v){ return !is_null($v) && $v !== ''; }));
+// De-duplicate if city and state are the same (case-insensitive)
+if (count($line3LeftParts) === 2 && strcasecmp($line3LeftParts[0], $line3LeftParts[1]) === 0) {
+  $line3LeftParts = [$line3LeftParts[0]];
+}
+$line3 = implode(', ', $line3LeftParts);
+$zip = '';
+if (isset($addr['zipcode'])) {
+  $z = trim((string)$addr['zipcode']);
+  if ($z !== '' && $z !== '0000') { $zip = $z; }
+}
+if ($zip !== '') {
+  $line3 .= ($line3 !== '' ? ' - ' : '') . $zip;
+}
+
+// If all lines are empty, try final fallback to legacy values (in case of partial data)
+if (empty($line1Parts) && empty($line2Parts) && $line3 === '') {
+  $legacy = [
+    'flatNumber' => $order['flatNumber'] ?? null,
+    'streetName' => $order['streetName'] ?? null,
+    'area' => $order['area'] ?? null,
+    'landmark' => $order['landmark'] ?? null,
+    'city' => $order['city'] ?? null,
+    'state' => $order['state'] ?? null,
+    'zipcode' => $order['zipcode'] ?? null,
+  ];
+  $line1Parts = array_values(array_filter([$legacy['flatNumber'], $legacy['streetName']], function($v){ return !is_null($v) && $v !== ''; }));
+  $line2Parts = array_values(array_filter([$legacy['area'], $legacy['landmark']], function($v){ return !is_null($v) && $v !== ''; }));
+  $line3LeftParts = array_values(array_filter([$legacy['city'], $legacy['state']], function($v){ return !is_null($v) && $v !== ''; }));
+  $line3 = implode(', ', $line3LeftParts);
+  $zip = '';
+  if (isset($legacy['zipcode'])) {
+    $z = trim((string)$legacy['zipcode']);
+    if ($z !== '' && $z !== '0000') { $zip = $z; }
+  }
+  if ($zip !== '') {
+    $line3 .= ($line3 !== '' ? ' - ' : '') . $zip;
+  }
+}
+
+// If still empty (e.g., legacy columns dropped), try user's default address as a final fallback
+if (empty($line1Parts) && empty($line2Parts) && $line3 === '') {
+  $defAddrQuery = "SELECT label, flatNumber, streetName, area, landmark, city, state, zipcode FROM addresses WHERE userID = ? AND is_default = 1 LIMIT 1";
+  $defAddrResult = executePreparedQuery($defAddrQuery, "i", [$userID]);
+  $def = mysqli_fetch_assoc($defAddrResult);
+  if ($def) {
+    $addressLabel = $def['label'] ?? $addressLabel;
+    $line1Parts = array_values(array_filter([$def['flatNumber'] ?? null, $def['streetName'] ?? null], function($v){ return !is_null($v) && $v !== ''; }));
+    $line2Parts = array_values(array_filter([$def['area'] ?? null, $def['landmark'] ?? null], function($v){ return !is_null($v) && $v !== ''; }));
+    $line3LeftParts = array_values(array_filter([$def['city'] ?? null, $def['state'] ?? null], function($v){ return !is_null($v) && $v !== ''; }));
+    $line3 = implode(', ', $line3LeftParts);
+    $zip = '';
+    if (isset($def['zipcode'])) {
+      $z = trim((string)$def['zipcode']);
+      if ($z !== '' && $z !== '0000') { $zip = $z; }
+    }
+    if ($zip !== '') {
+      $line3 .= ($line3 !== '' ? ' - ' : '') . $zip;
+    }
+  }
+}
+
 $itemsQuery = "SELECT order_items.*, items.packageName, items.itemImage 
                FROM order_items 
                LEFT JOIN items ON order_items.itemID = items.itemID 
@@ -57,12 +169,32 @@ include(__DIR__ . "/includes/header.php");
 
   <div class="checkout-form-card mb-4">
     <div class="checkout-form-header">
-      <h4><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h4>
+      <h4 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h4>
     </div>
     <div class="checkout-form-body">
-      <p><?php echo $order['flatNumber']; ?>, <?php echo $order['streetName']; ?></p>
-      <p><?php echo $order['area']; ?>, <?php echo $order['landmark']; ?></p>
-      <p><?php echo $order['city']; ?>, <?php echo $order['state']; ?> - <?php echo $order['zipcode']; ?></p>
+      <?php
+        $addrLine1 = !empty($line1Parts) ? implode(', ', $line1Parts) : '';
+        $addrLine2 = !empty($line2Parts) ? implode(', ', $line2Parts) : '';
+        $addrLine3 = $line3;
+        $hasAnyAddr = ($addrLine1 !== '' || $addrLine2 !== '' || $addrLine3 !== '');
+      ?>
+
+      <p><strong>Full Name:</strong> <?php echo e($order['fullName']); ?></p>
+      <?php if (!empty($order['contactNumber'])) : ?>
+        <p><strong>Contact Number:</strong> <?php echo e($order['contactNumber']); ?></p>
+      <?php endif; ?>
+
+      <?php if ($hasAnyAddr): ?>
+        <p><strong>Address:</strong> <?php echo e($addrLine1); ?></p>
+        <?php if ($addrLine2 !== ''): ?>
+          <p><strong>Additional:</strong> <?php echo e($addrLine2); ?></p>
+        <?php endif; ?>
+        <?php if ($addrLine3 !== ''): ?>
+          <p><strong>City/State/ZIP:</strong> <?php echo e($addrLine3); ?></p>
+        <?php endif; ?>
+      <?php else: ?>
+        <p class="text-muted mb-0">No delivery address on file.</p>
+      <?php endif; ?>
     </div>
   </div>
 

@@ -6,3 +6,5 @@ config/email.php
 test-email.php
 download-phpmailer.ps1
 
+backend/config/secrets.local.php
+

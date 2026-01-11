@@ -112,6 +112,31 @@ if($selectedCouponCode && isset($availableCoupons[$selectedCouponCode])){
   }
 }
 
+// Recompute shipping based on cart subtotal and quantity if no free-shipping coupon applied
+if (!$selectedCoupon) {
+  $cart = $_SESSION['cart'] ?? [];
+  $cartSubtotalDynamic = 0;
+  $totalQuantityDynamic = 0;
+  foreach($cart as $itemID => $quantity){
+    $itemID = intval($itemID);
+    $quantity = intval($quantity);
+    $itemResult = executePreparedQuery("SELECT price FROM items WHERE itemID = ? AND status = 'Active'", "i", [$itemID]);
+    if($itemResult && mysqli_num_rows($itemResult) > 0){
+      $row = mysqli_fetch_assoc($itemResult);
+      $cartSubtotalDynamic += floatval($row['price']) * $quantity;
+      $totalQuantityDynamic += $quantity;
+    }
+  }
+  // Tiered, cheaper shipping
+  if ($totalQuantityDynamic >= 10 || $cartSubtotalDynamic >= 500) {
+    $shippingFee = 0.00;
+  } elseif ($totalQuantityDynamic >= 5 || $cartSubtotalDynamic >= 200) {
+    $shippingFee = 20.00;
+  } else {
+    $shippingFee = 30.00;
+  }
+}
+
 // Place order
 if(isset($_POST['placeOrder'])){
   $fullName = trim($_POST['fullName']);
@@ -674,6 +699,17 @@ function showToast(title, message, type = 'success') {
     const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
       if (input.name && input.type !== 'file') {
+        if (input.type === 'radio') {
+          if (input.checked) {
+            formData[input.name] = input.value;
+          }
+          return;
+        }
+        if (input.type === 'checkbox') {
+          formData[input.name] = input.checked ? (input.value || '1') : '';
+          return;
+        }
+
         formData[input.name] = input.value;
       }
     });
@@ -688,10 +724,24 @@ function showToast(title, message, type = 'success') {
       try {
         const formData = JSON.parse(saved);
         Object.keys(formData).forEach(name => {
-          const input = form.querySelector(`[name="${name}"]`);
-          if (input && input.type !== 'file') {
-            input.value = formData[name];
+          const anyInput = form.querySelector(`[name="${name}"]`);
+          if (!anyInput || anyInput.type === 'file') return;
+
+          if (anyInput.type === 'radio') {
+            const val = formData[name];
+            const radioToCheck = form.querySelector(`input[type="radio"][name="${name}"][value="${CSS.escape(String(val))}"]`);
+            if (radioToCheck) {
+              radioToCheck.checked = true;
+            }
+            return;
           }
+
+          if (anyInput.type === 'checkbox') {
+            anyInput.checked = !!formData[name];
+            return;
+          }
+
+          anyInput.value = formData[name];
         });
       } catch (e) {
         console.error('Error restoring form data:', e);
@@ -775,6 +825,18 @@ function showToast(title, message, type = 'success') {
       }
     });
   });
+
+  // Initialize payment UI on page load (PayPal buttons won't render unless loadPayPal() runs)
+  const initiallySelected = document.querySelector('input[name="paymentMethod"]:checked');
+  if (initiallySelected) {
+    initiallySelected.dispatchEvent(new Event('change'));
+  } else {
+    const paypalRadio = document.querySelector('input[name="paymentMethod"][value="paypal"]');
+    if (paypalRadio) {
+      paypalRadio.checked = true;
+      paypalRadio.dispatchEvent(new Event('change'));
+    }
+  }
 
   // Form validation
   function validateForm() {
