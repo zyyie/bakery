@@ -22,6 +22,16 @@ function adminRegenerateSession() {
         $_SESSION['admin_last_regeneration'] = time();
         session_regenerate_id(true);
     }
+    
+    // Auto-deliver orders: Check and update orders with delivery date today or past
+    // This runs on every admin page visit to ensure orders are auto-delivered
+    $today = date('Y-m-d');
+    $autoDeliverQuery = "UPDATE orders 
+                         SET orderStatus = 'Delivered' 
+                         WHERE deliveryDate IS NOT NULL 
+                         AND DATE(deliveryDate) <= ? 
+                         AND orderStatus = 'On The Way'";
+    executePreparedUpdate($autoDeliverQuery, "s", [$today]);
 }
 
 function adminGetNotifications() {

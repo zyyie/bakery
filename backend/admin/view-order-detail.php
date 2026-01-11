@@ -1,6 +1,17 @@
 <?php
 session_start();
 require_once __DIR__ . '/../connect.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+
+// Auto-deliver orders: Check and update orders with delivery date today or past
+$today = date('Y-m-d');
+$autoDeliverQuery = "UPDATE orders 
+                     SET orderStatus = 'Delivered' 
+                     WHERE deliveryDate IS NOT NULL 
+                     AND DATE(deliveryDate) <= ? 
+                     AND orderStatus = 'On The Way'";
+executePreparedUpdate($autoDeliverQuery, "s", [$today]);
+
 include(__DIR__ . "/includes/header.php");
 
 $orderID = intval($_GET['viewid']);
@@ -8,7 +19,7 @@ $orderQuery = "SELECT * FROM orders WHERE orderID = ?";
 $orderResult = executePreparedQuery($orderQuery, "i", [$orderID]);
 $order = mysqli_fetch_assoc($orderResult);
 
-$itemsQuery = "SELECT order_items.*, items.packageName, items.itemImage 
+$itemsQuery = "SELECT order_items.*, items.* 
                FROM order_items 
                LEFT JOIN items ON order_items.itemID = items.itemID 
                WHERE order_items.orderID = ?";
@@ -31,17 +42,27 @@ $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
     <h5 class="text-primary">Delivery Address</h5>
     <div class="row">
       <div class="col-md-6">
-        <p><strong>Order Date:</strong> <?php echo $order['deliveryDate']; ?></p>
         <p><strong>Flat Number:</strong> <?php echo $order['flatNumber']; ?></p>
         <p><strong>Street Name:</strong> <?php echo $order['streetName']; ?></p>
-        <p><strong>Area:</strong> <?php echo $order['area']; ?></p>
         <p><strong>Landmark:</strong> <?php echo $order['landmark']; ?></p>
-      </div>
-      <div class="col-md-6">
         <p><strong>City:</strong> <?php echo $order['city']; ?></p>
         <p><strong>Zipcode:</strong> <?php echo $order['zipcode']; ?></p>
-        <p><strong>State:</strong> <?php echo $order['state']; ?></p>
+      </div>
+      <div class="col-md-6">
         <p><strong>Order Date:</strong> <?php echo $order['orderDate']; ?></p>
+        <p>
+          <strong>Delivery Date:</strong> 
+          <input type="date" 
+                 class="form-control form-control-sm d-inline-block" 
+                 id="deliveryDateInput" 
+                 value="<?php echo !empty($order['deliveryDate']) ? date('Y-m-d', strtotime($order['deliveryDate'])) : ''; ?>" 
+                 min="<?php echo date('Y-m-d'); ?>"
+                 style="width: auto; display: inline-block; margin-left: 10px;"
+                 data-orderid="<?php echo $orderID; ?>">
+          <button type="button" class="btn btn-sm btn-primary ms-2" id="saveDeliveryDateBtn">
+            <i class="fas fa-save"></i> Save
+          </button>
+        </p>
         <p><strong>Order Final Status:</strong> <?php echo $order['orderStatus']; ?></p>
       </div>
     </div>
@@ -73,8 +94,17 @@ $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
         <tr>
           <td><?php echo $count++; ?></td>
           <td>
-            <img src="<?php echo $item['itemImage'] ? '../../uploads/'.$item['itemImage'] : 'https://via.placeholder.com/80'; ?>" 
-                 style="width: 80px; height: 80px; object-fit: cover;">
+            <?php 
+            // Use product_image_url function if available, otherwise fallback
+            if (function_exists('product_image_url')) {
+              $imageUrl = product_image_url($item, 2); // depth 2 for admin (admin is 2 levels deep)
+            } else {
+              $imageUrl = $item['itemImage'] ? '../../uploads/'.$item['itemImage'] : '../../frontend/images/placeholder.jpg';
+            }
+            ?>
+            <img src="<?php echo $imageUrl; ?>" 
+                 alt="<?php echo htmlspecialchars($item['packageName']); ?>"
+                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
           </td>
           <td><?php echo $item['packageName']; ?></td>
           <td><?php echo $order['orderNumber']; ?></td>
@@ -121,6 +151,11 @@ $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
               <option value="Cancelled" <?php echo $order['orderStatus'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
             </select>
           </div>
+          <div class="mb-3">
+            <label class="form-label">Estimated Delivery Date:</label>
+            <input type="date" class="form-control" name="deliveryDate" value="<?php echo !empty($order['deliveryDate']) ? date('Y-m-d', strtotime($order['deliveryDate'])) : ''; ?>" min="<?php echo date('Y-m-d'); ?>">
+            <small class="text-muted">Set the estimated delivery date for this order</small>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
@@ -132,4 +167,39 @@ $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
 </div>
 
 <?php include(__DIR__ . "/includes/footer.php"); ?>
+
+<script>
+// Save delivery date via AJAX
+document.getElementById('saveDeliveryDateBtn')?.addEventListener('click', function() {
+  const deliveryDateInput = document.getElementById('deliveryDateInput');
+  const orderID = deliveryDateInput.getAttribute('data-orderid');
+  const deliveryDate = deliveryDateInput.value;
+  
+  if(!deliveryDate) {
+    alert('Please select a delivery date');
+    return;
+  }
+  
+  fetch('update-delivery-date.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `orderID=${orderID}&deliveryDate=${encodeURIComponent(deliveryDate)}`
+  })
+  .then(response => response.json())
+  .then(data => {
+    if(data.success) {
+      alert('Delivery date updated successfully!');
+      location.reload();
+    } else {
+      alert('Error updating delivery date: ' + (data.message || 'Unknown error'));
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error updating delivery date. Please try again.');
+  });
+});
+</script>
 

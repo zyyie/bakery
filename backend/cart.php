@@ -1,6 +1,17 @@
 <?php
 require_once __DIR__ . '/includes/bootstrap.php';
 
+// Check if user has valid mobile number (if logged in)
+if(isset($_SESSION['userID'])){
+  $userID = intval($_SESSION['userID']);
+  if(!userHasValidMobileNumber($userID)){
+    // Store current URL to return after updating mobile number
+    $_SESSION['redirect_after_mobile_update'] = 'cart.php';
+    header("Location: update-mobile.php");
+    exit();
+  }
+}
+
 // Add to cart
 if(isset($_POST['itemID']) && isset($_POST['quantity'])){
   if(!isset($_SESSION['cart'])){

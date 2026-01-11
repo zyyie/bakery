@@ -299,6 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentItemId = 0;
   let currentImages = [];
   let currentImageIdx = 0;
+  let currentUnitPrice = 0; // base price per item/pack
 
   function setPackageType(type) {
     const qvTypeBox = document.getElementById('qvTypeBox');
@@ -337,6 +338,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (img) img.src = currentImages[currentImageIdx];
   }
 
+  function updateDisplayedPrice() {
+    const priceEl = document.getElementById('qvPrice');
+    const qtyEl = document.getElementById('qvQty');
+    if (!priceEl || !qtyEl || !currentUnitPrice) return;
+    let qty = parseInt(qtyEl.value || '1', 10);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    const total = currentUnitPrice * qty;
+    priceEl.textContent = `₱${total.toFixed(2)}`;
+  }
+
   if (qvQtyPresets) {
     qvQtyPresets.innerHTML = presets.map(n => `<button type="button" class="btn btn-outline-brown btn-sm qv-preset" data-n="${n}">${n} pcs</button>`).join('');
     qvQtyPresets.addEventListener('click', (e) => {
@@ -346,16 +357,19 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!btn) return;
       const n = parseInt(btn.getAttribute('data-n') || '1', 10);
       if (qvQtyInput) qvQtyInput.value = String(Math.max(1, n));
+      updateDisplayedPrice();
     });
   }
 
   if (qvMinus) qvMinus.addEventListener('click', () => {
     const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
     if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v - 1));
+    updateDisplayedPrice();
   });
   if (qvPlus) qvPlus.addEventListener('click', () => {
     const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
     if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v + 1));
+    updateDisplayedPrice();
   });
   if (qvTypeBox) qvTypeBox.addEventListener('click', () => setPackageType('box'));
   if (qvTypePack) qvTypePack.addEventListener('click', () => setPackageType('pack'));
@@ -578,7 +592,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (nameEl) nameEl.textContent = item.packageName || '';
         if (catEl) catEl.textContent = item.categoryName || '';
-        if (priceEl) priceEl.textContent = `₱${item.price || ''}`;
+        // Store base unit price and show initial total based on quantity
+        currentUnitPrice = parseFloat(item.price || '0') || 0;
+        if (priceEl) {
+          updateDisplayedPrice();
+        }
         if (descEl) descEl.textContent = item.foodDescription || '';
         if (contEl) contEl.textContent = item.itemContains || '';
         if (titleEl) titleEl.textContent = item.packageName || 'Product Details';
@@ -635,6 +653,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const n = parseInt(btn.getAttribute('data-n') || '1', 10);
             const qvQtyInputNew = document.getElementById('qvQty');
             if (qvQtyInputNew) qvQtyInputNew.value = String(Math.max(1, n));
+            updateDisplayedPrice();
             // Update active state
             qvQtyPresetsEl.querySelectorAll('.quantity-preset').forEach(p => p.classList.remove('active'));
             btn.classList.add('active');
@@ -648,12 +667,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const qvTypePackNew = document.getElementById('qvTypePack');
 
         if (qvMinusNew) qvMinusNew.addEventListener('click', () => {
-          const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
-          if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v - 1));
+          // Get fresh reference to quantity input
+          const qtyInputEl = document.getElementById('qvQty');
+          const v = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
+          if (qtyInputEl) qtyInputEl.value = String(Math.max(1, v - 1));
+          updateDisplayedPrice();
         });
         if (qvPlusNew) qvPlusNew.addEventListener('click', () => {
-          const v = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
-          if (qvQtyInput) qvQtyInput.value = String(Math.max(1, v + 1));
+          // Get fresh reference to quantity input
+          const qtyInputEl = document.getElementById('qvQty');
+          const v = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
+          if (qtyInputEl) qtyInputEl.value = String(Math.max(1, v + 1));
+          updateDisplayedPrice();
         });
         if (qvTypeBoxNew) qvTypeBoxNew.addEventListener('click', () => setPackageType('box'));
         if (qvTypePackNew) qvTypePackNew.addEventListener('click', () => setPackageType('pack'));
@@ -686,7 +711,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const qvBuyNew = document.getElementById('qvBuy');
 
         if (qvAddNew) qvAddNew.addEventListener('click', async () => {
-          const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+          // Get fresh reference to quantity input from the dynamically loaded modal
+          const qtyInputEl = document.getElementById('qvQty');
+          const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
           const btn = qvAddNew;
           const originalText = btn.innerHTML;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
@@ -707,7 +734,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (qvBuyNew) qvBuyNew.addEventListener('click', async () => {
-          const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+          // Get fresh reference to quantity input from the dynamically loaded modal
+          const qtyInputEl = document.getElementById('qvQty');
+          const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
           const btn = qvBuyNew;
           const originalText = btn.innerHTML;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
@@ -887,7 +916,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const qvBuy = document.getElementById('qvBuy');
 
   if (qvAdd) qvAdd.addEventListener('click', async () => {
-    const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+    // Get fresh reference to quantity input
+    const qtyInputEl = document.getElementById('qvQty');
+    const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
     try {
       await apiAddToCart(currentItemId, Math.max(1, qty));
       window.location.href = 'cart.php';
@@ -897,7 +928,9 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   if (qvBuy) qvBuy.addEventListener('click', async () => {
-    const qty = qvQtyInput ? parseInt(qvQtyInput.value || '1', 10) : 1;
+    // Get fresh reference to quantity input
+    const qtyInputEl = document.getElementById('qvQty');
+    const qty = qtyInputEl ? parseInt(qtyInputEl.value || '1', 10) : 1;
     try {
       await apiAddToCart(currentItemId, Math.max(1, qty));
       window.location.href = 'checkout.php';

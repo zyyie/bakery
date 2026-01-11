@@ -3,13 +3,15 @@
 if (session_status() === PHP_SESSION_NONE) {
     // Set secure session parameters
     $cookieParams = session_get_cookie_params();
+    // Use 'Lax' instead of 'Strict' for SameSite to allow OAuth redirects
+    // 'Lax' still provides good security while allowing cross-site redirects (like OAuth)
     session_set_cookie_params([
         'lifetime' => 86400, // 24 hours
         'path' => '/',
         'domain' => '',
         'secure' => isset($_SERVER['HTTPS']),
         'httponly' => true,
-        'samesite' => 'Strict'
+        'samesite' => 'Lax'
     ]);
     
     session_start();

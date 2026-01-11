@@ -33,8 +33,12 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     mobileNumber VARCHAR(20) NOT NULL,
     password VARCHAR(255) NOT NULL,
+    google_id VARCHAR(255) NULL UNIQUE,
     regDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add index for Google OAuth lookup
+CREATE INDEX IF NOT EXISTS idx_google_id ON users(google_id);
 
 -- Admin Table
 CREATE TABLE IF NOT EXISTS admin (
@@ -207,4 +211,9 @@ INSERT INTO pages (pageTitle, pageDescription, email, mobileNumber, pageType) VA
 ALTER TABLE enquiries 
     ADD COLUMN userID INT NULL,
     ADD FOREIGN KEY (userID) REFERENCES users(userID) ON DELETE SET NULL;
+
+-- Google OAuth Support
+-- The users table already includes google_id column (line 36) for Google OAuth authentication
+-- Index idx_google_id (line 41) is created for faster Google ID lookups
+-- Users can log in using Google OAuth or traditional email/password
 
