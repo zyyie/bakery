@@ -50,6 +50,9 @@ $notif = adminGetNotifications();
           <a class="nav-link" href="read-enquiry.php">
             <i class="fas fa-list"></i> Customer Messages
           </a>
+          <a class="nav-link" href="api-sales-report.php">
+            <i class="fas fa-chart-line"></i> API Sales Report
+          </a>
           <a class="nav-link" href="account.php">
             <i class="fas fa-user-cog"></i> Admin Account
           </a>
