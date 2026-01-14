@@ -3,6 +3,22 @@ require_once __DIR__ . '/bootstrap.php';
 requireAdminLogin();
 adminRegenerateSession();
 $notif = adminGetNotifications();
+
+// Calculate base path for navigation links
+// Get the directory of the current script relative to admin folder
+$currentScript = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+$adminPos = strpos($currentScript, '/admin/');
+$adminBasePath = '';
+if ($adminPos !== false) {
+    $pathAfterAdmin = substr($currentScript, $adminPos + 7); // +7 for '/admin/'
+    // Remove filename, keep only directory path
+    $lastSlash = strrpos($pathAfterAdmin, '/');
+    if ($lastSlash !== false) {
+        $dirPath = substr($pathAfterAdmin, 0, $lastSlash + 1);
+        $depth = substr_count($dirPath, '/');
+        $adminBasePath = str_repeat('../', $depth);
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -24,42 +40,53 @@ $notif = adminGetNotifications();
           <img src="../../frontend/images/logo.png" alt="Bakery Logo">
         </div>
         <nav class="nav flex-column">
-          <a class="nav-link" href="dashboard.php">
+          <?php
+          // Determine active page
+          $currentPage = basename($_SERVER['PHP_SELF']);
+          $currentPath = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+          $isDashboard = strpos($currentPath, 'dashboard.php') !== false;
+          $isCustomerMessages = strpos($currentPath, 'read-enquiry.php') !== false;
+          $isSmsMessages = strpos($currentPath, 'sms-messages.php') !== false;
+          ?>
+          <a class="nav-link <?php echo $isDashboard ? 'active' : ''; ?>" href="<?php echo $adminBasePath; ?>dashboard.php">
             <i class="fas fa-home"></i> Dashboard
           </a>
           <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#itemMenu">
             <i class="fas fa-list"></i> Items <i class="fas fa-chevron-right float-end"></i>
           </a>
           <div class="collapse" id="itemMenu">
-            <a class="nav-link ps-5" href="manage-category.php">Categories</a>
-            <a class="nav-link ps-5" href="add-food-package.php">Add Food Package</a>
-            <a class="nav-link ps-5" href="manage-food-package.php">Manage Food Package</a>
-            <a class="nav-link ps-5" href="inventory-management.php">Inventory</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>catalog/manage-category.php">Categories</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>catalog/add-food-package.php">Add Food Package</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>catalog/manage-food-package.php">Manage Food Package</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>catalog/inventory-management.php">Inventory</a>
           </div>
           <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#orderMenu">
             <i class="fas fa-file-alt"></i> Orders <i class="fas fa-chevron-right float-end"></i>
           </a>
           <div class="collapse" id="orderMenu">
-            <a class="nav-link ps-5" href="new-orders.php">New Orders</a>
-            <a class="nav-link ps-5" href="confirmed-orders.php">Confirmed</a>
-            <a class="nav-link ps-5" href="on-the-way-orders.php">On The Way</a>
-            <a class="nav-link ps-5" href="delivered-orders.php">Delivered</a>
-            <a class="nav-link ps-5" href="cancelled-orders.php">Cancelled</a>
-            <a class="nav-link ps-5" href="all-order.php">All Orders</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/new-orders.php">New Orders</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/confirmed-orders.php">Confirmed</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/on-the-way-orders.php">On The Way</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/delivered-orders.php">Delivered</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/cancelled-orders.php">Cancelled</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>orders/all-order.php">All Orders</a>
           </div>
-          <a class="nav-link" href="read-enquiry.php">
+          <a class="nav-link <?php echo $isCustomerMessages ? 'active' : ''; ?>" href="<?php echo $adminBasePath; ?>messages/read-enquiry.php">
             <i class="fas fa-list"></i> Customer Messages
+          </a>
+          <a class="nav-link <?php echo $isSmsMessages ? 'active' : ''; ?>" href="<?php echo $adminBasePath; ?>messages/sms-messages.php">
+            <i class="fas fa-sms"></i> SMS Messages
           </a>
           <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#reportMenu">
             <i class="fas fa-chart-line"></i> Reports <i class="fas fa-chevron-right float-end"></i>
           </a>
           <div class="collapse" id="reportMenu">
-            <a class="nav-link ps-5" href="api-sales-report.php">API Sales Report</a>
+            <a class="nav-link ps-5" href="<?php echo $adminBasePath; ?>reports/api-sales-report.php">API Sales Report</a>
           </div>
-          <a class="nav-link" href="account.php">
+          <a class="nav-link" href="<?php echo $adminBasePath; ?>auth/account.php">
             <i class="fas fa-user-cog"></i> Admin Account
           </a>
-          <a class="nav-link" href="logout.php">
+          <a class="nav-link" href="<?php echo $adminBasePath; ?>auth/logout.php">
             <i class="fas fa-sign-out-alt"></i> Logout
           </a>
         </nav>
@@ -101,8 +128,8 @@ $notif = adminGetNotifications();
                   <i class="fas fa-user"></i> <?php echo htmlspecialchars($_SESSION['adminUsername'] ?? 'Admin'); ?>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" href="account.php">Account</a></li>
-                  <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                  <li><a class="dropdown-item" href="<?php echo $adminBasePath; ?>auth/account.php">Account</a></li>
+                  <li><a class="dropdown-item" href="<?php echo $adminBasePath; ?>auth/logout.php">Logout</a></li>
                 </ul>
               </div>
             </div>

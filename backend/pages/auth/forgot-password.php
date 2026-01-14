@@ -33,14 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']) && !isset($_
             if (executePreparedUpdate($updateQuery, "ssi", [$resetCode, $expires, $user['userID']])) {
                 // Send email with code
                 try {
-                    $emailSender = new Email();
+                $emailSender = new Email();
                     if ($emailSender->sendPasswordResetCode($user['email'], $user['fullName'], $resetCode)) {
                         $message = 'A 6-digit password reset code has been sent to your email. Please check your inbox and spam folder.';
                         $showEmailForm = false;
                         $showCodeForm = true;
                         $emailSent = true;
-                    } else {
-                        $error = 'Failed to send email. Please try again later.';
+                } else {
+                    $error = 'Failed to send email. Please try again later.';
                     }
                 } catch (Exception $e) {
                     $error = 'Error sending email. Please try again later.';

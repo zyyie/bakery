@@ -188,6 +188,34 @@ function get_reset_link_base_url() {
     return $url;
 }
 
+function get_sms_base_url() {
+    // Get SMS base URL from config (PRIORITY - use this first)
+    $smsConfig = require __DIR__ . '/../config/sms.php';
+    if (!empty($smsConfig['base_url'])) {
+        return rtrim($smsConfig['base_url'], '/');
+    }
+    
+    // Fallback: use email config base_url if SMS config doesn't have one
+    $emailConfig = require __DIR__ . '/../config/email.php';
+    if (!empty($emailConfig['base_url'])) {
+        return rtrim($emailConfig['base_url'], '/');
+    }
+    
+    // Final fallback: auto-detect
+    $scheme = is_https() ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // If host is localhost, try to get the actual IP address
+    if ($host === 'localhost' || $host === '127.0.0.1' || strpos($host, 'localhost') !== false) {
+        $serverIP = get_server_ip();
+        if ($serverIP !== 'localhost' && $serverIP !== '127.0.0.1') {
+            $host = $serverIP;
+        }
+    }
+    
+    return $scheme . '://' . $host . '/bakery';
+}
+
 function set_app_cookie($name, $value, $expires) {
     $options = [
         'expires' => $expires,

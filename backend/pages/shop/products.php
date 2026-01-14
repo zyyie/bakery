@@ -94,27 +94,28 @@ include(__DIR__ . "/../../includes/header.php");
       ?>
       
       <!-- Search Bar -->
-      <div class="mb-3">
-        <form method="GET" action="products.php" class="d-flex gap-2">
+      <div class="mb-3 d-flex justify-content-end">
+        <form method="GET" action="products.php" class="d-flex gap-2 align-items-center w-100">
           <input type="hidden" name="category" value="<?php echo isset($_GET['category']) ? htmlspecialchars($_GET['category']) : ''; ?>">
-          <div class="input-group">
-            <span class="input-group-text bg-light border-end-0">
-              <i class="fas fa-search text-muted"></i>
+          <div class="input-group flex-grow-1" style="border-radius: 50px; overflow: hidden; border: 1px solid #dee2e6;">
+            <span class="input-group-text bg-light border-0" style="padding: 0.5rem 0.75rem;">
+              <i class="fas fa-search text-muted" style="font-size: 0.875rem;"></i>
             </span>
             <input type="text" 
-                   class="form-control border-start-0" 
+                   class="form-control border-0" 
                    name="search" 
                    id="searchInput"
                    placeholder="Search products..." 
                    value="<?php echo htmlspecialchars($searchTerm); ?>"
-                   autocomplete="off">
+                   autocomplete="off"
+                   style="font-size: 0.875rem; padding: 0.5rem 0.75rem; height: 40px;">
           </div>
-          <button type="submit" class="btn btn-brown">
+          <button type="submit" class="btn btn-brown rounded-pill" style="font-size: 0.875rem; padding: 0.5rem 1.25rem; height: 40px; white-space: nowrap;">
             <i class="fas fa-search me-1"></i>Search
           </button>
           <?php if (!empty($searchTerm)): ?>
             <a href="products.php<?php echo $categoryId > 0 ? '?category=' . $categoryId : ''; ?>" 
-               class="btn btn-outline-secondary">
+               class="btn btn-outline-secondary rounded-pill" style="font-size: 0.875rem; padding: 0.5rem 1.25rem; height: 40px; white-space: nowrap;">
               <i class="fas fa-times me-1"></i>Clear
             </a>
           <?php endif; ?>

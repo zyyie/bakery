@@ -27,9 +27,10 @@ if (!str_starts_with($recipient, '+')) {
 }
 
 // SMS Gateway configuration
-$gateway_url = "http://192.168.18.112:8080";
-$username = "sms";
-$password = "1234567890";
+$smsConfig = require __DIR__ . '/../../config/sms.php';
+$gateway_url = $smsConfig['gateway_url'] ?? 'http://192.168.18.112:8080';
+$username = $smsConfig['gateway_username'] ?? 'sms';
+$password = $smsConfig['gateway_password'] ?? '1234567890';
 
 $url = rtrim($gateway_url, '/') . '/messages';
 

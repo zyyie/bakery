@@ -78,3 +78,31 @@
   "sim":"sim2"
 }
 [2026-01-13 11:52:57] 
+[2026-01-14 21:16:00] INCOMING: {
+  "from":"+639930152544",
+  "text":"yes",
+  "sentStamp":1768421756000,
+  "receivedStamp":1768421758478,
+  "sim":"sim2"
+}
+[2026-01-14 21:16:00] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-14 21:16:00] ERROR: Failed to store message
+[2026-01-14 21:20:06] INCOMING: {
+  "from":"+639930152544",
+  "text":"yoww",
+  "sentStamp":1768422001000,
+  "receivedStamp":1768422005349,
+  "sim":"sim2"
+}
+[2026-01-14 21:20:06] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-14 21:20:06] ERROR: Failed to store message - Table 'db_bakery.sms_messages' doesn't exist
+[2026-01-14 21:20:06] DEBUG: Phone=+639930152544, Message=yoww, MessageID=NULL, Result=false
+[2026-01-14 21:39:22] INCOMING: {
+  "from":"+639930152544",
+  "text":"zyyie",
+  "sentStamp":1768423158000,
+  "receivedStamp":1768423161821,
+  "sim":"sim2"
+}
+[2026-01-14 21:39:22] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-14 21:39:22] STORED: From +639930152544 TO +639493380766: zyyie
