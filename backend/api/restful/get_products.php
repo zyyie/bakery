@@ -18,6 +18,44 @@ if (!hash_equals($sharedKey, (string)$receivedKey)) {
     exit;
 }
 
+// Try remote inventory API first; fallback to DB if unavailable
+$remoteHost = '192.168.18.171';
+$remotePath = '/Finals_SCHOOLCANTEEN/partials/productloop.php';
+$baseUrl = 'http://' . $remoteHost . $remotePath . '?api_key=' . rawurlencode($sharedKey);
+$tryUrls = [
+    $baseUrl,
+    preg_replace('/^http:/i', 'https:', $baseUrl)
+];
+$remoteOk = false;
+foreach ($tryUrls as $url) {
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 8,
+        CURLOPT_HEADER => false,
+    ]);
+    if (stripos($url, 'https://') === 0) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    }
+    $body = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: null;
+    curl_close($ch);
+    if ($body !== false && $code && $code >= 200 && $code < 300) {
+        $decoded = json_decode($body, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            echo json_encode($decoded, JSON_UNESCAPED_UNICODE);
+            $remoteOk = true;
+            break;
+        }
+    }
+}
+if ($remoteOk) {
+    exit;
+}
+
 // Inventory table may be optional; detect if it exists
 $hasInventory = false;
 try {

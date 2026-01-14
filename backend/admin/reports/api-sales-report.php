@@ -14,32 +14,62 @@ $validDates = preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate) && preg_match('/^\d
 // Fetch School Cafeteria API data (Live)
 $canteenData = null;
 $canteenError = null;
-$canteen_ip = "192.168.1.100";
+$canteen_ip = "192.168.18.171";
 $canteen_url = "http://$canteen_ip/Finals_SCHOOLCANTEEN/api/get_vendor_sales.php?api_key=CARNICK-CANTEEN-2026";
 
-// Set timeout for API call
-$context = stream_context_create([
-    'http' => [
-        'timeout' => 5,
-        'ignore_errors' => true
-    ]
-]);
-
-$canteenResponse = @file_get_contents($canteen_url, false, $context);
+// Fetch with cURL and HTTPS fallback
 $canteenHttpCode = null;
-if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
-    if (preg_match('/\s(\d{3})\s/', (string)$http_response_header[0], $m)) {
-        $canteenHttpCode = (int)$m[1];
+$curlErr = null;
+$responseBody = null;
+
+$tryUrls = [
+    $canteen_url,
+    // HTTPS fallback (ignore self-signed for connectivity testing)
+    preg_replace('/^http:/i', 'https:', $canteen_url)
+];
+
+foreach ($tryUrls as $idx => $url) {
+    if (!$url) continue;
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_CONNECTTIMEOUT => 3,
+        CURLOPT_TIMEOUT => 8,
+        CURLOPT_HEADER => false,
+    ]);
+    if (stripos($url, 'https://') === 0) {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     }
+    $body = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: null;
+    $errNo = curl_errno($ch);
+    $errStr = curl_error($ch);
+    curl_close($ch);
+
+    if ($body !== false && $code) {
+        $responseBody = $body;
+        $canteenHttpCode = (int)$code;
+        break;
+    }
+
+    $curlErr = "cURL error #$errNo: $errStr";
 }
-if ($canteenResponse !== false) {
-    $canteenData = json_decode($canteenResponse, true);
+
+if ($responseBody !== null && $canteenHttpCode && $canteenHttpCode >= 200 && $canteenHttpCode < 300) {
+    $canteenData = json_decode($responseBody, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         $canteenError = "Invalid JSON response from cafeteria API";
         $canteenData = null;
     }
 } else {
-    $canteenError = "Can't connect to the cafeteria server.";
+    // Single concise diagnostic; avoid redundant duplicate probes
+    $errno = 0; $errstr = '';
+    $fp = @fsockopen($canteen_ip, 80, $errno, $errstr, 2.0);
+    if ($fp) { fclose($fp); }
+    $sockHint = $fp ? '' : (" Network/port check failed (" . (string)$errno . ": " . (string)$errstr . ")");
+    $canteenError = "Can't connect to the cafeteria server." . ($sockHint !== '' ? $sockHint : '') . ($curlErr ? " Details: " . $curlErr : '');
 }
 
 $canteenConnected = (bool)($canteenData && isset($canteenData['success']) && $canteenData['success']);
