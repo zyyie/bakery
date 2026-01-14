@@ -57,6 +57,18 @@ include(__DIR__ . "/../../includes/header.php");
 ?>
 
 <div class="checkout-container">
+  <div class="mb-3">
+    <?php if(isset($_SESSION['redirect_after_mobile_update']) && $_SESSION['redirect_after_mobile_update'] === 'checkout.php'): ?>
+      <a href="cart.php" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Back to Cart
+      </a>
+    <?php else: ?>
+      <a href="user-dashboard.php" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+      </a>
+    <?php endif; ?>
+  </div>
+  
   <div class="checkout-header">
     <h1><i class="fas fa-mobile-alt me-2"></i>Update Mobile Number</h1>
     <p>Please provide a valid mobile number to continue shopping</p>

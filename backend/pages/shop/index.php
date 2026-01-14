@@ -200,8 +200,8 @@ include(__DIR__ . "/../../includes/header.php");
   <div class="container">
     <style>
       /* Scoped size tweaks for category icons on homepage */
-      .categories-section .category-icon { width: 64px; height: 64px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
-      .categories-section .category-icon i { font-size: 26px; }
+      .categories-section .category-icon { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+      .categories-section .category-icon i { font-size: 18px; }
     </style>
     <div class="text-center mb-5">
       <span class="section-label">Our Categories</span>
@@ -216,11 +216,11 @@ include(__DIR__ . "/../../includes/header.php");
       $iconMap = [
         // breads (distinct icons per category)
         'classic & basic bread' => 'fa-bread-slice',
-        'sweet bread' => 'fa-cake-candles',
+        'sweet bread' => 'fa-birthday-cake',
         'filled / stuffed bread' => 'fa-stroopwafel',
         'buns & rolls' => 'fa-hamburger',
-        'bread–cake combo' => 'fa-cake-candles',
-        'bread-cake combo' => 'fa-cake-candles', // fallback for hyphen variant
+        'bread–cake combo' => 'fa-layer-group',
+        'bread-cake combo' => 'fa-layer-group', // fallback for hyphen variant
         'special (budget-friendly)' => 'fa-star',
         // sweets
         'cookies' => 'fa-cookie-bite',
@@ -244,11 +244,6 @@ include(__DIR__ . "/../../includes/header.php");
         </div>
       </div>
       <?php endwhile; ?>
-    </div>
-    <div class="text-center mt-5">
-      <a href="products.php" class="btn btn-brown btn-lg">
-        <i class="fas fa-th me-2"></i>View All Categories
-      </a>
     </div>
   </div>
 </section>
@@ -518,11 +513,13 @@ document.addEventListener('DOMContentLoaded', function() {
       .lb-overlay.is-open{display:flex}
       .lb-content{position:relative;max-width:90vw;max-height:90vh}
       .lb-img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-      .lb-close,.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-      .lb-close{top:12px;right:12px;transform:none}
-      .lb-prev{left:12px}
-      .lb-next{right:12px}
-      @media (max-width: 768px){.lb-prev{left:8px}.lb-next{right:8px}}
+      .lb-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.9);color:#333;border:none;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;z-index:10;transition:all 0.3s ease}
+      .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.95);color:var(--brown-primary);border:3px solid var(--brown-primary);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;z-index:10;transition:all 0.3s ease;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+      .lb-prev:hover,.lb-next:hover{background:var(--brown-primary);color:#fff;transform:translateY(-50%) scale(1.1);box-shadow:0 6px 16px rgba(0,0,0,0.4)}
+      .lb-close:hover{background:rgba(255,255,255,1);transform:scale(1.1)}
+      .lb-prev{left:20px}
+      .lb-next{right:20px}
+      @media (max-width: 768px){.lb-prev{left:10px}.lb-next{right:10px}.lb-prev,.lb-next{width:50px;height:50px;font-size:20px}}
     `;
     document.head.appendChild(style);
 
@@ -530,19 +527,31 @@ document.addEventListener('DOMContentLoaded', function() {
     overlay.className = 'lb-overlay';
     overlay.innerHTML = `
       <div class="lb-content">
-        <button type="button" class="lb-close" aria-label="Close">✕</button>
-        <button type="button" class="lb-prev" aria-label="Previous">❮</button>
+        <button type="button" class="lb-close" aria-label="Close"><i class="fas fa-times"></i></button>
+        <button type="button" class="lb-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
         <img class="lb-img" alt="" />
-        <button type="button" class="lb-next" aria-label="Next">❯</button>
+        <button type="button" class="lb-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
       </div>`;
     document.body.appendChild(overlay);
 
     let imgs = [];
     let idx = 0;
     function setSrc(i){
-      idx = (i+imgs.length)%imgs.length;
+      if (imgs.length === 0) return;
+      idx = ((i % imgs.length) + imgs.length) % imgs.length;
       const img = overlay.querySelector('.lb-img');
       if (img) img.src = imgs[idx] || '';
+      // Update arrow visibility
+      const prevBtn = overlay.querySelector('.lb-prev');
+      const nextBtn = overlay.querySelector('.lb-next');
+      if (prevBtn) {
+        prevBtn.style.opacity = idx === 0 ? '0.5' : '1';
+        prevBtn.style.cursor = idx === 0 ? 'not-allowed' : 'pointer';
+      }
+      if (nextBtn) {
+        nextBtn.style.opacity = idx === imgs.length - 1 ? '0.5' : '1';
+        nextBtn.style.cursor = idx === imgs.length - 1 ? 'not-allowed' : 'pointer';
+      }
     }
     function openLightbox(images, startIdx){
       imgs = Array.isArray(images)? images.slice(): [];
@@ -561,8 +570,14 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'ArrowRight') return setSrc(idx+1);
     }
     overlay.querySelector('.lb-close')?.addEventListener('click', close);
-    overlay.querySelector('.lb-prev')?.addEventListener('click', () => setSrc(idx-1));
-    overlay.querySelector('.lb-next')?.addEventListener('click', () => setSrc(idx+1));
+    overlay.querySelector('.lb-prev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (idx > 0) setSrc(idx-1);
+    });
+    overlay.querySelector('.lb-next')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (idx < imgs.length - 1) setSrc(idx+1);
+    });
     overlay.addEventListener('click', (e)=>{ if (e.target === overlay) close(); });
 
     // expose
@@ -605,8 +620,8 @@ document.addEventListener('DOMContentLoaded', function() {
           qvBody.innerHTML = `
             <div class="row g-3">
               <div class="col-md-6">
-                <div class="mb-2" style="border-radius: 12px; overflow: hidden;">
-                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 300px; object-fit: cover;">
+                <div class="mb-2 position-relative" style="border-radius: 12px; overflow: hidden;">
+                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 400px; object-fit: contain; background: #f8f9fa; cursor: zoom-in;">
                 </div>
                 <div class="gallery-controls">
                   <button type="button" class="gallery-nav-btn" id="qvPrev" aria-label="Prev"><i class="fas fa-chevron-left"></i></button>
@@ -1029,7 +1044,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-});
+  });
 </script>
+
 
 <?php include(__DIR__ . "/../../includes/footer.php"); ?>

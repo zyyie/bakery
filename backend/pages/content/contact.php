@@ -6,23 +6,19 @@ $error = "";
 
 if(isset($_POST['name'])){
   $name = trim($_POST['name']);
-  $email = trim($_POST['email']);
-  $mobileNumber = trim($_POST['mobileNumber']);
   $message = trim($_POST['message']);
   
   // Input validation
-  if(empty($name) || empty($email) || empty($message)){
-    $error = "Name, email, and message are required!";
-  } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-    $error = "Invalid email format!";
+  if(empty($name) || empty($message)){
+    $error = "Name and message are required!";
   } else {
     // Check if user is logged in
     $userID = isset($_SESSION['userID']) ? $_SESSION['userID'] : null;
     
     $query = "INSERT INTO enquiries (userID, name, email, mobileNumber, message, enquiryDate, status) 
-              VALUES (?, ?, ?, ?, ?, NOW(), 'Unread')";
+              VALUES (?, ?, '', '', ?, NOW(), 'Unread')";
     
-    $result = executePreparedUpdate($query, "issss", [$userID, $name, $email, $mobileNumber, $message]);
+    $result = executePreparedUpdate($query, "iss", [$userID, $name, $message]);
     
     if($result !== false){
       $success = "Your inquiry has been submitted successfully! We'll get back to you soon.";
@@ -41,6 +37,12 @@ include(__DIR__ . "/../../includes/header.php");
 
 
 <div class="container contact-page my-5">
+  <div class="mb-3">
+    <a href="index.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </a>
+  </div>
+  
   <div class="row g-4">
     <div class="col-md-6">
       <div class="card shadow contact-card h-100">
@@ -114,18 +116,6 @@ include(__DIR__ . "/../../includes/header.php");
               <div class="input-group">
                 <span class="input-group-text bg-brown text-white"><i class="fas fa-user"></i></span>
                 <input type="text" class="form-control" name="name" placeholder="Your Full Name" value="<?php echo isset($_SESSION['fullName']) ? e($_SESSION['fullName']) : ''; ?>" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="input-group">
-                <span class="input-group-text bg-brown text-white"><i class="fas fa-envelope"></i></span>
-                <input type="email" class="form-control" name="email" placeholder="Your Email Address" value="<?php echo isset($_SESSION['email']) ? e($_SESSION['email']) : ''; ?>" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <div class="input-group">
-                <span class="input-group-text bg-brown text-white"><i class="fas fa-phone"></i></span>
-                <input type="tel" name="mobileNumber" class="form-control" placeholder="Your Phone Number" required>
               </div>
             </div>
             <div class="mb-3">

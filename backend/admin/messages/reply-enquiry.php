@@ -142,21 +142,17 @@ include(dirname(__DIR__) . "/includes/header.php");
         <h5 class="mb-0">Original Message</h5>
     </div>
     <div class="card-body">
+        <?php if($enquiry['email']): ?>
         <div class="row mb-3">
             <div class="col-md-6">
-                <strong>From:</strong> <?php echo e($enquiry['name']); ?> 
-                <?php if($enquiry['email']): ?>
-                &lt;<?php echo e($enquiry['email']); ?>&gt;
-                <?php endif; ?>
-            </div>
-            <div class="col-md-6">
-                <strong>Date:</strong> <?php echo date('M d, Y H:i', strtotime($enquiry['enquiryDate'])); ?>
+                <strong>Email:</strong> <?php echo e($enquiry['email']); ?>
             </div>
         </div>
+        <?php endif; ?>
         <?php if($enquiry['mobileNumber']): ?>
         <div class="row mb-3">
             <div class="col-md-6">
-                <strong>Phone:</strong> <?php echo e($enquiry['mobileNumber']); ?>
+                <strong>Mobile Number:</strong> <?php echo e($enquiry['mobileNumber']); ?>
             </div>
         </div>
         <?php endif; ?>

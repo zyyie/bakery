@@ -28,10 +28,93 @@ if(isset($_POST['applyCoupon']) && isset($_POST['ajax'])){
   $couponCode = trim($_POST['couponCode'] ?? '');
   if(!empty($couponCode)){
     $_SESSION['selected_coupon'] = $couponCode;
-    echo json_encode(['success' => true, 'message' => 'Coupon applied successfully']);
+    
+    // Recalculate totals with new coupon
+    $cart = $_SESSION['cart'] ?? [];
+    $cartSubtotal = 0;
+    $totalQuantity = 0;
+    foreach($cart as $itemID => $quantity){
+      $itemID = intval($itemID);
+      $quantity = intval($quantity);
+      $itemResult = executePreparedQuery("SELECT price FROM items WHERE itemID = ? AND status = 'Active'", "i", [$itemID]);
+      if($itemResult && mysqli_num_rows($itemResult) > 0){
+        $row = mysqli_fetch_assoc($itemResult);
+        $cartSubtotal += floatval($row['price']) * $quantity;
+        $totalQuantity += $quantity;
+      }
+    }
+    
+    // Calculate shipping and discount
+    if ($totalQuantity >= 10 || $cartSubtotal >= 500) {
+      $shippingFee = 0.00;
+    } elseif ($totalQuantity >= 5 || $cartSubtotal >= 200) {
+      $shippingFee = 20.00;
+    } else {
+      $shippingFee = 30.00;
+    }
+    
+    $discountAmount = 0;
+    if(isset($availableCoupons[$couponCode])){
+      $coupon = $availableCoupons[$couponCode];
+      if($coupon['type'] === 'percentage'){
+        $discountAmount = $cartSubtotal * ($coupon['value'] / 100);
+      } elseif($coupon['type'] === 'fixed'){
+        $discountAmount = min($coupon['value'], $cartSubtotal);
+      } elseif($coupon['type'] === 'free_shipping'){
+        if($totalQuantity >= 3 && $cartSubtotal >= $coupon['min_order']){
+          $shippingFee = 0;
+        }
+      }
+    }
+    
+    echo json_encode([
+      'success' => true, 
+      'message' => 'Coupon applied successfully',
+      'subtotal' => number_format($cartSubtotal, 2),
+      'discount' => number_format($discountAmount, 2),
+      'shipping' => number_format($shippingFee, 2),
+      'total' => number_format($cartSubtotal - $discountAmount + $shippingFee, 2),
+      'couponName' => $availableCoupons[$couponCode]['name'] ?? '',
+      'couponCode' => $couponCode,
+      'freeShipping' => $shippingFee == 0
+    ]);
   } else {
     unset($_SESSION['selected_coupon']);
-    echo json_encode(['success' => true, 'message' => 'Coupon removed']);
+    
+    // Recalculate without coupon
+    $cart = $_SESSION['cart'] ?? [];
+    $cartSubtotal = 0;
+    $totalQuantity = 0;
+    foreach($cart as $itemID => $quantity){
+      $itemID = intval($itemID);
+      $quantity = intval($quantity);
+      $itemResult = executePreparedQuery("SELECT price FROM items WHERE itemID = ? AND status = 'Active'", "i", [$itemID]);
+      if($itemResult && mysqli_num_rows($itemResult) > 0){
+        $row = mysqli_fetch_assoc($itemResult);
+        $cartSubtotal += floatval($row['price']) * $quantity;
+        $totalQuantity += $quantity;
+      }
+    }
+    
+    if ($totalQuantity >= 10 || $cartSubtotal >= 500) {
+      $shippingFee = 0.00;
+    } elseif ($totalQuantity >= 5 || $cartSubtotal >= 200) {
+      $shippingFee = 20.00;
+    } else {
+      $shippingFee = 30.00;
+    }
+    
+    echo json_encode([
+      'success' => true, 
+      'message' => 'Coupon removed',
+      'subtotal' => number_format($cartSubtotal, 2),
+      'discount' => '0.00',
+      'shipping' => number_format($shippingFee, 2),
+      'total' => number_format($cartSubtotal + $shippingFee, 2),
+      'couponName' => '',
+      'couponCode' => '',
+      'freeShipping' => $shippingFee == 0
+    ]);
   }
   exit();
 }
@@ -60,6 +143,9 @@ if(isset($_GET['removeCoupon'])){
 
 // Define available coupons
 $availableCoupons = [
+  'SAVE10' => ['name' => '10% Off', 'type' => 'percentage', 'value' => 10, 'description' => 'Get 10% off your entire order'],
+  'SAVE20' => ['name' => '20% Off', 'type' => 'percentage', 'value' => 20, 'description' => 'Get 20% off your entire order'],
+  'SAVE50' => ['name' => '₱50 Off', 'type' => 'fixed', 'value' => 50, 'description' => 'Get ₱50 off your entire order'],
   'FREESHIP50' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 50, 'description' => 'Free shipping on orders over ₱50'],
   'FREESHIP100' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 100, 'description' => 'Free shipping on orders over ₱100'],
   'FREESHIP200' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 200, 'description' => 'Free shipping on orders over ₱200'],
@@ -94,6 +180,7 @@ if ($totalQuantityDynamic >= 10 || $cartSubtotalDynamic >= 500) {
 }
 
 $shippingFeeBeforeCoupon = $shippingFee;
+$discountAmount = 0;
 
 if($selectedCouponCode && isset($availableCoupons[$selectedCouponCode])){
   $selectedCoupon = $availableCoupons[$selectedCouponCode];
@@ -112,26 +199,33 @@ if($selectedCouponCode && isset($availableCoupons[$selectedCouponCode])){
     }
   }
 
-  // Rule 1: free shipping coupons require at least 3 items in cart (any coupon)
-  if($totalQuantity <= 2){
-    $error = "Free shipping coupons are only available when you purchase at least 3 items.";
-    $selectedCoupon = null;
-    unset($_SESSION['selected_coupon']);
-  }
-  // Rule 2: bigger coupons (FREESHIP100, FREESHIP200) only for very large orders (e.g. 100+ items)
-  elseif(in_array($selectedCouponCode, ['FREESHIP100','FREESHIP200'], true) && $totalQuantity < 100){
-    $error = "This shipping coupon is only available for bulk orders of at least 100 packs/boxes. For smaller orders, please use the ₱50 free-shipping coupon.";
-    $selectedCoupon = null;
-    unset($_SESSION['selected_coupon']);
-  }
-  // Rule 3: check minimum amount for any remaining valid coupon
-  elseif($cartSubtotalCheck >= $selectedCoupon['min_order']){
-    $shippingFee = 0; // Free shipping
-  } else {
-    // Coupon doesn't apply if minimum not met - show message
-    $error = "Coupon {$selectedCouponCode} requires a minimum order of ₱" . number_format($selectedCoupon['min_order'], 2) . ". Your current subtotal is ₱" . number_format($cartSubtotalCheck, 2) . ".";
-    $selectedCoupon = null; // Coupon doesn't apply if minimum not met
-    unset($_SESSION['selected_coupon']);
+  // Apply discount based on coupon type
+  if($selectedCoupon['type'] === 'percentage'){
+    $discountAmount = $cartSubtotalCheck * ($selectedCoupon['value'] / 100);
+  } elseif($selectedCoupon['type'] === 'fixed'){
+    $discountAmount = min($selectedCoupon['value'], $cartSubtotalCheck); // Don't discount more than subtotal
+  } elseif($selectedCoupon['type'] === 'free_shipping'){
+    // Rule 1: free shipping coupons require at least 3 items in cart (any coupon)
+    if($totalQuantity <= 2){
+      $error = "Free shipping coupons are only available when you purchase at least 3 items.";
+      $selectedCoupon = null;
+      unset($_SESSION['selected_coupon']);
+    }
+    // Rule 2: bigger coupons (FREESHIP100, FREESHIP200) only for very large orders (e.g. 100+ items)
+    elseif(in_array($selectedCouponCode, ['FREESHIP100','FREESHIP200'], true) && $totalQuantity < 100){
+      $error = "This shipping coupon is only available for bulk orders of at least 100 packs/boxes. For smaller orders, please use the ₱50 free-shipping coupon.";
+      $selectedCoupon = null;
+      unset($_SESSION['selected_coupon']);
+    }
+    // Rule 3: check minimum amount for any remaining valid coupon
+    elseif($cartSubtotalCheck >= $selectedCoupon['min_order']){
+      $shippingFee = 0; // Free shipping
+    } else {
+      // Coupon doesn't apply if minimum not met - show message
+      $error = "Coupon {$selectedCouponCode} requires a minimum order of ₱" . number_format($selectedCoupon['min_order'], 2) . ". Your current subtotal is ₱" . number_format($cartSubtotalCheck, 2) . ".";
+      $selectedCoupon = null; // Coupon doesn't apply if minimum not met
+      unset($_SESSION['selected_coupon']);
+    }
   }
 }
 
@@ -359,6 +453,12 @@ include(__DIR__ . "/../../includes/header.php");
 
 
 <div class="checkout-container">
+  <div class="mb-3">
+    <a href="cart.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Cart
+    </a>
+  </div>
+  
   <?php if($error): ?>
   <div class="alert alert-danger"><?php echo $error; ?></div>
   <?php endif; ?>
@@ -424,18 +524,18 @@ include(__DIR__ . "/../../includes/header.php");
               </div>
             </div>
 
-            <!-- Shipping Coupons Section -->
+            <!-- Coupons Section -->
             <div class="form-section">
               <div class="form-section-title">
-                <i class="fas fa-ticket-alt me-2"></i>Shipping Coupons
+                <i class="fas fa-ticket-alt me-2"></i>Available Coupons
               </div>
               <div class="coupon-section mb-3">
                 <button type="button" class="btn btn-outline-brown" data-bs-toggle="modal" data-bs-target="#couponModal">
                   <i class="fas fa-ticket-alt me-2"></i>
                   <?php if($selectedCoupon): ?>
-                    Applied: <?php echo $selectedCoupon['name']; ?> - Free Shipping!
+                    Applied: <?php echo $selectedCoupon['name']; ?>
                   <?php else: ?>
-                    Apply Shipping Coupon
+                    Apply Coupon
                   <?php endif; ?>
                 </button>
                 <?php if($selectedCoupon): ?>
@@ -532,14 +632,28 @@ include(__DIR__ . "/../../includes/header.php");
             <span class="cart-summary-label">Subtotal</span>
             <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal, 2); ?></span>
           </div>
+          
+          <?php if($discountAmount > 0 && $selectedCoupon): ?>
+          <div class="cart-summary-row" style="color: #28a745; font-weight: 600;">
+            <span class="cart-summary-label">
+              <i class="fas fa-ticket-alt me-1"></i><?php echo $selectedCoupon['name']; ?> (<?php echo $selectedCouponCode; ?>)
+            </span>
+            <span class="cart-summary-value">-₱<?php echo number_format($discountAmount, 2); ?></span>
+          </div>
+          <?php endif; ?>
+          
           <?php
           // Compute shipping discount compared to the actual pre-coupon shipping fee
           $shippingDiscount = max(0, $shippingFeeBeforeCoupon - $shippingFee);
           ?>
-          <?php if($shippingDiscount > 0 && $selectedCoupon): ?>
+          <?php if($shippingDiscount > 0): ?>
           <div class="cart-summary-row" style="color: #28a745; font-weight: 600;">
             <span class="cart-summary-label">
-              <i class="fas fa-ticket-alt me-1"></i><?php echo $selectedCoupon['name']; ?> (<?php echo $selectedCouponCode; ?>)
+              <?php if($selectedCoupon && $selectedCoupon['type'] === 'free_shipping'): ?>
+                <i class="fas fa-ticket-alt me-1"></i><?php echo $selectedCoupon['name']; ?> (<?php echo $selectedCouponCode; ?>)
+              <?php else: ?>
+                <i class="fas fa-truck me-1"></i>Free Shipping (₱200+ Order)
+              <?php endif; ?>
             </span>
             <span class="cart-summary-value">-₱<?php echo number_format($shippingDiscount, 2); ?></span>
           </div>
@@ -553,9 +667,10 @@ include(__DIR__ . "/../../includes/header.php");
             <span class="cart-summary-value">₱<?php echo number_format($shippingFee, 2); ?></span>
           </div>
           <?php endif; ?>
+          
           <div class="cart-summary-row cart-summary-total">
             <span class="cart-summary-label">Total</span>
-            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal + $shippingFee, 2); ?></span>
+            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal - $discountAmount + $shippingFee, 2); ?></span>
           </div>
           
           <div class="payment-section">

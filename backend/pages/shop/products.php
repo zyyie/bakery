@@ -5,6 +5,12 @@ include(__DIR__ . "/../../includes/header.php");
 
 
 <div class="container products-page my-5">
+  <div class="mb-3">
+    <a href="index.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </a>
+  </div>
+  
   <div class="row">
     <!-- Sidebar Categories -->
     <div class="col-md-3">
@@ -30,49 +36,93 @@ include(__DIR__ . "/../../includes/header.php");
 
     <!-- Products -->
     <div class="col-md-9">
+      <?php
+      $categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
+      $searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+      
+      // Check if inventory table exists
+      $hasInventory = false;
+      try {
+          $invCheck = executePreparedQuery("SHOW TABLES LIKE 'inventory'", "", []);
+          $hasInventory = ($invCheck && mysqli_num_rows($invCheck) > 0);
+      } catch (Exception $e) {
+          $hasInventory = false;
+      }
+      
+      // Build query with search and category filtering
+      $whereConditions = ["items.status = 'Active'"];
+      $params = [];
+      $paramTypes = "";
+      
+      if ($categoryId > 0) {
+        $whereConditions[] = "items.categoryID = ?";
+        $params[] = $categoryId;
+        $paramTypes .= "i";
+      }
+      
+      if (!empty($searchTerm)) {
+        $whereConditions[] = "(items.packageName LIKE ? OR items.foodDescription LIKE ? OR categories.categoryName LIKE ?)";
+        $searchPattern = '%' . $searchTerm . '%';
+        $params[] = $searchPattern;
+        $params[] = $searchPattern;
+        $params[] = $searchPattern;
+        $paramTypes .= "sss";
+      }
+      
+      $whereClause = implode(' AND ', $whereConditions);
+      
+      if ($hasInventory) {
+        $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
+                  FROM items 
+                  LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                  LEFT JOIN inventory inv ON inv.itemID = items.itemID
+                  WHERE $whereClause
+                  ORDER BY items.packageName ASC";
+      } else {
+        $query = "SELECT items.*, categories.categoryName, 0 as stock_qty 
+                  FROM items 
+                  LEFT JOIN categories ON items.categoryID = categories.categoryID 
+                  WHERE $whereClause
+                  ORDER BY items.packageName ASC";
+      }
+      
+      if (!empty($params)) {
+        $result = executePreparedQuery($query, $paramTypes, $params);
+      } else {
+        $result = executePreparedQuery($query, "", []);
+      }
+      ?>
+      
+      <!-- Search Bar -->
+      <div class="mb-3">
+        <form method="GET" action="products.php" class="d-flex gap-2">
+          <input type="hidden" name="category" value="<?php echo isset($_GET['category']) ? htmlspecialchars($_GET['category']) : ''; ?>">
+          <div class="input-group">
+            <span class="input-group-text bg-light border-end-0">
+              <i class="fas fa-search text-muted"></i>
+            </span>
+            <input type="text" 
+                   class="form-control border-start-0" 
+                   name="search" 
+                   id="searchInput"
+                   placeholder="Search products..." 
+                   value="<?php echo htmlspecialchars($searchTerm); ?>"
+                   autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-brown">
+            <i class="fas fa-search me-1"></i>Search
+          </button>
+          <?php if (!empty($searchTerm)): ?>
+            <a href="products.php<?php echo $categoryId > 0 ? '?category=' . $categoryId : ''; ?>" 
+               class="btn btn-outline-secondary">
+              <i class="fas fa-times me-1"></i>Clear
+            </a>
+          <?php endif; ?>
+        </form>
+      </div>
+      
       <div class="row">
         <?php
-        $categoryId = isset($_GET['category']) ? intval($_GET['category']) : 0;
-        
-        // Check if inventory table exists
-        $hasInventory = false;
-        try {
-            $invCheck = executePreparedQuery("SHOW TABLES LIKE 'inventory'", "", []);
-            $hasInventory = ($invCheck && mysqli_num_rows($invCheck) > 0);
-        } catch (Exception $e) {
-            $hasInventory = false;
-        }
-        
-        if ($categoryId > 0) {
-          if ($hasInventory) {
-            $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
-                      FROM items 
-                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                      LEFT JOIN inventory inv ON inv.itemID = items.itemID
-                      WHERE items.status = 'Active' AND items.categoryID = ?";
-          } else {
-            $query = "SELECT items.*, categories.categoryName, 0 as stock_qty 
-                      FROM items 
-                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                      WHERE items.status = 'Active' AND items.categoryID = ?";
-          }
-          $result = executePreparedQuery($query, "i", [$categoryId]);
-        } else {
-          if ($hasInventory) {
-            $query = "SELECT items.*, categories.categoryName, inv.stock_qty 
-                      FROM items 
-                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                      LEFT JOIN inventory inv ON inv.itemID = items.itemID
-                      WHERE items.status = 'Active'";
-          } else {
-            $query = "SELECT items.*, categories.categoryName, 0 as stock_qty 
-                      FROM items 
-                      LEFT JOIN categories ON items.categoryID = categories.categoryID 
-                      WHERE items.status = 'Active'";
-          }
-          $result = executePreparedQuery($query, "", []);
-        }
-        
         // Debug: Check for query errors
         if ($result === false) {
           $dbError = isset($GLOBALS['db_last_error']) ? $GLOBALS['db_last_error'] : 'Unknown database error';
@@ -110,9 +160,26 @@ include(__DIR__ . "/../../includes/header.php");
         else:
         ?>
         <div class="col-12">
-          <div class="alert alert-info">No products found in this category.</div>
+          <div class="alert alert-info text-center py-5">
+            <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+            <h5>No products found</h5>
+            <?php if (!empty($searchTerm)): ?>
+              <p>No products match your search "<strong><?php echo htmlspecialchars($searchTerm); ?></strong>".</p>
+              <p class="mb-0">
+                <a href="products.php<?php echo $categoryId > 0 ? '?category=' . $categoryId : ''; ?>" class="btn btn-brown">
+                  <i class="fas fa-arrow-left me-2"></i>View All Products
+                </a>
+              </p>
+            <?php else: ?>
+              <p>No products found in this category.</p>
+            <?php endif; ?>
+          </div>
         </div>
         <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -408,11 +475,13 @@ document.addEventListener('DOMContentLoaded', function() {
       .lb-overlay.is-open{display:flex}
       .lb-content{position:relative;max-width:90vw;max-height:90vh}
       .lb-img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:6px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
-      .lb-close,.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-      .lb-close{top:12px;right:12px;transform:none}
-      .lb-prev{left:12px}
-      .lb-next{right:12px}
-      @media (max-width: 768px){.lb-prev{left:8px}.lb-next{right:8px}}
+      .lb-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.9);color:#333;border:none;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;z-index:10;transition:all 0.3s ease}
+      .lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.95);color:var(--brown-primary);border:3px solid var(--brown-primary);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:24px;z-index:10;transition:all 0.3s ease;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+      .lb-prev:hover,.lb-next:hover{background:var(--brown-primary);color:#fff;transform:translateY(-50%) scale(1.1);box-shadow:0 6px 16px rgba(0,0,0,0.4)}
+      .lb-close:hover{background:rgba(255,255,255,1);transform:scale(1.1)}
+      .lb-prev{left:20px}
+      .lb-next{right:20px}
+      @media (max-width: 768px){.lb-prev{left:10px}.lb-next{right:10px}.lb-prev,.lb-next{width:50px;height:50px;font-size:20px}}
     `;
     document.head.appendChild(style);
 
@@ -420,19 +489,31 @@ document.addEventListener('DOMContentLoaded', function() {
     overlay.className = 'lb-overlay';
     overlay.innerHTML = `
       <div class="lb-content">
-        <button type="button" class="lb-close" aria-label="Close">✕</button>
-        <button type="button" class="lb-prev" aria-label="Previous">❮</button>
+        <button type="button" class="lb-close" aria-label="Close"><i class="fas fa-times"></i></button>
+        <button type="button" class="lb-prev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
         <img class="lb-img" alt="" />
-        <button type="button" class="lb-next" aria-label="Next">❯</button>
+        <button type="button" class="lb-next" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
       </div>`;
     document.body.appendChild(overlay);
 
     let imgs = [];
     let idx = 0;
     function setSrc(i){
-      idx = (i+imgs.length)%imgs.length;
+      if (imgs.length === 0) return;
+      idx = ((i % imgs.length) + imgs.length) % imgs.length;
       const img = overlay.querySelector('.lb-img');
       if (img) img.src = imgs[idx] || '';
+      // Update arrow visibility
+      const prevBtn = overlay.querySelector('.lb-prev');
+      const nextBtn = overlay.querySelector('.lb-next');
+      if (prevBtn) {
+        prevBtn.style.opacity = idx === 0 ? '0.5' : '1';
+        prevBtn.style.cursor = idx === 0 ? 'not-allowed' : 'pointer';
+      }
+      if (nextBtn) {
+        nextBtn.style.opacity = idx === imgs.length - 1 ? '0.5' : '1';
+        nextBtn.style.cursor = idx === imgs.length - 1 ? 'not-allowed' : 'pointer';
+      }
     }
     function openLightbox(images, startIdx){
       imgs = Array.isArray(images)? images.slice(): [];
@@ -451,8 +532,14 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'ArrowRight') return setSrc(idx+1);
     }
     overlay.querySelector('.lb-close')?.addEventListener('click', close);
-    overlay.querySelector('.lb-prev')?.addEventListener('click', () => setSrc(idx-1));
-    overlay.querySelector('.lb-next')?.addEventListener('click', () => setSrc(idx+1));
+    overlay.querySelector('.lb-prev')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (idx > 0) setSrc(idx-1);
+    });
+    overlay.querySelector('.lb-next')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (idx < imgs.length - 1) setSrc(idx+1);
+    });
     overlay.addEventListener('click', (e)=>{ if (e.target === overlay) close(); });
 
     // expose
@@ -493,8 +580,8 @@ document.addEventListener('DOMContentLoaded', function() {
           qvBody.innerHTML = `
             <div class="row g-3">
               <div class="col-md-6">
-                <div class="product-gallery">
-                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 300px; object-fit: cover;">
+                <div class="product-gallery position-relative">
+                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 400px; object-fit: contain; background: #f8f9fa; cursor: zoom-in;">
                 </div>
                 <div class="gallery-controls">
                   <button type="button" class="gallery-nav-btn" id="qvPrev" aria-label="Prev"><i class="fas fa-chevron-left"></i></button>
@@ -631,13 +718,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         setMainImage(initIdx);
 
-        // Allow opening the current image in a separate tab when main image is clicked
+        // Click main image to open lightbox with arrows (no need to click thumbnails one by one)
         const mainImgEl = document.getElementById('qvMainImg');
         if (mainImgEl) {
           mainImgEl.style.cursor = 'zoom-in';
           mainImgEl.addEventListener('click', () => {
-            const src = currentImages && currentImages.length ? currentImages[currentImageIdx] : mainImgEl.src;
-            if (src) window.open(src, '_blank', 'noopener');
+            if (window.openBakeryLightbox) window.openBakeryLightbox(currentImages, currentImageIdx);
           });
         }
 
@@ -941,6 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
 
 <?php include(__DIR__ . "/../../includes/footer.php"); ?>
 

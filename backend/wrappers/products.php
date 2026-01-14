@@ -468,8 +468,8 @@ document.addEventListener('DOMContentLoaded', function() {
           qvBody.innerHTML = `
             <div class="row g-3">
               <div class="col-md-6">
-                <div class="product-gallery">
-                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 300px; object-fit: cover;">
+                <div class="product-gallery position-relative">
+                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 400px; object-fit: contain; background: #f8f9fa; cursor: zoom-in;">
                 </div>
                 <div class="gallery-controls">
                   <button type="button" class="gallery-nav-btn" id="qvPrev" aria-label="Prev"><i class="fas fa-chevron-left"></i></button>
@@ -916,6 +916,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
 
 <?php include(__DIR__ . "/includes/footer.php"); ?>
 

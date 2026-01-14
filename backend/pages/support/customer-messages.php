@@ -14,23 +14,19 @@ $error = "";
 if(isset($_POST['sendMessage'])){
   $userID = $_SESSION['userID'];
   $name = trim($_POST['name']);
-  $email = trim($_POST['email']);
-  $mobileNumber = trim($_POST['mobileNumber']);
   $message = trim($_POST['message']);
   
-  // Email-only validation and send
-  if (empty($name) || empty($email) || empty($message)) {
-    $error = "Name, email, and message are required!";
-  } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $error = "Invalid email format!";
+  // Name and message validation only
+  if (empty($name) || empty($message)) {
+    $error = "Name and message are required!";
   } else {
     $query = "INSERT INTO enquiries (userID, name, email, mobileNumber, message, enquiryDate, status) 
-              VALUES (?, ?, ?, ?, ?, NOW(), 'Unread')";
-    $result = executePreparedUpdate($query, "issss", [$userID, $name, $email, $mobileNumber, $message]);
+              VALUES (?, ?, '', '', ?, NOW(), 'Unread')";
+    $result = executePreparedUpdate($query, "iss", [$userID, $name, $message]);
     if($result !== false){
       require_once __DIR__ . '/../../includes/Email.php';
       $mailer = new Email();
-      $mailer->sendContactMessage($name, $email, $mobileNumber, $message);
+      $mailer->sendContactMessage($name, '', '', $message);
       $success = "Your inquiry has been submitted successfully! We'll get back to you soon.";
     } else {
       $error = "Failed to submit enquiry!";
@@ -45,6 +41,12 @@ $result = executePreparedQuery($query, "i", [$userID]);
 ?>
 
 <div class="container my-5">
+  <div class="mb-3">
+    <a href="user-dashboard.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+    </a>
+  </div>
+  
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="card shadow">
@@ -72,18 +74,10 @@ $result = executePreparedQuery($query, "i", [$userID]);
             <h5 class="text-brown mb-3">Send a New Message</h5>
             <form method="POST">
               <div class="row">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-12 mb-3">
                   <label class="form-label">Your Name</label>
                   <input type="text" class="form-control" name="name" value="<?php echo e($_SESSION['fullName']); ?>" required>
                 </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Email Address</label>
-                  <input type="email" class="form-control" name="email" value="<?php echo e($_SESSION['email']); ?>" required>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Mobile Number</label>
-                <input type="tel" class="form-control" name="mobileNumber" placeholder="Your phone number">
               </div>
               <div class="mb-3">
                 <label class="form-label">Message</label>

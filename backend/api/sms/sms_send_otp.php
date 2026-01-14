@@ -2,7 +2,7 @@
 session_start();
 header('Content-Type: application/json');
 
-$gateway_url = "http://192.168.1.101:8080";
+$gateway_url = "http://192.168.18.112:8080";
 $username = "sms";
 $password = "1234567890";
 

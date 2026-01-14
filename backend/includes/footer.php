@@ -117,8 +117,9 @@ if ($__backendPos !== false) {
       <div class="bakery-ai-actions">
         <button type="button" class="bakery-ai-action" data-quick="Tell me about your products">Products</button>
         <button type="button" class="bakery-ai-action" data-quick="How do I place an order?">Ordering</button>
-        <button type="button" class="bakery-ai-action" data-quick="What are your delivery options?">Delivery</button>
+        <button type="button" class="bakery-ai-action" data-quick="What are your pickup options?">Pickup</button>
         <button type="button" class="bakery-ai-action" data-quick="What are your prices?">Pricing</button>
+        <button type="button" class="bakery-ai-action" data-quick="Do you have custom cakes?">Custom Cakes</button>
         <button type="button" class="bakery-ai-action secondary" data-quick="I don't need help now">I don't need help now</button>
       </div>
     </div>

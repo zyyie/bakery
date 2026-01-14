@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>✅ Coupon System Now Working!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="alert alert-success text-center">
+            <h2>🎉 COUPON SYSTEM NOW ENABLED! 🎉</h2>
+            <p>The coupon system is now working properly on your website!</p>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4>✅ Available Coupons:</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>🎯 Product Discounts:</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-success">
+                                <strong>SAVE10</strong> = 10% off entire order
+                            </li>
+                            <li class="list-group-item list-group-item-success">
+                                <strong>SAVE20</strong> = 20% off entire order
+                            </li>
+                            <li class="list-group-item list-group-item-success">
+                                <strong>SAVE50</strong> = ₱50 off entire order
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🚚 Free Shipping:</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-info">
+                                <strong>FREESHIP50</strong> = Free shipping ₱50+
+                            </li>
+                            <li class="list-group-item list-group-item-info">
+                                <strong>FREESHIP100</strong> = Free shipping ₱100+
+                            </li>
+                            <li class="list-group-item list-group-item-info">
+                                <strong>FREESHIP200</strong> = Free shipping ₱200+
+                            </li>
+                            <li class="list-group-item list-group-item-warning">
+                                <strong>Automatic:</strong> Orders ₱200+ get free shipping!
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header bg-primary text-white">
+                <h4>🔄 How It Works:</h4>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li><strong>Go to Checkout</strong> - Click "Apply Coupon" button</li>
+                    <li><strong>Select Coupon</strong> - Choose from available coupons in modal</li>
+                    <li><strong>Apply Instantly</strong> - AJAX applies coupon without page reload</li>
+                    <li><strong>See Savings</strong> - Order summary updates automatically</li>
+                    <li><strong>Complete Order</strong> - Discount applied to final total</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-3">
+            <h5>📝 Example Results:</h5>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>₱300 + SAVE20</h6>
+                        </div>
+                        <div class="card-body">
+                            <small>
+                                Subtotal: ₱300.00<br>
+                                20% Off: -₱60.00<br>
+                                Shipping: ₱20.00<br>
+                                <strong>Total: ₱260.00</strong>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>₱488 + FREESHIP50</h6>
+                        </div>
+                        <div class="card-body">
+                            <small>
+                                Subtotal: ₱488.00<br>
+                                Free Shipping: -₱20.00<br>
+                                Shipping: Free<br>
+                                <strong>Total: ₱488.00</strong>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6>₱220 (no coupon)</h6>
+                        </div>
+                        <div class="card-body">
+                            <small>
+                                Subtotal: ₱220.00<br>
+                                Discount: ₱0.00<br>
+                                Shipping: Free (Auto)<br>
+                                <strong>Total: ₱220.00</strong>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="checkout.php" class="btn btn-success btn-lg">
+                <i class="fas fa-shopping-cart me-2"></i>Test Coupon System Now
+            </a>
+        </div>
+    </div>
+</body>
+</html>

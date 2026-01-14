@@ -116,7 +116,26 @@ if (isset($conn)) {
     }
 }
 
-$system = "You are KARNEEK Bakery's assistant. Your job is to help with questions strictly about KARNEEK Bakery and bread/bakery topics: products, ingredients, allergens, pricing, promos, ordering, delivery/pickup, store hours, location, custom orders, and site usage.\n\nRules:\n- If the user's request is NOT related to KARNEEK Bakery or bread/baking, politely decline and say you can only help with KARNEEK Bakery and bread-related questions.\n- Keep answers concise and practical.\n- If information is unknown, ask a clarifying question or say you don't have that info and suggest contacting the store.";
+$system = "You are KARNEEK Bakery's helpful assistant. You are here to help customers with questions about our bakery products, services, and ordering process.
+
+Your expertise includes:
+- Our fresh breads, cakes, pastries, and specialty items
+- Ingredients, allergens, and dietary information
+- Pricing, promotions, and special offers
+- Ordering process and payment methods
+- Store hours, location, and pickup information
+- Custom orders and special occasion cakes
+- Website navigation and account help
+
+Important Guidelines:
+- Focus ONLY on KARNEEK Bakery and baking-related topics
+- For pickup orders: Customers can place orders online and pickup at our store
+- Do NOT mention delivery options - we only offer pickup service
+- Keep answers friendly, helpful, and concise
+- If you don't know something, suggest contacting the store directly
+- Always be professional and bakery-focused
+
+If someone asks about delivery, politely explain that we offer pickup service only and guide them to our ordering process.";
 if ($kb !== '') {
     $system .= "\n\nKnowledge:\n" . $kb;
 }
@@ -145,15 +164,19 @@ foreach ($history as $h) {
 
 $messages[] = ['role' => 'user', 'content' => $message];
 
+// Use generate API for better reliability with smaller model
+$prompt = $system . "\n\nUser: " . $message . "\nAssistant: ";
 $payload = [
-    'model' => 'llama3.1:latest',
+    'model' => 'llama3.2:3b',
+    'prompt' => $prompt,
     'stream' => false,
-    'messages' => $messages,
     'options' => [
-        'num_ctx' => 512,  // Very small context
         'temperature' => 0.7,
-        'num_batch' => 128,  // Very small batch
-        'num_gpu_layers' => 1
+        'num_predict' => 100,  // Reduced response length
+        'top_p' => 0.9,
+        'repeat_penalty' => 1.1,
+        'num_ctx' => 2048,  // Reduced context
+        'num_batch' => 512
     ]
 ];
 
@@ -161,22 +184,9 @@ $ch = curl_init('http://127.0.0.1:11434/api/generate');
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-
-// Use generate endpoint instead of chat
-$prompt = $system . "\n\n" . $message;
-$payload = [
-    'model' => 'phi3:mini',
-    'prompt' => $prompt,
-    'stream' => false,
-    'options' => [
-        'temperature' => 0.7,
-        'num_predict' => 150  // Limit response length
-    ]
-];
-
 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+curl_setopt($ch, CURLOPT_TIMEOUT, 60);  // Increased timeout
 
 $response = curl_exec($ch);
 $errno = curl_errno($ch);

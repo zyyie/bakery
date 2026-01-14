@@ -100,6 +100,94 @@ function current_base_url() {
     return $scheme . '://' . $host . ($dir ? '/' . $dir : '');
 }
 
+function get_server_ip() {
+    // Try to get the local IP address for mobile device access
+    $possibleIPs = [];
+    
+    // Method 1: Get server IP from SERVER_ADDR
+    if (!empty($_SERVER['SERVER_ADDR']) && $_SERVER['SERVER_ADDR'] !== '127.0.0.1' && $_SERVER['SERVER_ADDR'] !== '::1') {
+        $ip = $_SERVER['SERVER_ADDR'];
+        // Only use private IPs (192.168.x.x, 10.x.x.x, 172.16-31.x.x)
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            $possibleIPs[] = $ip;
+        }
+    }
+    
+    // Method 2: Try to get IP from network interfaces (Windows)
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $output = [];
+        @exec('ipconfig', $output, $returnVar);
+        if ($returnVar === 0) {
+            foreach ($output as $line) {
+                if (preg_match('/IPv4 Address[^:]*:\s*(\d+\.\d+\.\d+\.\d+)/i', $line, $matches)) {
+                    $ip = trim($matches[1]);
+                    if ($ip !== '127.0.0.1' && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+                        // It's a private IP (192.168.x.x, 10.x.x.x, etc.)
+                        if (!in_array($ip, $possibleIPs)) {
+                            $possibleIPs[] = $ip;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Method 3: Try socket connection to get local IP
+    if (empty($possibleIPs)) {
+        $socket = @socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+        if ($socket !== false) {
+            @socket_connect($socket, '8.8.8.8', 53);
+            $localIP = '';
+            @socket_getsockname($socket, $localIP);
+            @socket_close($socket);
+            if (!empty($localIP) && $localIP !== '127.0.0.1') {
+                $possibleIPs[] = $localIP;
+            }
+        }
+    }
+    
+    // Return first valid IP or fallback to localhost
+    return !empty($possibleIPs) ? $possibleIPs[0] : 'localhost';
+}
+
+function get_reset_link_base_url() {
+    // Check if base URL is configured in email config (PRIORITY - use this first)
+    $emailConfig = require __DIR__ . '/../config/email.php';
+    if (!empty($emailConfig['base_url'])) {
+        return rtrim($emailConfig['base_url'], '/');
+    }
+    
+    // For email links, use IP address if available so mobile devices can access
+    $scheme = is_https() ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    
+    // If host is localhost, try to get the actual IP address
+    if ($host === 'localhost' || $host === '127.0.0.1' || strpos($host, 'localhost') !== false) {
+        $serverIP = get_server_ip();
+        if ($serverIP !== 'localhost' && $serverIP !== '127.0.0.1') {
+            $host = $serverIP;
+            error_log("Using detected IP address for reset link: $host");
+        } else {
+            error_log("Warning: Could not detect server IP, using localhost (may not work on mobile devices)");
+        }
+    }
+    
+    // Get base path
+    $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $backendPos = strpos($scriptName, '/backend/');
+    
+    if ($backendPos !== false) {
+        $basePath = rtrim(substr($scriptName, 0, $backendPos), '/');
+        $url = $scheme . '://' . $host . $basePath;
+        error_log("Generated reset link base URL: $url");
+        return $url;
+    }
+    
+    $url = $scheme . '://' . $host . '/bakery';
+    error_log("Generated reset link base URL (fallback): $url");
+    return $url;
+}
+
 function set_app_cookie($name, $value, $expires) {
     $options = [
         'expires' => $expires,

@@ -22,6 +22,12 @@ include(__DIR__ . "/../../includes/header.php");
 
 
 <div class="container my-5">
+  <div class="mb-3">
+    <a href="my-orders.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to My Orders
+    </a>
+  </div>
+  
   <div class="card shadow">
     <div class="card-body">
       <h4>Order Number: <?php echo $order['orderNumber']; ?></h4>
@@ -56,7 +62,6 @@ include(__DIR__ . "/../../includes/header.php");
         <p><strong>Delivery Date:</strong> <?php echo $order['deliveryDate']; ?></p>
         <?php endif; ?>
       </div>
-      <a href="my-orders.php" class="btn btn-warning">Back to Orders</a>
     </div>
   </div>
 </div>

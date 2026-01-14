@@ -97,8 +97,8 @@ __halt_compiler();
   <div class="container">
     <style>
       /* Scoped size tweaks for category icons on homepage */
-      .categories-section .category-icon { width: 64px; height: 64px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
-      .categories-section .category-icon i { font-size: 26px; }
+      .categories-section .category-icon { width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+      .categories-section .category-icon i { font-size: 18px; }
     </style>
     <div class="text-center mb-5">
       <span class="section-label">Our Categories</span>
@@ -113,11 +113,11 @@ __halt_compiler();
       $iconMap = [
         // breads (distinct icons per category)
         'classic & basic bread' => 'fa-bread-slice',
-        'sweet bread' => 'fa-cake-candles',
+        'sweet bread' => 'fa-birthday-cake',
         'filled / stuffed bread' => 'fa-stroopwafel',
         'buns & rolls' => 'fa-hamburger',
-        'bread–cake combo' => 'fa-cake-candles',
-        'bread-cake combo' => 'fa-cake-candles', // fallback for hyphen variant
+        'bread–cake combo' => 'fa-layer-group',
+        'bread-cake combo' => 'fa-layer-group', // fallback for hyphen variant
         'special (budget-friendly)' => 'fa-star',
         // sweets
         'cookies' => 'fa-cookie-bite',
@@ -141,11 +141,6 @@ __halt_compiler();
         </div>
       </div>
       <?php endwhile; ?>
-    </div>
-    <div class="text-center mt-5">
-      <a href="products.php" class="btn btn-brown btn-lg">
-        <i class="fas fa-th me-2"></i>View All Categories
-      </a>
     </div>
   </div>
 </section>
@@ -502,8 +497,8 @@ document.addEventListener('DOMContentLoaded', function() {
           qvBody.innerHTML = `
             <div class="row g-3">
               <div class="col-md-6">
-                <div class="mb-2" style="border-radius: 12px; overflow: hidden;">
-                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 300px; object-fit: cover;">
+                <div class="mb-2 position-relative" style="border-radius: 12px; overflow: hidden;">
+                  <img id="qvMainImg" src="" alt="" style="width:100%; height: 400px; object-fit: contain; background: #f8f9fa; cursor: zoom-in;">
                 </div>
                 <div class="gallery-controls">
                   <button type="button" class="gallery-nav-btn" id="qvPrev" aria-label="Prev"><i class="fas fa-chevron-left"></i></button>
@@ -928,5 +923,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 });
 </script>
+
 
 <?php include(__DIR__ . "/includes/footer.php"); ?>

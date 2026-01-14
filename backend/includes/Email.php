@@ -82,24 +82,73 @@ class Email {
     }
 
     public function sendPasswordReset($toEmail, $toName, $resetLink) {
-        if (!$this->enabled) { return false; }
+        if (!$this->enabled) { 
+            error_log("Email sending disabled - PHPMailer not installed");
+            return false; 
+        }
         try {
+            // Clear previous recipients
+            $this->mailer->clearAddresses();
+            $this->mailer->clearAttachments();
+            
             // Recipients
             $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
             $this->mailer->addAddress($toEmail, $toName);
             
             // Content
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = 'Password Reset Request';
+            $this->mailer->Subject = 'Password Reset Request - KARNEEK Bakery';
             
             $message = $this->getPasswordResetTemplate($toName, $resetLink);
             $this->mailer->Body = $message;
             $this->mailer->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $message));
 
-            $this->mailer->send();
-            return true;
+            $result = $this->mailer->send();
+            if ($result) {
+                error_log("Password reset email sent successfully to: $toEmail");
+            } else {
+                error_log("Failed to send password reset email. Error: {$this->mailer->ErrorInfo}");
+            }
+            return $result;
         } catch (Exception $e) {
-            error_log("Message could not be sent. Mailer Error: {$this->mailer->ErrorInfo}");
+            error_log("Exception sending password reset email to $toEmail: " . $e->getMessage());
+            error_log("PHPMailer Error Info: {$this->mailer->ErrorInfo}");
+            return false;
+        }
+    }
+
+    public function sendPasswordResetCode($toEmail, $toName, $resetCode) {
+        if (!$this->enabled) { 
+            error_log("Email sending disabled - PHPMailer not installed");
+            return false; 
+        }
+        try {
+            // Clear previous recipients
+            $this->mailer->clearAddresses();
+            $this->mailer->clearAttachments();
+            
+            // Recipients
+            $this->mailer->setFrom($this->config['from_email'], $this->config['from_name']);
+            $this->mailer->addAddress($toEmail, $toName);
+            
+            // Content
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = 'Password Reset Code - KARNEEK Bakery';
+            
+            $message = $this->getPasswordResetCodeTemplate($toName, $resetCode);
+            $this->mailer->Body = $message;
+            $this->mailer->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $message));
+
+            $result = $this->mailer->send();
+            if ($result) {
+                error_log("Password reset code sent successfully to: $toEmail");
+            } else {
+                error_log("Failed to send password reset code. Error: {$this->mailer->ErrorInfo}");
+            }
+            return $result;
+        } catch (Exception $e) {
+            error_log("Exception sending password reset code to $toEmail: " . $e->getMessage());
+            error_log("PHPMailer Error Info: {$this->mailer->ErrorInfo}");
             return false;
         }
     }
@@ -175,6 +224,75 @@ class Email {
                 <div class='footer'>
                     <p>This is an automated message, please do not reply directly to this email.</p>
                     <p>&copy; " . date('Y') . " Bakery Shop. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+    }
+
+    private function getPasswordResetCodeTemplate($name, $resetCode) {
+        
+        return "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #f8f9fa; padding: 20px; text-align: center; }
+                .content { padding: 20px; }
+                .code-box {
+                    background-color: #f8f9fa;
+                    border: 2px solid #8B4513;
+                    border-radius: 8px;
+                    padding: 20px;
+                    text-align: center;
+                    margin: 20px 0;
+                    font-size: 32px;
+                    font-weight: bold;
+                    letter-spacing: 8px;
+                    color: #8B4513;
+                    font-family: 'Courier New', monospace;
+                }
+                .button {
+                    display: inline-block;
+                    padding: 12px 24px;
+                    background-color: #8B4513;
+                    color: #fff !important;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                }
+                .footer { 
+                    margin-top: 20px; 
+                    padding-top: 20px;
+                    border-top: 1px solid #eee;
+                    font-size: 12px;
+                    color: #777;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2>KARNEEK Bakery</h2>
+                </div>
+                <div class='content'>
+                    <p>Hello $name,</p>
+                    <p>We received a request to reset your password. Use the code below to reset your password:</p>
+                    <div class='code-box'>$resetCode</div>
+                    <p><strong>Steps to reset your password:</strong></p>
+                    <ol>
+                        <li>Go to the password reset page</li>
+                        <li>Enter the code above: <strong>$resetCode</strong></li>
+                        <li>Set your new password</li>
+                    </ol>
+                    <p><strong>This code will expire in 15 minutes.</strong></p>
+                    <p>If you didn't request a password reset, you can safely ignore this email.</p>
+                </div>
+                <div class='footer'>
+                    <p>This is an automated message, please do not reply directly to this email.</p>
+                    <p>&copy; " . date('Y') . " KARNEEK Bakery. All rights reserved.</p>
                 </div>
             </div>
         </body>

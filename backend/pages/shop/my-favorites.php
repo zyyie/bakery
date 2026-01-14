@@ -5,6 +5,12 @@ include(__DIR__ . "/../../includes/header.php");
 ?>
 
 <div class="checkout-container">
+  <div class="mb-3">
+    <a href="products.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Products
+    </a>
+  </div>
+  
   <div class="checkout-header">
     <h1>My Favorites</h1>
     <p>Your saved items</p>

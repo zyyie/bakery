@@ -11,6 +11,12 @@ include(__DIR__ . "/../../includes/header.php");
 
 <div class="about-page">
   <div class="container my-5">
+    <div class="mb-3">
+      <a href="index.php" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left me-2"></i>Back to Home
+      </a>
+    </div>
+    
     <div class="row justify-content-center">
       <div class="col-lg-10">
         <div class="card shadow about-card">

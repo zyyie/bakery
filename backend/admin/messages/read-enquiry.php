@@ -12,12 +12,16 @@ if (!function_exists('e')) {
 
 include(dirname(__DIR__) . "/includes/header.php");
 
+$success = "";
+
 if(isset($_POST['markRead'])){
   $enquiryID = intval($_POST['enquiryID']);
+  
   if($enquiryID > 0){
-    $query = "UPDATE enquiries SET status = 'Read' WHERE enquiryID = ?";
-    executePreparedUpdate($query, "i", [$enquiryID]);
+    $query = "UPDATE enquiries SET status = 'Read' WHERE enquiryID = $enquiryID";
+    mysqli_query($conn, $query);
   }
+  
   header("Location: read-enquiry.php");
   exit();
 }
@@ -35,8 +39,6 @@ $result = executePreparedQuery($query, "", []);
         <tr>
           <th>#</th>
           <th>Name</th>
-          <th>Email</th>
-          <th>Mobile Number</th>
           <th>Message</th>
           <th>Message Date</th>
           <th>Action</th>
@@ -55,8 +57,6 @@ $result = executePreparedQuery($query, "", []);
             <small class="text-muted">(Registered User)</small>
             <?php endif; ?>
           </td>
-          <td><?php echo $row['email']; ?></td>
-          <td><?php echo $row['mobileNumber']; ?></td>
           <td>
             <div class="message-preview" style="max-width: 300px; cursor: pointer;" onclick="toggleMessage(this)">
               <?php echo e(substr($row['message'], 0, 50)); ?>
@@ -74,15 +74,20 @@ $result = executePreparedQuery($query, "", []);
             ?>">
               <?php echo $row['status']; ?>
             </span>
-            <?php if($row['status'] == 'Unread'): ?>
-            <form method="POST" class="d-inline">
-              <input type="hidden" name="enquiryID" value="<?php echo $row['enquiryID']; ?>">
-              <button type="submit" name="markRead" class="btn btn-sm btn-primary">Mark as Read</button>
-            </form>
-            <?php endif; ?>
-            <a href="reply-enquiry.php?id=<?php echo $row['enquiryID']; ?>" class="btn btn-sm btn-info ms-2">
-              <i class="fas fa-reply me-1"></i>Reply
-            </a>
+            <div class="mt-2">
+              <?php if($row['status'] == 'Unread'): ?>
+              <form method="POST" style="display: inline;">
+                <input type="hidden" name="enquiryID" value="<?php echo $row['enquiryID']; ?>">
+                <input type="hidden" name="action" value="read">
+                <button type="submit" name="markRead" class="btn btn-sm btn-primary me-2">
+                  <i class="fas fa-envelope-open"></i> Mark as Read
+                </button>
+              </form>
+              <?php endif; ?>
+              <a href="reply-enquiry.php?id=<?php echo $row['enquiryID']; ?>" class="btn btn-sm btn-info">
+                <i class="fas fa-reply"></i> Reply
+              </a>
+            </div>
           </td>
         </tr>
         <?php endwhile; ?>

@@ -17,3 +17,491 @@ Stack trace:
 #1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(21): header('Location: read-...')
 #2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
 #3 {main}
+[14-Jan-2026 09:12:14 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 09:12:27 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 09:14:05 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 09:36:50 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 C:\xampp\htdocs\bakery\backend\admin\account.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 09:37:16 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 10:26:25 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:26
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 26)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(26): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:26:40 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:26
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 26)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(26): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:36:33 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:29
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 29)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(29): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:36:38 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:29
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 29)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(29): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:36:49 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:29
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 29)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(29): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:37:01 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:29
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 29)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(29): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:41:17 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:33
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 33)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(33): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:41:24 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:33
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 33)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(33): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:41:39 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:33
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 33)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(33): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:45:03 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:45:12 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:47:39 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:47:48 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:48:59 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:49:30 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:31
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 31)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(31): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:52:02 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:23
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 23)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(23): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:52:10 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:23
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 23)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(23): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:52:17 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:23
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 23)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(23): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:52:59 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:23
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 23)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(23): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 10:58:20 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:28
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 28)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(28): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 11:00:13 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:28
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 28)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(28): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 11:00:29 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:28
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 28)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(28): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 11:03:40 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:25
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 25)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(25): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 11:05:18 Europe/Berlin] Unhandled exception: ArgumentCountError: The number of variables must match the number of parameters in the prepared statement in C:\xampp\htdocs\bakery\backend\config\connect.php:74
+#0 C:\xampp\htdocs\bakery\backend\config\connect.php(74): mysqli_stmt->bind_param('is', 16, 'Unread')
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(22): executePreparedUpdate('UPDATE enquirie...', 'is', Array)
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 11:06:26 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:91) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:25
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 25)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(25): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}
+[14-Jan-2026 16:46:38 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:04:34 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:19:07 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:19:34 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:24:48 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:25:11 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:31:15 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:31:26 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:31:59 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:32:23 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:32:32 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:32:46 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:32:58 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:33:38 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:33:50 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:34:13 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:34:43 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:34:57 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:35:20 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 17:35:29 Europe/Berlin] Prepare failed: Table 'db_bakery.item_images' doesn't exist
+[14-Jan-2026 18:03:05 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:03:05 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:03:05 Europe/Berlin] Reset link: http://localhost//bakery/backend/wrappers/bakery/backend/reset-password.php?token=9229cda05b08d97e3781344cadbc89066cc2e8ac31e253ce66da0aa963e7bf1e
+[14-Jan-2026 18:14:11 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:14:11 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:14:11 Europe/Berlin] Reset link: http://localhost/bakery/backend/reset-password.php?token=874a1caf0f4877dd3a235d4d16c70b03836fe1d23fb21d82a371ccb171d49cb1
+[14-Jan-2026 18:14:44 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:14:44 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:14:44 Europe/Berlin] Reset link: http://localhost/bakery/backend/reset-password.php?token=c2fd1dea17111c3bec9c122f96f24ce3d07d6b2df712a7d3783a9a32f95a7a33
+[14-Jan-2026 18:25:09 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:25:09 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:25:09 Europe/Berlin] Reset link: http://localhost/bakery/backend/reset-password.php?token=09c8c65b9e6929b202f3ab7424ae5107f2ecee08ccc04ab6e7bd5deef34b7ad2
+[14-Jan-2026 18:39:26 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:39:26 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:39:26 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=0788245ec45da8aa40bf780adc0b20860f572f3acb900e1c811b970c9aab0097
+[14-Jan-2026 18:40:00 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:40:00 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:40:00 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=531b5fa56b6a7eaaa54f492225645c793fd2523b0dec669da3179aedb1a299e2
+[14-Jan-2026 18:45:47 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 18:45:47 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 18:45:47 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=719a8db7cd2506307cdca7c2cf4a0193ab834b3582f93f3abe72cc5d9c7299a7
+[14-Jan-2026 18:45:47 Europe/Berlin] Token: 719a8db7cd2506307cdc...
+[14-Jan-2026 18:45:52 Europe/Berlin] Password reset email sent successfully to: eliazamaemalibiran@gmail.com
+[14-Jan-2026 18:45:52 Europe/Berlin] Password reset email sent successfully to: eliazamaemalibiran@gmail.com
+[14-Jan-2026 18:45:52 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=719a8db7cd2506307cdca7c2cf4a0193ab834b3582f93f3abe72cc5d9c7299a7
+[14-Jan-2026 18:51:53 Europe/Berlin] Password reset attempt with token: 531b5fa56b6a7eaaa54f...
+[14-Jan-2026 18:51:53 Europe/Berlin] Invalid or expired reset token attempted: 531b5fa56b6a7eaaa54f...
+[14-Jan-2026 18:52:28 Europe/Berlin] Password reset attempt with token: 531b5fa56b6a7eaaa54f...
+[14-Jan-2026 18:52:28 Europe/Berlin] Invalid or expired reset token attempted: 531b5fa56b6a7eaaa54f...
+[14-Jan-2026 18:53:02 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 18:53:02 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 18:53:02 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=079ccf88a81b0bf1008e4448d15868f71dc4006b40cffcc357cd35934d994e9e
+[14-Jan-2026 18:53:02 Europe/Berlin] Token: 079ccf88a81b0bf1008e...
+[14-Jan-2026 18:53:07 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:53:07 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:53:07 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=079ccf88a81b0bf1008e4448d15868f71dc4006b40cffcc357cd35934d994e9e
+[14-Jan-2026 18:53:12 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 18:53:12 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 18:53:12 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=aa7803396c010ca7a48c4a669c3c458d19e5088c1d3fe95e4379f358f19ae0ae
+[14-Jan-2026 18:53:12 Europe/Berlin] Token: aa7803396c010ca7a48c...
+[14-Jan-2026 18:53:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:53:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 18:53:17 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=aa7803396c010ca7a48c4a669c3c458d19e5088c1d3fe95e4379f358f19ae0ae
+[14-Jan-2026 18:53:25 Europe/Berlin] Password reset attempt with token: 079ccf88a81b0bf1008e...
+[14-Jan-2026 18:53:25 Europe/Berlin] Invalid or expired reset token attempted: 079ccf88a81b0bf1008e...
+[14-Jan-2026 18:53:32 Europe/Berlin] Password reset attempt with token: 079ccf88a81b0bf1008e...
+[14-Jan-2026 18:53:32 Europe/Berlin] Invalid or expired reset token attempted: 079ccf88a81b0bf1008e...
+[14-Jan-2026 18:53:38 Europe/Berlin] Password reset attempt with token: aa7803396c010ca7a48c...
+[14-Jan-2026 18:53:38 Europe/Berlin] Invalid or expired reset token attempted: aa7803396c010ca7a48c...
+[14-Jan-2026 18:53:45 Europe/Berlin] Password reset attempt with token: aa7803396c010ca7a48c...
+[14-Jan-2026 18:53:45 Europe/Berlin] Invalid or expired reset token attempted: aa7803396c010ca7a48c...
+[14-Jan-2026 19:03:03 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:03:03 Europe/Berlin] Token received (first 20 chars): aa7803396c010ca7a48c
+[14-Jan-2026 19:03:03 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:03:03 Europe/Berlin] Token full: aa7803396c010ca7a48c4a669c3c458d19e5088c1d3fe95e4379f358f19ae0ae
+[14-Jan-2026 19:03:03 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time 
+              FROM users 
+              WHERE reset_token = ?' at line 1
+[14-Jan-2026 19:03:03 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:03:03 Europe/Berlin] Token received: aa7803396c010ca7a48c... (full length: 64)
+[14-Jan-2026 19:03:03 Europe/Berlin] Unhandled exception: Error: Call to undefined function getConnection() in C:\xampp\htdocs\bakery\backend\pages\auth\reset-password.php:52
+#0 C:\xampp\htdocs\bakery\backend\wrappers\reset-password.php(2): require()
+#1 {main}
+[14-Jan-2026 19:03:12 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:03:12 Europe/Berlin] Token received (first 20 chars): aa7803396c010ca7a48c
+[14-Jan-2026 19:03:12 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:03:12 Europe/Berlin] Token full: aa7803396c010ca7a48c4a669c3c458d19e5088c1d3fe95e4379f358f19ae0ae
+[14-Jan-2026 19:03:12 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time 
+              FROM users 
+              WHERE reset_token = ?' at line 1
+[14-Jan-2026 19:03:12 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:03:12 Europe/Berlin] Token received: aa7803396c010ca7a48c... (full length: 64)
+[14-Jan-2026 19:03:12 Europe/Berlin] Unhandled exception: Error: Call to undefined function getConnection() in C:\xampp\htdocs\bakery\backend\pages\auth\reset-password.php:52
+#0 C:\xampp\htdocs\bakery\backend\wrappers\reset-password.php(2): require()
+#1 {main}
+[14-Jan-2026 19:03:14 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:03:14 Europe/Berlin] Token received (first 20 chars): aa7803396c010ca7a48c
+[14-Jan-2026 19:03:14 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:03:14 Europe/Berlin] Token full: aa7803396c010ca7a48c4a669c3c458d19e5088c1d3fe95e4379f358f19ae0ae
+[14-Jan-2026 19:03:14 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time 
+              FROM users 
+              WHERE reset_token = ?' at line 1
+[14-Jan-2026 19:03:14 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:03:14 Europe/Berlin] Token received: aa7803396c010ca7a48c... (full length: 64)
+[14-Jan-2026 19:03:14 Europe/Berlin] Unhandled exception: Error: Call to undefined function getConnection() in C:\xampp\htdocs\bakery\backend\pages\auth\reset-password.php:52
+#0 C:\xampp\htdocs\bakery\backend\wrappers\reset-password.php(2): require()
+#1 {main}
+[14-Jan-2026 19:05:27 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:05:27 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:05:27 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:05:27 Europe/Berlin] Token: 6e60c787aa9da77f1753...
+[14-Jan-2026 19:05:32 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:05:32 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:05:32 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:05:35 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:05:35 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:05:35 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:05:35 Europe/Berlin] Token: 5133c88b2207434f1d9f...
+[14-Jan-2026 19:05:40 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:05:40 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:05:40 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:05:53 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:05:53 Europe/Berlin] Token received (first 20 chars): 6e60c787aa9da77f1753
+[14-Jan-2026 19:05:53 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:05:53 Europe/Berlin] Token full: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:05:53 Europe/Berlin] Raw GET token: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:05:53 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time,
+              TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires...' at line 1
+[14-Jan-2026 19:05:53 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:05:53 Europe/Berlin] Token received: 6e60c787aa9da77f1753... (full length: 64)
+[14-Jan-2026 19:05:53 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:05:53 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:05:53 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:05:35, token (first 20): 5133c88b2207434f1d9f, token length: 64
+[14-Jan-2026 19:05:53 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:05:53 Europe/Berlin] Invalid token attempted: 6e60c787aa9da77f1753... (length: 64)
+[14-Jan-2026 19:05:53 Europe/Berlin] Invalid or expired reset token attempted: 6e60c787aa9da77f1753...
+[14-Jan-2026 19:06:40 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:06:40 Europe/Berlin] Token received (first 20 chars): 5133c88b2207434f1d9f
+[14-Jan-2026 19:06:40 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:06:40 Europe/Berlin] Token full: 5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:06:40 Europe/Berlin] Raw GET token: 5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:06:40 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time,
+              TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires...' at line 1
+[14-Jan-2026 19:06:40 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:06:40 Europe/Berlin] Token received: 5133c88b2207434f1d9f... (full length: 64)
+[14-Jan-2026 19:06:40 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:06:40 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:06:40 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:05:35, token (first 20): 5133c88b2207434f1d9f, token length: 64
+[14-Jan-2026 19:06:40 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:06:40 Europe/Berlin] Invalid token attempted: 5133c88b2207434f1d9f... (length: 64)
+[14-Jan-2026 19:06:40 Europe/Berlin] Invalid or expired reset token attempted: 5133c88b2207434f1d9f...
+[14-Jan-2026 19:07:11 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:07:11 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:07:11 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=9db9e96adc4e727694cac9931158255cb6fbe0b27332fa55ffd633730d09ef24
+[14-Jan-2026 19:07:11 Europe/Berlin] Token: 9db9e96adc4e727694ca...
+[14-Jan-2026 19:07:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:07:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:07:17 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=9db9e96adc4e727694cac9931158255cb6fbe0b27332fa55ffd633730d09ef24
+[14-Jan-2026 19:07:21 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:07:21 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:07:21 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=0e33adbf9075c157ec4fa70679014ec1d5780b44d0ce924624b719f6c8948e87
+[14-Jan-2026 19:07:21 Europe/Berlin] Token: 0e33adbf9075c157ec4f...
+[14-Jan-2026 19:07:26 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:07:26 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:07:26 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=0e33adbf9075c157ec4fa70679014ec1d5780b44d0ce924624b719f6c8948e87
+[14-Jan-2026 19:09:27 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:09:27 Europe/Berlin] Token received (first 20 chars): 6e60c787aa9da77f1753
+[14-Jan-2026 19:09:27 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:09:27 Europe/Berlin] Token full: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:09:27 Europe/Berlin] Raw GET token: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:09:27 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:09:27 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:09:27 Europe/Berlin] Token received: 6e60c787aa9da77f1753... (full length: 64)
+[14-Jan-2026 19:09:27 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:09:27 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:09:27 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:07:21, token (first 20): 0e33adbf9075c157ec4f, token length: 64
+[14-Jan-2026 19:09:27 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:09:27 Europe/Berlin] Invalid token attempted: 6e60c787aa9da77f1753... (length: 64)
+[14-Jan-2026 19:09:27 Europe/Berlin] Invalid or expired reset token attempted: 6e60c787aa9da77f1753...
+[14-Jan-2026 19:12:12 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:12:12 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:12:12 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=d12dcc2b92947cca551354e936ea9e2b3a9053e36b4d309d20cd525d0636d82d
+[14-Jan-2026 19:12:12 Europe/Berlin] Token: d12dcc2b92947cca5513...
+[14-Jan-2026 19:12:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:12:17 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:12:17 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=d12dcc2b92947cca551354e936ea9e2b3a9053e36b4d309d20cd525d0636d82d
+[14-Jan-2026 19:12:31 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:12:31 Europe/Berlin] Token received (first 20 chars): 6e60c787aa9da77f1753
+[14-Jan-2026 19:12:31 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:12:31 Europe/Berlin] Token full: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:12:31 Europe/Berlin] Raw GET token: 6e60c787aa9da77f1753a8714219d366f723ed9be05b86c3d48f6a27d6c1269c
+[14-Jan-2026 19:12:31 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:12:31 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:12:31 Europe/Berlin] Token received: 6e60c787aa9da77f1753... (full length: 64)
+[14-Jan-2026 19:12:31 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:12:31 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:12:31 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:12:12, token (first 20): d12dcc2b92947cca5513, token length: 64
+[14-Jan-2026 19:12:31 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:12:31 Europe/Berlin] Invalid token attempted: 6e60c787aa9da77f1753... (length: 64)
+[14-Jan-2026 19:12:31 Europe/Berlin] Invalid or expired reset token attempted: 6e60c787aa9da77f1753...
+[14-Jan-2026 19:12:53 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:12:53 Europe/Berlin] Token received (first 20 chars): 5133c88b2207434f1d9f
+[14-Jan-2026 19:12:53 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:12:53 Europe/Berlin] Token full: 5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:12:53 Europe/Berlin] Raw GET token: 5133c88b2207434f1d9fdf821faed7d3fa0b107f5a6eba6fb5f4dfc02ab28182
+[14-Jan-2026 19:12:53 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:12:53 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:12:53 Europe/Berlin] Token received: 5133c88b2207434f1d9f... (full length: 64)
+[14-Jan-2026 19:12:53 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:12:53 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:12:53 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:12:12, token (first 20): d12dcc2b92947cca5513, token length: 64
+[14-Jan-2026 19:12:53 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:12:53 Europe/Berlin] Invalid token attempted: 5133c88b2207434f1d9f... (length: 64)
+[14-Jan-2026 19:12:53 Europe/Berlin] Invalid or expired reset token attempted: 5133c88b2207434f1d9f...
+[14-Jan-2026 19:13:13 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:13:13 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:13:13 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=bc76cbca9a291b5e400bad5630ba06523bcbadb1c4700f63e3e9ccedc40d54a7
+[14-Jan-2026 19:13:13 Europe/Berlin] Token: bc76cbca9a291b5e400b...
+[14-Jan-2026 19:13:16 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:13:16 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:13:16 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:16 Europe/Berlin] Token: 83ad9902e7fb6f098888...
+[14-Jan-2026 19:13:18 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:13:18 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:13:18 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=bc76cbca9a291b5e400bad5630ba06523bcbadb1c4700f63e3e9ccedc40d54a7
+[14-Jan-2026 19:13:21 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:13:21 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:13:21 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:33 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:13:33 Europe/Berlin] Token received (first 20 chars): 83ad9902e7fb6f098888
+[14-Jan-2026 19:13:33 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:13:33 Europe/Berlin] Token full: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:33 Europe/Berlin] Raw GET token: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:33 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:13:33 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:13:33 Europe/Berlin] Token received: 83ad9902e7fb6f098888... (full length: 64)
+[14-Jan-2026 19:13:33 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:13:33 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:13:33 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:13:16, token (first 20): 83ad9902e7fb6f098888, token length: 64
+[14-Jan-2026 19:13:33 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:13:33 Europe/Berlin] Invalid token attempted: 83ad9902e7fb6f098888... (length: 64)
+[14-Jan-2026 19:13:33 Europe/Berlin] Invalid or expired reset token attempted: 83ad9902e7fb6f098888...
+[14-Jan-2026 19:13:36 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:13:36 Europe/Berlin] Token received (first 20 chars): 83ad9902e7fb6f098888
+[14-Jan-2026 19:13:36 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:13:36 Europe/Berlin] Token full: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:36 Europe/Berlin] Raw GET token: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:36 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:13:36 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:13:36 Europe/Berlin] Token received: 83ad9902e7fb6f098888... (full length: 64)
+[14-Jan-2026 19:13:36 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:13:36 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:13:36 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:13:16, token (first 20): 83ad9902e7fb6f098888, token length: 64
+[14-Jan-2026 19:13:36 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:13:36 Europe/Berlin] Invalid token attempted: 83ad9902e7fb6f098888... (length: 64)
+[14-Jan-2026 19:13:36 Europe/Berlin] Invalid or expired reset token attempted: 83ad9902e7fb6f098888...
+[14-Jan-2026 19:13:38 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:13:38 Europe/Berlin] Token received (first 20 chars): 83ad9902e7fb6f098888
+[14-Jan-2026 19:13:38 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:13:38 Europe/Berlin] Token full: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:38 Europe/Berlin] Raw GET token: 83ad9902e7fb6f098888afc07de8bd75806465f91f4d2e4da46f29e74547f29d
+[14-Jan-2026 19:13:38 Europe/Berlin] Prepare failed: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'current_time, TIMESTAMPDIFF(SECOND, NOW(), reset_token_expires) as seconds_re...' at line 1
+[14-Jan-2026 19:13:38 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:13:38 Europe/Berlin] Token received: 83ad9902e7fb6f098888... (full length: 64)
+[14-Jan-2026 19:13:38 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:13:38 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:13:38 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:13:16, token (first 20): 83ad9902e7fb6f098888, token length: 64
+[14-Jan-2026 19:13:38 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:13:38 Europe/Berlin] Invalid token attempted: 83ad9902e7fb6f098888... (length: 64)
+[14-Jan-2026 19:13:38 Europe/Berlin] Invalid or expired reset token attempted: 83ad9902e7fb6f098888...
+[14-Jan-2026 19:18:21 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:18:21 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:18:21 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:21 Europe/Berlin] Token: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:18:27 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:18:27 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:18:27 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:30 Europe/Berlin] === Password Reset Link Generated ===
+[14-Jan-2026 19:18:30 Europe/Berlin] Base URL: http://192.168.18.115/bakery
+[14-Jan-2026 19:18:30 Europe/Berlin] Full Reset Link: http://192.168.18.115/bakery/backend/reset-password.php?token=9bd60565c4200e29aed1fd59d8dca13962c97a3ae0786b473b8e1beb217751e2
+[14-Jan-2026 19:18:30 Europe/Berlin] Token: 9bd60565c4200e29aed1...
+[14-Jan-2026 19:18:35 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:18:35 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:18:35 Europe/Berlin] Reset link: http://192.168.18.115/bakery/backend/reset-password.php?token=9bd60565c4200e29aed1fd59d8dca13962c97a3ae0786b473b8e1beb217751e2
+[14-Jan-2026 19:18:47 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:18:47 Europe/Berlin] Token received (first 20 chars): a5f0795d7e5865ed517b
+[14-Jan-2026 19:18:47 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:18:47 Europe/Berlin] Token full: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:47 Europe/Berlin] Raw GET token: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:47 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:18:47 Europe/Berlin] Token received: a5f0795d7e5865ed517b... (full length: 64)
+[14-Jan-2026 19:18:47 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:18:47 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:18:47 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:18:30, token (first 20): 9bd60565c4200e29aed1, token length: 64
+[14-Jan-2026 19:18:47 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:18:47 Europe/Berlin] Invalid token attempted: a5f0795d7e5865ed517b... (length: 64)
+[14-Jan-2026 19:18:47 Europe/Berlin] Invalid or expired reset token attempted: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:18:50 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:18:50 Europe/Berlin] Token received (first 20 chars): a5f0795d7e5865ed517b
+[14-Jan-2026 19:18:50 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:18:50 Europe/Berlin] Token full: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:50 Europe/Berlin] Raw GET token: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:50 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:18:50 Europe/Berlin] Token received: a5f0795d7e5865ed517b... (full length: 64)
+[14-Jan-2026 19:18:50 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:18:50 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:18:50 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:18:30, token (first 20): 9bd60565c4200e29aed1, token length: 64
+[14-Jan-2026 19:18:50 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:18:50 Europe/Berlin] Invalid token attempted: a5f0795d7e5865ed517b... (length: 64)
+[14-Jan-2026 19:18:50 Europe/Berlin] Invalid or expired reset token attempted: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:18:56 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:18:56 Europe/Berlin] Token received (first 20 chars): a5f0795d7e5865ed517b
+[14-Jan-2026 19:18:56 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:18:56 Europe/Berlin] Token full: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:56 Europe/Berlin] Raw GET token: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:56 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:18:56 Europe/Berlin] Token received: a5f0795d7e5865ed517b... (full length: 64)
+[14-Jan-2026 19:18:56 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:18:56 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:18:56 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:18:30, token (first 20): 9bd60565c4200e29aed1, token length: 64
+[14-Jan-2026 19:18:56 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:18:56 Europe/Berlin] Invalid token attempted: a5f0795d7e5865ed517b... (length: 64)
+[14-Jan-2026 19:18:56 Europe/Berlin] Invalid or expired reset token attempted: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:18:58 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:18:58 Europe/Berlin] Token received (first 20 chars): a5f0795d7e5865ed517b
+[14-Jan-2026 19:18:58 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:18:58 Europe/Berlin] Token full: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:58 Europe/Berlin] Raw GET token: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:18:58 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:18:58 Europe/Berlin] Token received: a5f0795d7e5865ed517b... (full length: 64)
+[14-Jan-2026 19:18:58 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:18:58 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:18:58 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:18:30, token (first 20): 9bd60565c4200e29aed1, token length: 64
+[14-Jan-2026 19:18:58 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:18:58 Europe/Berlin] Invalid token attempted: a5f0795d7e5865ed517b... (length: 64)
+[14-Jan-2026 19:18:58 Europe/Berlin] Invalid or expired reset token attempted: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:19:03 Europe/Berlin] === Password Reset Token Verification ===
+[14-Jan-2026 19:19:03 Europe/Berlin] Token received (first 20 chars): a5f0795d7e5865ed517b
+[14-Jan-2026 19:19:03 Europe/Berlin] Token length: 64
+[14-Jan-2026 19:19:03 Europe/Berlin] Token full: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:19:03 Europe/Berlin] Raw GET token: a5f0795d7e5865ed517b240515c82317491e05f9973321dd7346e6fe5e6588b2
+[14-Jan-2026 19:19:03 Europe/Berlin] Token NOT FOUND in database
+[14-Jan-2026 19:19:03 Europe/Berlin] Token received: a5f0795d7e5865ed517b... (full length: 64)
+[14-Jan-2026 19:19:03 Europe/Berlin] Found token in DB for userID: 1, expires: 2026-01-14 19:45:47, token (first 20): 719a8db7cd2506307cdc, token length: 64
+[14-Jan-2026 19:19:03 Europe/Berlin] Found token in DB for userID: 2, expires: 2026-01-03 15:45:36, token (first 20): df3df9008288996687fb, token length: 64
+[14-Jan-2026 19:19:03 Europe/Berlin] Found token in DB for userID: 4, expires: 2026-01-14 20:18:30, token (first 20): 9bd60565c4200e29aed1, token length: 64
+[14-Jan-2026 19:19:03 Europe/Berlin] Total active tokens in database: 3
+[14-Jan-2026 19:19:03 Europe/Berlin] Invalid token attempted: a5f0795d7e5865ed517b... (length: 64)
+[14-Jan-2026 19:19:03 Europe/Berlin] Invalid or expired reset token attempted: a5f0795d7e5865ed517b...
+[14-Jan-2026 19:21:15 Europe/Berlin] Password reset email sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:24:58 Europe/Berlin] Password reset code sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:27:18 Europe/Berlin] Password reset code sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:27:26 Europe/Berlin] Password reset code sent successfully to: umalikazyra974@gmail.com
+[14-Jan-2026 19:36:27 Europe/Berlin] Password reset code sent successfully to: umalikazyra974@gmail.com

@@ -42,6 +42,12 @@ include(__DIR__ . "/../../includes/header.php");
 ?>
 
 <div class="checkout-container">
+  <div class="mb-3">
+    <a href="index.php" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-2"></i>Back to Home
+    </a>
+  </div>
+  
   <div class="checkout-header">
     <h1><i class="fas fa-tachometer-alt me-2"></i>My Dashboard</h1>
     <p>Welcome back, <?php echo htmlspecialchars($user['fullName']); ?>!</p>
