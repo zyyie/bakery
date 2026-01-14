@@ -1,8 +1,84 @@
 <?php
 
-require_once __DIR__ . '/../connect.php';
+require_once __DIR__ . '/../config/connect.php';
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/validation.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
+$__appLogDir = __DIR__ . '/../logs';
+if (!is_dir($__appLogDir)) {
+    @mkdir($__appLogDir, 0775, true);
+}
+ini_set('error_log', $__appLogDir . '/php_errors.log');
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+set_exception_handler(function (Throwable $e) {
+    $uri = (string)($_SERVER['REQUEST_URI'] ?? '');
+    $accept = (string)($_SERVER['HTTP_ACCEPT'] ?? '');
+    $contentType = (string)($_SERVER['CONTENT_TYPE'] ?? '');
+    $isJson = stripos($accept, 'application/json') !== false || stripos($contentType, 'application/json') !== false || stripos($uri, '/api/') !== false;
+
+    $msg = "Unhandled exception: " . get_class($e) . ": " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString();
+    error_log($msg);
+
+    if (!headers_sent()) {
+        http_response_code(500);
+        if ($isJson) {
+            header('Content-Type: application/json');
+        } else {
+            header('Content-Type: text/html; charset=UTF-8');
+        }
+    }
+
+    if ($isJson) {
+        echo json_encode(['ok' => false, 'error' => 'Server error']);
+    } else {
+        echo 'An unexpected error occurred. Please try again later.';
+    }
+    exit;
+});
+
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if (!$err) {
+        return;
+    }
+    $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+    if (!in_array($err['type'] ?? 0, $fatalTypes, true)) {
+        return;
+    }
+
+    $uri = (string)($_SERVER['REQUEST_URI'] ?? '');
+    $accept = (string)($_SERVER['HTTP_ACCEPT'] ?? '');
+    $contentType = (string)($_SERVER['CONTENT_TYPE'] ?? '');
+    $isJson = stripos($accept, 'application/json') !== false || stripos($contentType, 'application/json') !== false || stripos($uri, '/api/') !== false;
+
+    error_log('Fatal error: ' . ($err['message'] ?? '') . ' in ' . ($err['file'] ?? '') . ':' . ($err['line'] ?? ''));
+
+    if (!headers_sent()) {
+        http_response_code(500);
+        if ($isJson) {
+            header('Content-Type: application/json');
+        } else {
+            header('Content-Type: text/html; charset=UTF-8');
+        }
+    }
+
+    if ($isJson) {
+        echo json_encode(['ok' => false, 'error' => 'Server error']);
+    } else {
+        echo 'An unexpected error occurred. Please try again later.';
+    }
+});
 
 function is_https() {
     return !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
@@ -22,25 +98,6 @@ function current_base_url() {
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $dir = rtrim(dirname($_SERVER['PHP_SELF'] ?? '/'), '/\\');
     return $scheme . '://' . $host . ($dir ? '/' . $dir : '');
-}
-
-function get_google_redirect_uri() {
-    $scheme = is_https() ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    
-    // Get the base path - this should be the backend directory
-    $scriptPath = dirname($_SERVER['SCRIPT_NAME'] ?? '/backend');
-    
-    // Normalize the path - remove trailing slashes and ensure proper format
-    $scriptPath = rtrim($scriptPath, '/');
-    if (empty($scriptPath) || $scriptPath === '/') {
-        $scriptPath = '/backend';
-    }
-    
-    // Build the redirect URI
-    $redirectUri = $scheme . '://' . $host . $scriptPath . '/google-callback.php';
-    
-    return $redirectUri;
 }
 
 function set_app_cookie($name, $value, $expires) {
@@ -150,6 +207,53 @@ function product_image_url(array $itemRow, int $depth = 0): string {
 function product_image_urls(array $itemRow, int $depth = 0, int $max = 3): array {
     $prefix = app_path_prefix($depth);
     $urls = [];
+
+    // Prefer images from item_images table when available
+    $itemID = isset($itemRow['itemID']) ? intval($itemRow['itemID']) : 0;
+    if ($itemID > 0) {
+        try {
+            $rs = executePreparedQuery(
+                "SELECT image_path FROM item_images WHERE itemID = ? ORDER BY is_primary DESC, sort_order ASC, imageID ASC LIMIT ?",
+                "ii",
+                [$itemID, max(1, $max)]
+            );
+            if ($rs && mysqli_num_rows($rs) > 0) {
+                while ($r = mysqli_fetch_assoc($rs)) {
+                    $p = trim((string)($r['image_path'] ?? ''));
+                    if ($p === '') continue;
+
+                    // Absolute URLs
+                    if (preg_match('~^https?://~i', $p)) {
+                        $urls[] = $p;
+                        if (count($urls) >= $max) break;
+                        continue;
+                    }
+
+                    // Normalize slashes and trim
+                    $p2 = str_replace('\\', '/', $p);
+                    $p2 = ltrim($p2, '/');
+
+                    // If path already targets frontend images, serve it directly
+                    if (stripos($p2, 'frontend/images/') === 0) {
+                        $urls[] = $prefix . $p2;
+                    } elseif (stripos($p2, 'images/') === 0) {
+                        $urls[] = $prefix . 'frontend/' . $p2;
+                    } else {
+                        // Default: uploads-relative
+                        $urls[] = $prefix . 'uploads/' . $p2;
+                    }
+
+                    if (count($urls) >= $max) break;
+                }
+
+                if (!empty($urls)) {
+                    return $urls;
+                }
+            }
+        } catch (Throwable $e) {
+            // Ignore DB errors here and fall back gracefully
+        }
+    }
 
     if (!empty($itemRow['itemImage'])) {
         // If itemImage is set, return it as a single image

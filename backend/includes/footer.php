@@ -1,3 +1,12 @@
+<?php
+$__scriptName = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+$__backendBaseUrl = '/backend';
+$__backendPos = strpos($__scriptName, '/backend/');
+if ($__backendPos !== false) {
+  $__backendBaseUrl = substr($__scriptName, 0, $__backendPos) . '/backend';
+}
+?>
+
 <!-- Footer -->
 <footer class="footer">
   <div class="container">
@@ -12,12 +21,12 @@
       <div class="col-md-4">
         <h5>Useful Links</h5>
         <ul class="list-unstyled">
-          <li><a href="about.php" class="text-muted text-decoration-none">About Us</a></li>
-          <li><a href="contact.php" class="text-muted text-decoration-none">Contact Us</a></li>
-          <li><a href="index.php" class="text-muted text-decoration-none">Home</a></li>
-          <li><a href="login.php" class="text-muted text-decoration-none">Login</a></li>
-          <li><a href="products.php" class="text-muted text-decoration-none">Food Packages</a></li>
-          <li><a href="admin/login.php" class="text-muted text-decoration-none">Admin Login</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/about.php" class="text-muted text-decoration-none">About Us</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/contact.php" class="text-muted text-decoration-none">Contact Us</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/index.php" class="text-muted text-decoration-none">Home</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/login.php" class="text-muted text-decoration-none">Login</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/products.php" class="text-muted text-decoration-none">Food Packages</a></li>
+          <li><a href="<?php echo $__backendBaseUrl; ?>/admin/login.php" class="text-muted text-decoration-none">Admin Login</a></li>
         </ul>
       </div>
       <div class="col-md-4">

@@ -1,0 +1,12 @@
+# Route all PHP requests to wrappers folder while preserving URLs
+RewriteEngine On
+
+# Skip if the request is already for a file that exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Route PHP files to wrappers folder
+RewriteRule ^(about|cart|checkout|contact|customer-messages|forgot-password|index|login|logout|my-favorites|my-orders|order-details|product-details|products|reset-password|signup|track-order|update-mobile|user-dashboard)\.php$ wrappers/$1.php [L]
+
+# Handle root index.php request
+RewriteRule ^$ wrappers/index.php [L]

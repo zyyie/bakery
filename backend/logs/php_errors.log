@@ -1,0 +1,19 @@
+[13-Jan-2026 16:42:57 Europe/Berlin] PHP Fatal error:  Uncaught ErrorException: session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php:53
+Stack trace:
+#0 [internal function]: {closure}(2, 'session_start()...', 'C:\\xampp\\htdocs...', 53)
+#1 C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php(53): session_start()
+#2 Command line code(1): require('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php on line 53
+[13-Jan-2026 16:42:57 Europe/Berlin] Fatal error: Uncaught ErrorException: session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php:53
+Stack trace:
+#0 [internal function]: {closure}(2, 'session_start()...', 'C:\\xampp\\htdocs...', 53)
+#1 C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php(53): session_start()
+#2 Command line code(1): require('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\bakery\backend\admin\includes\bootstrap.php:53
+[14-Jan-2026 03:44:52 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:88) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:21
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 21)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(21): header('Location: read-...')
+#2 C:\xampp\htdocs\bakery\backend\admin\read-enquiry.php(2): require('C:\\xampp\\htdocs...')
+#3 {main}

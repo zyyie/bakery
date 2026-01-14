@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Route specific root entrypoints into backend/wrappers
+RewriteRule ^$ backend/wrappers/root-index.php [L]
+RewriteRule ^index\.php$ backend/wrappers/root-index.php [L]
+RewriteRule ^sms_webhook\.php$ backend/wrappers/sms_webhook.php [L]
+RewriteRule ^send_otp\.php$ backend/wrappers/send_otp.php [L]
+RewriteRule ^drop-database\.php$ backend/wrappers/drop-database.php [L]

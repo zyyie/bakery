@@ -1,10 +1,57 @@
 <?php
 
-require_once __DIR__ . '/../../connect.php';
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+require_once dirname(__DIR__, 2) . '/config/connect.php';
+
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
+$__appLogDir = __DIR__ . '/../../logs';
+if (!is_dir($__appLogDir)) {
+    @mkdir($__appLogDir, 0775, true);
+}
+ini_set('error_log', $__appLogDir . '/php_errors.log');
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+set_exception_handler(function (Throwable $e) {
+    $msg = "Unhandled exception: " . get_class($e) . ": " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine() . "\n" . $e->getTraceAsString();
+    error_log($msg);
+
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+    echo 'An unexpected error occurred. Please try again later.';
+    exit;
+});
+
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if (!$err) {
+        return;
+    }
+    $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR];
+    if (!in_array($err['type'] ?? 0, $fatalTypes, true)) {
+        return;
+    }
+
+    error_log('Fatal error: ' . ($err['message'] ?? '') . ' in ' . ($err['file'] ?? '') . ':' . ($err['line'] ?? ''));
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=UTF-8');
+    }
+    echo 'An unexpected error occurred. Please try again later.';
+});
 
 function adminIsLoggedIn() {
     return isset($_SESSION['adminID']);
@@ -12,7 +59,13 @@ function adminIsLoggedIn() {
 
 function requireAdminLogin() {
     if (!adminIsLoggedIn()) {
-        header('Location: login.php');
+        $scriptName = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+        $adminBaseUrl = '';
+        $adminPos = strpos($scriptName, '/admin/');
+        if ($adminPos !== false) {
+            $adminBaseUrl = substr($scriptName, 0, $adminPos) . '/admin';
+        }
+        header('Location: ' . ($adminBaseUrl !== '' ? ($adminBaseUrl . '/login.php') : 'login.php'));
         exit();
     }
 }
