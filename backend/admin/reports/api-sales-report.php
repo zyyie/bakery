@@ -26,6 +26,12 @@ $context = stream_context_create([
 ]);
 
 $canteenResponse = @file_get_contents($canteen_url, false, $context);
+$canteenHttpCode = null;
+if (isset($http_response_header) && is_array($http_response_header) && !empty($http_response_header[0])) {
+    if (preg_match('/\s(\d{3})\s/', (string)$http_response_header[0], $m)) {
+        $canteenHttpCode = (int)$m[1];
+    }
+}
 if ($canteenResponse !== false) {
     $canteenData = json_decode($canteenResponse, true);
     if (json_last_error() !== JSON_ERROR_NONE) {
@@ -35,6 +41,11 @@ if ($canteenResponse !== false) {
 } else {
     $canteenError = "Can't connect to the cafeteria server.";
 }
+
+$canteenConnected = (bool)($canteenData && isset($canteenData['success']) && $canteenData['success']);
+$canteenVendor = $canteenConnected ? (string)($canteenData['vendor'] ?? 'Cafeteria') : '';
+$canteenRevenue = $canteenConnected ? (float)($canteenData['total_revenue'] ?? 0) : 0.0;
+$canteenOrders = $canteenConnected ? (int)(isset($canteenData['detailed_logs']) && is_array($canteenData['detailed_logs']) ? count($canteenData['detailed_logs']) : 0) : 0;
 
 // Initialize sales data
 $salesData = [
@@ -125,6 +136,30 @@ if ($validDates) {
 
 <div class="header-bar">
   <h2 class="mb-0" style="color: #333; font-weight: 600;">API Sales Report</h2>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body">
+    <?php if ($canteenConnected): ?>
+      <div class="alert alert-success mb-0">
+        <strong>Cafeteria API:</strong> Connected
+        <?php if ($canteenHttpCode !== null): ?> (HTTP <?php echo (int)$canteenHttpCode; ?>)<?php endif; ?>
+        <br>
+        <strong>Vendor:</strong> <?php echo htmlspecialchars($canteenVendor); ?>
+        <br>
+        <strong>Total revenue:</strong> ₱<?php echo number_format($canteenRevenue, 2); ?>
+        <br>
+        <strong>Orders:</strong> <?php echo (int)$canteenOrders; ?>
+      </div>
+    <?php else: ?>
+      <div class="alert alert-danger mb-0">
+        <strong>Cafeteria API:</strong> Not connected
+        <?php if ($canteenHttpCode !== null): ?> (HTTP <?php echo (int)$canteenHttpCode; ?>)<?php endif; ?>
+        <br>
+        <?php echo htmlspecialchars((string)($canteenError ?: 'Unknown error')); ?>
+      </div>
+    <?php endif; ?>
+  </div>
 </div>
 
 <div class="card mb-4">

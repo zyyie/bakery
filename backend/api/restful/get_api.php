@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/bootstrap.php';
-require_once __DIR__ . '/../config/connect.php';
+require_once dirname(__DIR__, 2) . '/includes/bootstrap.php';
 
 header('Content-Type: application/json');
 
