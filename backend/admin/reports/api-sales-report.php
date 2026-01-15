@@ -14,7 +14,7 @@ $validDates = preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate) && preg_match('/^\d
 // Fetch School Cafeteria API data (Live)
 $canteenData = null;
 $canteenError = null;
-$canteen_ip = "192.168.18.171";
+$canteen_ip = "192.168.1.100";
 $canteen_url = "http://$canteen_ip/Finals_SCHOOLCANTEEN/api/get_vendor_sales.php?api_key=CARNICK-CANTEEN-2026";
 
 // Fetch with cURL and HTTPS fallback

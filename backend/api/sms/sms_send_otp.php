@@ -26,9 +26,13 @@ if (empty($recipient)) {
 
 // Clean and validate phone number
 $recipient = trim($recipient);
-if (!str_starts_with($recipient, '+')) {
-    $recipient = '+' . $recipient;
+$digits = preg_replace('/\D+/', '', $recipient);
+if (strlen($digits) < 7 || strlen($digits) > 15) {
+    echo json_encode(['ok' => false, 'error' => 'Invalid phone number']);
+    exit;
 }
+// Keep display/submit format with + for SMS gateway, but use digits-only as session key
+$gatewayPhone = '+' . $digits;
 
 $otp = rand(100000, 999999);
 $message = "Your OTP is $otp. Do not share this code with anyone.";
@@ -36,7 +40,7 @@ $message = "Your OTP is $otp. Do not share this code with anyone.";
 $url = rtrim($gateway_url, '/') . '/messages';
 
 $payload = [
-    "phoneNumbers" => [$recipient],
+    "phoneNumbers" => [$gatewayPhone],
     "textMessage" => ["text" => $message],
     "withDeliveryReport" => true
 ];
@@ -58,16 +62,19 @@ $context = stream_context_create($options);
 $response = @file_get_contents($url, false, $context);
 $statusLine = isset($http_response_header[0]) ? $http_response_header[0] : 'HTTP/1.1 (no status)';
 
-// Store OTP in session
+// Store OTP in session using normalized key
 $_SESSION['otp'] = $_SESSION['otp'] ?? [];
-$_SESSION['otp'][$recipient] = [
+$_SESSION['otp'][$digits] = [
     'code' => (string)$otp,
-    'exp' => time() + 300
+    'sent_at' => time(),
+    'exp' => time() + 300,
+    'attempts' => 0,
+    'max_attempts' => 5,
 ];
 
 echo json_encode([
     'ok' => true,
-    'phone' => $recipient,
+    'phone' => $gatewayPhone,
     'otp' => (string)$otp,
     'statusLine' => $statusLine,
     'response' => $response ?: null

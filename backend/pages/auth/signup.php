@@ -31,8 +31,9 @@ if(isset($_POST['fullName'])){
   } elseif(!filter_var($email, FILTER_VALIDATE_EMAIL)){
     $error = "Invalid email format!";
   } else {
-    // Require OTP verification for the provided mobile number
-    $isVerified = isset($_SESSION['otp_verified'][$mobileNumber]) && $_SESSION['otp_verified'][$mobileNumber] === true;
+    // Require OTP verification for the provided mobile number (normalize to digits-only for consistency)
+    $normalizedMobile = preg_replace('/\D+/', '', $mobileNumber);
+    $isVerified = isset($_SESSION['otp_verified'][$normalizedMobile]) && $_SESSION['otp_verified'][$normalizedMobile] === true;
     if (!$isVerified) {
       $error = "Please verify your mobile number with the OTP.";
     } else {
@@ -53,7 +54,7 @@ if(isset($_POST['fullName'])){
       if($result !== false){
         $success = "Registration successful! Please login.";
         // Clear verification state after successful registration
-        unset($_SESSION['otp_verified'][$mobileNumber]);
+        unset($_SESSION['otp_verified'][$normalizedMobile]);
       } else {
         $error = "Registration failed! Please try again.";
       }

@@ -19,6 +19,14 @@ if ($adminPos !== false) {
         $adminBasePath = str_repeat('../', $depth);
     }
 }
+
+// Compute app base path (URL path up to but not including '/backend/') for linking shared assets like CSS
+$scriptName = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+$backendPos = strpos($scriptName, '/backend/');
+$appBasePath = '';
+if ($backendPos !== false) {
+    $appBasePath = substr($scriptName, 0, $backendPos);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,8 +36,7 @@ if ($adminPos !== false) {
   <title>Admin Panel - Bakery Management</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../../frontend/css/admin-style.css">
-  </style>
+  <link rel="stylesheet" href="<?php echo htmlspecialchars($appBasePath); ?>/frontend/css/admin-style.css?v=<?php echo time(); ?>">
 </head>
 <body>
   <div class="container-fluid">
@@ -37,7 +44,7 @@ if ($adminPos !== false) {
       <!-- Sidebar -->
       <div class="col-md-2 sidebar">
         <div class="logo-section">
-          <img src="../../frontend/images/logo.png" alt="Bakery Logo">
+          <img src="<?php echo htmlspecialchars($appBasePath); ?>/frontend/images/logo.png" alt="Bakery Logo">
         </div>
         <nav class="nav flex-column">
           <?php

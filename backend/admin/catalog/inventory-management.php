@@ -266,14 +266,14 @@ include(dirname(__DIR__) . "/includes/header.php");
                         <tr>
                             <td>
                                 <?php 
-                                // Use depth 2 for admin pages (admin is 2 levels deep from root)
-                                $imageUrl = function_exists('product_image_url') ? product_image_url($row, 2) : '../../frontend/images/placeholder.jpg';
+                                // Use depth 3 for this page (admin/catalog is 3 levels deep from project root)
+                                $imageUrl = function_exists('product_image_url') ? product_image_url($row, 3) : '../../../frontend/images/placeholder.jpg';
                                 ?>
                                 <img src="<?php echo $imageUrl; ?>" 
                                      alt="<?php echo e($row['packageName']); ?>" 
                                      style="width: 60px; height: 60px; object-fit: cover;" 
                                      class="rounded border"
-                                     onerror="this.src='../../frontend/images/placeholder.jpg'">
+                                     onerror="this.src='<?php echo htmlspecialchars($appBasePath ?? ''); ?>/frontend/images/placeholder.jpg'">
                             </td>
                             <td>
                                 <strong><?php echo e($row['packageName']); ?></strong>

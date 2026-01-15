@@ -76,6 +76,13 @@ if(isset($_POST['username']) && isset($_POST['password'])){
     }
   }
 }
+// Compute app base path (URL path up to but not including '/backend/') for linking shared assets like CSS
+$scriptName = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+$backendPos = strpos($scriptName, '/backend/');
+$appBasePath = '';
+if ($backendPos !== false) {
+  $appBasePath = substr($scriptName, 0, $backendPos);
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -85,7 +92,7 @@ if(isset($_POST['username']) && isset($_POST['password'])){
   <title>Admin Login - Bakery Management</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../../frontend/css/style.css">
+  <link rel="stylesheet" href="<?php echo htmlspecialchars($appBasePath); ?>/frontend/css/admin-style.css?v=<?php echo time(); ?>">
 </head>
 <body class="auth-body admin-auth">
   <div class="auth-container">
