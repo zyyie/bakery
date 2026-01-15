@@ -77,7 +77,7 @@ if(isset($_POST['reply'])){
     if($smsID > 0 && !empty($replyMessage) && !empty($phoneNumber)){
         // Send SMS reply
         $smsConfig = require __DIR__ . '/../../config/sms.php';
-        $gateway_url = $smsConfig['gateway_url'] ?? 'http://192.168.18.112:8080';
+        $gateway_url = $smsConfig['gateway_url'] ?? 'http://10.54.202.176:8080';
         $username = $smsConfig['gateway_username'] ?? 'sms';
         $password = $smsConfig['gateway_password'] ?? '1234567890';
         
@@ -187,12 +187,14 @@ $receiveNumber = $smsConfig['receive_number'] ?? '+639493380766';
 $displayReceiveNumber = str_replace('+63', '0', $receiveNumber); // Show as 09493380766
 ?>
 
-<h2 class="mb-4" style="color: #8B4513; font-weight: 600;">
-    <i class="fas fa-sms"></i> SMS Messages
-    <?php if($unreadCount > 0): ?>
-        <span class="badge bg-danger ms-2"><?php echo $unreadCount; ?> Unread</span>
-    <?php endif; ?>
-</h2>
+<div class="header-bar">
+    <h2 class="mb-0" style="color: #333; font-weight: 600;">
+        <i class="fas fa-sms"></i> SMS Messages
+        <?php if($unreadCount > 0): ?>
+            <span class="badge bg-danger ms-2"><?php echo $unreadCount; ?> Unread</span>
+        <?php endif; ?>
+    </h2>
+</div>
 
 <div class="alert alert-primary mb-3">
     <div class="d-flex justify-content-between align-items-center">

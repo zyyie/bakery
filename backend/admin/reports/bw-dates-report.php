@@ -28,7 +28,9 @@ if(isset($_POST['fromDate']) && isset($_POST['toDate'])){
 }
 ?>
 
-<h2 class="mb-4">B/W Dates Report</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">B/W Dates Report</h2>
+</div>
 
 <div class="card mb-4">
   <div class="card-body">

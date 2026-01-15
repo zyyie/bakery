@@ -182,9 +182,12 @@ $categoriesResult = executePreparedQuery("SELECT categoryID, categoryName FROM c
 include(dirname(__DIR__) . "/includes/header.php");
 ?>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Inventory Management</h2>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-        <h2 class="mb-1">Inventory Management</h2>
         <div class="d-flex align-items-center gap-2">
             <span class="text-muted small">Filter by Category:</span>
             <form method="GET" class="d-flex align-items-center gap-2">

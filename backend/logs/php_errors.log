@@ -535,3 +535,31 @@ Stack trace:
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:21:45 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:22:42 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:23:50 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}

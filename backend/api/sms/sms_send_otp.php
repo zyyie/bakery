@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 
 // SMS Gateway configuration
 $smsConfig = require __DIR__ . '/../../config/sms.php';
-$gateway_url = $smsConfig['gateway_url'] ?? 'http://192.168.18.112:8080';
+$gateway_url = $smsConfig['gateway_url'] ?? 'http://10.54.202.176:8080';
 $username = $smsConfig['gateway_username'] ?? 'sms';
 $password = $smsConfig['gateway_password'] ?? '1234567890';
 

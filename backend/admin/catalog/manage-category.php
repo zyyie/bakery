@@ -18,7 +18,9 @@ $query = "SELECT * FROM categories ORDER BY creationDate DESC";
 $result = executeQuery($query);
 ?>
 
-<h2 class="mb-4">Manage Category</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Manage Category</h2>
+</div>
 
 <div class="card">
   <div class="card-body">

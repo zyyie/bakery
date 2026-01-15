@@ -30,7 +30,9 @@ $query = "SELECT e.*, u.fullName as userName FROM enquiries e LEFT JOIN users u 
 $result = executePreparedQuery($query, "", []);
 ?>
 
-<h2 class="mb-4">Customer Messages</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Customer Messages</h2>
+</div>
 
 <div class="card">
   <div class="card-body">

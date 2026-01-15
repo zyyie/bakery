@@ -55,7 +55,9 @@ $catQuery = "SELECT * FROM categories";
 $catResult = executeQuery($catQuery);
 ?>
 
-<h2 class="mb-4">Add Food Package</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Add Food Package</h2>
+</div>
 
 <?php if($success): ?>
 <div class="alert alert-success"><?php echo $success; ?></div>

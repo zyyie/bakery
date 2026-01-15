@@ -1,5 +1,5 @@
 <?php
-$gateway_url = "http://192.168.1.101:8080";
+$gateway_url = "http://10.54.202.176:8080";
 $username = "sms";
 $password = "1234567890";
 
