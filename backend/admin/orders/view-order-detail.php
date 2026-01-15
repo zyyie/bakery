@@ -83,7 +83,9 @@ $itemsQuery = "SELECT order_items.*, items.*
 $itemsResult = executePreparedQuery($itemsQuery, "i", [$orderID]);
 ?>
 
-<h2 class="mb-4">View Order Details</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">View Order Details</h2>
+</div>
 
 <div class="card mb-4">
   <div class="card-body">

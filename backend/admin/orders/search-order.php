@@ -21,7 +21,9 @@ if(isset($_POST['orderNumber'])){
 }
 ?>
 
-<h2 class="mb-4">Search Order</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Search Order</h2>
+</div>
 
 <div class="card mb-4">
   <div class="card-body">

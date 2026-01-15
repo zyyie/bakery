@@ -8,7 +8,9 @@ $query = "SELECT * FROM orders WHERE orderStatus = 'Delivered' ORDER BY orderDat
 $result = executeQuery($query);
 ?>
 
-<h2 class="mb-4">Delivered Orders</h2>
+<div class="header-bar">
+  <h2 class="mb-0" style="color: #333; font-weight: 600;">Delivered Orders</h2>
+</div>
 
 <div class="card">
   <div class="card-body">
