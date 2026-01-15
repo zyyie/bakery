@@ -10,27 +10,11 @@ if ($id <= 0) {
     exit;
 }
 
-// Check if inventory table exists
-$hasInventory = false;
-try {
-    $invCheck = executePreparedQuery("SHOW TABLES LIKE 'inventory'", "", []);
-    $hasInventory = ($invCheck && mysqli_num_rows($invCheck) > 0);
-} catch (Exception $e) {
-    $hasInventory = false;
-}
-
-if ($hasInventory) {
-    $sql = "SELECT items.*, categories.categoryName, inv.stock_qty
-            FROM items
-            LEFT JOIN categories ON items.categoryID = categories.categoryID
-            LEFT JOIN inventory inv ON inv.itemID = items.itemID
-            WHERE items.itemID = ?";
-} else {
-    $sql = "SELECT items.*, categories.categoryName, 0 as stock_qty
-            FROM items
-            LEFT JOIN categories ON items.categoryID = categories.categoryID
-            WHERE items.itemID = ?";
-}
+// Simple query without inventory to test
+$sql = "SELECT items.*, categories.categoryName
+        FROM items
+        LEFT JOIN categories ON items.categoryID = categories.categoryID
+        WHERE items.itemID = ?";
 
 $result = executePreparedQuery($sql, "i", [$id]);
 if (!$result) {
@@ -53,7 +37,6 @@ $images = [];
 try {
     $images = product_image_urls($row, 1, 3);
     if (empty($images)) {
-        // Fallback to placeholder
         $images = ['frontend/images/placeholder.jpg'];
     }
 } catch (Exception $e) {
@@ -68,10 +51,11 @@ echo json_encode([
     'price' => number_format((float)$row['price'], 2, '.', ''),
     'foodDescription' => (string)($row['foodDescription'] ?? ''),
     'itemContains' => (string)($row['itemContains'] ?? ''),
-    'stockQty' => isset($row['stock_qty']) ? (int)$row['stock_qty'] : 0,
+    'stockQty' => 0,
     'deliveryWindow' => '9:00 AM – 6:00 PM',
     'deliveryLeadTime' => '1–2 days',
     'imageUrl' => $images[0] ?? 'frontend/images/placeholder.jpg',
     'images' => $images,
     'itemImage' => (string)($row['itemImage'] ?? ''),
 ], JSON_UNESCAPED_SLASHES);
+?>

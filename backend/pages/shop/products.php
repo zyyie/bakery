@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   async function loadItem(itemId) {
-    const res = await fetch(`api/item-details.php?id=${encodeURIComponent(itemId)}`);
+    const res = await fetch(`/bakery/backend/api/restful/item-details.php?id=${encodeURIComponent(itemId)}`);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data && data.error ? data.error : 'Failed to load item');
     return data;

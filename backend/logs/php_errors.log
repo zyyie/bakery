@@ -535,3 +535,134 @@ Stack trace:
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
+[15-Jan-2026 01:12:47 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:46:13 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:46:35 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:47:27 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:29 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:07 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:14 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:49:37 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
+#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
+#1 {main}
+[15-Jan-2026 01:50:56 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:58:33 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:59:01 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 01:59:04 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:05:40 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:07:49 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:10 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:08:10 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
+#0 {main}
+[15-Jan-2026 02:22:51 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 02:23:47 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}

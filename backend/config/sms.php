@@ -2,7 +2,7 @@
 
 return [
     // SMS Gateway configuration
-    'gateway_url' => 'http://192.168.18.112:8080',
+    'gateway_url' => 'http://192.168.1.101:8080',
     'gateway_username' => 'sms',
     'gateway_password' => '1234567890',
     
@@ -10,7 +10,7 @@ return [
     // This is the address that will be included in SMS messages
     // IMPORTANT: Set this to your server's IP address and port for mobile device access
     // Example: 'http://192.168.18.112:8080' (use your actual IP and port)
-    'base_url' => 'http://192.168.18.112:8080',
+    'base_url' => 'http://192.168.1.100',
     
     // Receiving number - SMS messages sent TO this number will be received by the website
     // Format: +63 for Philippines, then number without leading 0

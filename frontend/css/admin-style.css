@@ -376,3 +376,72 @@ i.fab {
 .breadcrumb-item.active {
   color: var(--brown-dark);
 }
+
+/* Admin Auth (Login) Styles */
+.auth-body.admin-auth {
+  background: #faf9f7;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 480px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+.auth-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(139, 69, 19, 0.12);
+  padding: 32px;
+}
+
+.auth-logo {
+  height: 120px;
+  object-fit: contain;
+}
+
+.auth-title {
+  color: var(--brown-primary);
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+.auth-form .form-label {
+  color: var(--brown-primary);
+  font-weight: 600;
+}
+
+.auth-form .form-control {
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.auth-form .btn {
+  border-radius: 10px;
+  padding: 12px;
+  letter-spacing: 0.5px;
+}
+
+.auth-link {
+  color: var(--brown-primary);
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  color: var(--brown-dark);
+  text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+  .auth-card { padding: 24px; }
+  .auth-logo { height: 96px; }
+}

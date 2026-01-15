@@ -24,8 +24,10 @@ $ourReceiveNumber = $smsConfig['receive_number'] ?? '+639493380766';
 
 // Try different possible formats from SMS gateway
 // Get sender's phone number
-if (isset($data['from']) || isset($data['phoneNumber']) || isset($data['sender'])) {
-    $phoneNumber = $data['from'] ?? $data['phoneNumber'] ?? $data['sender'] ?? null;
+if (isset($data['from'])) {
+    $phoneNumber = $data['from'];
+} elseif (isset($data['phoneNumber']) || isset($data['sender'])) {
+    $phoneNumber = $data['phoneNumber'] ?? $data['sender'] ?? null;
 }
 
 // Get receiver's phone number (the number that received the SMS)
@@ -33,17 +35,19 @@ if (isset($data['to']) || isset($data['recipient']) || isset($data['receiveNumbe
     $receiveNumber = $data['to'] ?? $data['recipient'] ?? $data['receiveNumber'] ?? $data['destination'] ?? null;
 }
 
-if (isset($data['message']) || isset($data['text']) || isset($data['textMessage'])) {
-    $message = $data['message'] ?? $data['text'] ?? $data['textMessage'] ?? null;
+// Get message text
+if (isset($data['text'])) {
+    $message = $data['text'];
+} elseif (isset($data['message']) || isset($data['textMessage'])) {
+    $message = $data['message'] ?? $data['textMessage'] ?? null;
     // Handle nested textMessage structure
     if (is_array($message) && isset($message['text'])) {
         $message = $message['text'];
     }
 }
 
-if (isset($data['messageId']) || isset($data['id']) || isset($data['messageID'])) {
-    $messageId = $data['messageId'] ?? $data['id'] ?? $data['messageID'] ?? null;
-}
+// Get message ID (SMS Forwarder doesn't provide one in this template)
+$messageId = $data['messageId'] ?? $data['id'] ?? $data['messageID'] ?? null;
 
 // Normalize receiver number for comparison
 $isForOurNumber = false;

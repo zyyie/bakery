@@ -18,62 +18,22 @@ if (!hash_equals($sharedKey, (string)$receivedKey)) {
     exit;
 }
 
-// Try remote inventory API first; fallback to DB if unavailable
-$remoteHost = '192.168.18.171';
-$remotePath = '/Finals_SCHOOLCANTEEN/partials/productloop.php';
-$baseUrl = 'http://' . $remoteHost . $remotePath . '?api_key=' . rawurlencode($sharedKey);
-$tryUrls = [
-    $baseUrl,
-    preg_replace('/^http:/i', 'https:', $baseUrl)
-];
-$remoteOk = false;
-foreach ($tryUrls as $url) {
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_CONNECTTIMEOUT => 3,
-        CURLOPT_TIMEOUT => 8,
-        CURLOPT_HEADER => false,
-    ]);
-    if (stripos($url, 'https://') === 0) {
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    }
-    $body = curl_exec($ch);
-    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE) ?: null;
-    curl_close($ch);
-    if ($body !== false && $code && $code >= 200 && $code < 300) {
-        $decoded = json_decode($body, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            echo json_encode($decoded, JSON_UNESCAPED_UNICODE);
-            $remoteOk = true;
-            break;
-        }
-    }
-}
-if ($remoteOk) {
-    exit;
-}
-
-// Inventory table may be optional; detect if it exists
-$hasInventory = false;
-try {
-    $invCheck = executePreparedQuery("SHOW TABLES LIKE 'inventory'", "", []);
-    $hasInventory = ($invCheck && mysqli_num_rows($invCheck) > 0);
-} catch (Exception $e) {
-    $hasInventory = false;
-}
-
-if ($hasInventory) {
-    $sql = "SELECT i.packageName, i.foodDescription, i.price, inv.stock_qty
-            FROM items i
-            LEFT JOIN inventory inv ON inv.itemID = i.itemID";
-} else {
-    // Fallback when inventory table is missing
-    $sql = "SELECT i.packageName, i.foodDescription, i.price, 0 AS stock_qty
-            FROM items i";
-}
+/**
+ * 1. INAYOS NA SQL QUERY
+ * - Isinama ang 'i.itemID' para sa tracking.
+ * - Nag-LEFT JOIN sa 'item_images' para makuha ang 'image_path'.
+ * - Naglagay ng CONDITION na 'img.is_primary = 1' para isang picture lang ang lumabas.
+ */
+$sql = "SELECT 
+            i.itemID, 
+            i.packageName, 
+            i.foodDescription, 
+            i.price, 
+            inv.stock_qty, 
+            img.image_path
+        FROM items i
+        LEFT JOIN inventory inv ON inv.itemID = i.itemID
+        LEFT JOIN item_images img ON img.itemID = i.itemID AND img.is_primary = 1";
 
 $res = executePreparedQuery($sql, "", []);
 
@@ -86,14 +46,20 @@ if ($res === false) {
 
 $data = [];
 while ($row = $res->fetch_assoc()) {
+    /**
+     * 2. INAYOS NA DATA MAPPING
+     * - Isinama ang 'id' (itemID) para magamit sa cart/checkout.
+     * - Isinama ang 'image_url' para lumitaw ang picture sa side ng Canteen.
+     */
     $data[] = [
-        'name' => (string)$row['packageName'],
+        'id'          => (int)$row['itemID'],
+        'name'        => (string)$row['packageName'],
         'description' => (string)($row['foodDescription'] ?? ''),
-        'price' => (float)$row['price'],
-        'stocks' => isset($row['stock_qty']) ? (int)$row['stock_qty'] : 0,
-        'source' => 'carnick',
+        'price'       => (float)$row['price'],
+        'stocks'      => isset($row['stock_qty']) ? (int)$row['stock_qty'] : 0,
+        'image_url'   => !empty($row['image_path']) ? $row['image_path'] : '', // Ipapasa ang path ng primary image
+        'source'      => 'carnick',
     ];
 }
 
 echo json_encode($data, JSON_UNESCAPED_UNICODE);
-

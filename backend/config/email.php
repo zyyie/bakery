@@ -4,7 +4,7 @@ return [
     'host' => 'smtp.gmail.com',
     'smtp_auth' => true,
     'username' => 'karneekbakery@gmail.com',
-    'password' => 'hoqg spvx xzue xkub',
+    'password' => 'qhnuqypmcjeyante',
     'smtp_secure' => 'tls',
     'port' => 587,
     'charset' => 'UTF-8',
@@ -16,5 +16,5 @@ return [
     // Find your IP: Run 'ipconfig' in CMD and look for IPv4 Address
     // Example: 'http://192.168.18.115/bakery' (use your actual IP)
     // Leave empty to auto-detect (may not work in all cases)
-    'base_url' => 'http://192.168.18.115/bakery', // Set your IP address here for mobile access
+    'base_url' => 'http://192.168.1.100/bakery', // Set your IP address here for mobile access
 ];

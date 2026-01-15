@@ -4,7 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once dirname(__DIR__, 2) . '/config/connect.php';
+// Load shared app bootstrap (DB, sessions, helpers)
+require_once dirname(__DIR__, 2) . '/includes/bootstrap.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
@@ -75,9 +76,8 @@ function adminRegenerateSession() {
         $_SESSION['admin_last_regeneration'] = time();
         session_regenerate_id(true);
     }
-    
+
     // Auto-deliver orders: Check and update orders with delivery date today or past
-    // This runs on every admin page visit to ensure orders are auto-delivered
     $today = date('Y-m-d');
     $autoDeliverQuery = "UPDATE orders 
                          SET orderStatus = 'Delivered' 

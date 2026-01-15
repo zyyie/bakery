@@ -10,12 +10,19 @@ $toDate = isset($_POST['toDate']) ? trim($_POST['toDate']) : date('Y-m-d');
 
 // Validate date format
 $validDates = preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $toDate);
+// Initialize here to avoid undefined variable when $validDates is false
+$hasSourceColumn = false;
 
 // Fetch School Cafeteria API data (Live)
 $canteenData = null;
 $canteenError = null;
 $canteen_ip = "192.168.1.100";
 $canteen_url = "http://$canteen_ip/Finals_SCHOOLCANTEEN/api/get_vendor_sales.php?api_key=CARNICK-CANTEEN-2026";
+
+// If the cafeteria API supports date filtering, pass it (safe if ignored)
+if ($validDates) {
+    $canteen_url .= '&from=' . rawurlencode($fromDate) . '&to=' . rawurlencode($toDate);
+}
 
 // Fetch with cURL and HTTPS fallback
 $canteenHttpCode = null;
@@ -77,6 +84,44 @@ $canteenVendor = $canteenConnected ? (string)($canteenData['vendor'] ?? 'Cafeter
 $canteenRevenue = $canteenConnected ? (float)($canteenData['total_revenue'] ?? 0) : 0.0;
 $canteenOrders = $canteenConnected ? (int)(isset($canteenData['detailed_logs']) && is_array($canteenData['detailed_logs']) ? count($canteenData['detailed_logs']) : 0) : 0;
 
+// Filter cafeteria logs by selected date range (so the report reflects the chosen period)
+$canteenLogsAll = ($canteenConnected && isset($canteenData['detailed_logs']) && is_array($canteenData['detailed_logs'])) ? $canteenData['detailed_logs'] : [];
+$canteenLogs = $canteenLogsAll;
+$canteenRevenueFiltered = $canteenRevenue;
+$canteenOrdersFiltered = $canteenOrders;
+if ($validDates && !empty($canteenLogsAll)) {
+    $fromTs = strtotime($fromDate . ' 00:00:00');
+    $toTs = strtotime($toDate . ' 23:59:59');
+
+    $filtered = [];
+    $sum = 0.0;
+
+    foreach ($canteenLogsAll as $log) {
+        $createdAt = (string)($log['created_at'] ?? '');
+        $ts = $createdAt !== '' ? strtotime($createdAt) : false;
+        if ($ts === false) {
+            continue;
+        }
+        if ($ts < $fromTs || $ts > $toTs) {
+            continue;
+        }
+        $filtered[] = $log;
+
+        // Prefer total_amount, otherwise compute quantity*price
+        if (isset($log['total_amount'])) {
+            $sum += (float)$log['total_amount'];
+        } else {
+            $qty = isset($log['quantity']) ? (float)$log['quantity'] : 0.0;
+            $price = isset($log['price']) ? (float)$log['price'] : 0.0;
+            $sum += ($qty * $price);
+        }
+    }
+
+    $canteenLogs = $filtered;
+    $canteenOrdersFiltered = count($filtered);
+    $canteenRevenueFiltered = $sum;
+}
+
 // Initialize sales data
 $salesData = [
     'carnick' => [
@@ -98,8 +143,9 @@ $salesData = [
 
 // Use API data for school cafeteria if available
 if ($canteenData && isset($canteenData['success']) && $canteenData['success']) {
-    $salesData['carnick']['totalSales'] = isset($canteenData['total_revenue']) ? (float)$canteenData['total_revenue'] : 0.00;
-    $salesData['carnick']['totalOrders'] = isset($canteenData['detailed_logs']) ? count($canteenData['detailed_logs']) : 0;
+    // Use filtered totals so the report reflects the selected date range
+    $salesData['carnick']['totalSales'] = $validDates ? (float)$canteenRevenueFiltered : (isset($canteenData['total_revenue']) ? (float)$canteenData['total_revenue'] : 0.00);
+    $salesData['carnick']['totalOrders'] = $validDates ? (int)$canteenOrdersFiltered : (isset($canteenData['detailed_logs']) ? count($canteenData['detailed_logs']) : 0);
     $salesData['carnick']['averageOrder'] = $salesData['carnick']['totalOrders'] > 0 
         ? $salesData['carnick']['totalSales'] / $salesData['carnick']['totalOrders'] 
         : 0.00;
@@ -323,7 +369,7 @@ if ($validDates) {
       <i class="fas fa-list"></i> School Cafeteria Sales Report (Live)
     </h5>
     
-    <?php if (isset($canteenData['detailed_logs']) && is_array($canteenData['detailed_logs']) && count($canteenData['detailed_logs']) > 0): ?>
+    <?php if (!empty($canteenLogs) && is_array($canteenLogs) && count($canteenLogs) > 0): ?>
       <div class="table-responsive">
         <table class="table table-striped table-hover">
           <thead class="table-dark">
@@ -336,7 +382,7 @@ if ($validDates) {
             </tr>
           </thead>
           <tbody>
-            <?php foreach($canteenData['detailed_logs'] as $log): ?>
+            <?php foreach($canteenLogs as $log): ?>
               <tr>
                 <td><?php echo htmlspecialchars($log['product_name'] ?? 'N/A'); ?></td>
                 <td><?php echo htmlspecialchars($log['quantity'] ?? '0'); ?></td>
@@ -369,7 +415,7 @@ if ($validDates) {
 </div>
 <?php endif; ?>
 
-<?php if (!$hasSourceColumn): ?>
+<?php if ($validDates && !$hasSourceColumn): ?>
 <div class="alert alert-warning">
   <i class="fas fa-exclamation-triangle"></i> 
   <strong>Note:</strong> The 'source' column has not been added to the orders table yet. 
