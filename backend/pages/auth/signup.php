@@ -240,8 +240,10 @@ include(__DIR__ . "/../../includes/login-header.php");
         sendStatus.textContent = 'OTP sent.';
         sendStatus.className = 'form-text text-success';
       } else {
-        sendStatus.textContent = 'Failed to send OTP.';
+        const errorMsg = resp.data && resp.data.error ? resp.data.error : 'Failed to send OTP. Please check your phone number and try again.';
+        sendStatus.textContent = errorMsg;
         sendStatus.className = 'form-text text-danger';
+        console.error('OTP send failed:', resp.data);
       }
       sendBtn.disabled = false;
     });

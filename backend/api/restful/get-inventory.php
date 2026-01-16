@@ -28,13 +28,17 @@ try {
 }
 
 if ($hasInventory) {
-    $sql = "SELECT i.packageName, i.foodDescription, i.price, inv.stock_qty
+    // Query reads directly from inventory table, so any updates will be immediately reflected
+    // This ensures real-time inventory data for the school cafeteria API
+    $sql = "SELECT i.itemID, i.packageName, i.foodDescription, i.price, COALESCE(inv.stock_qty, 0) AS stock_qty
             FROM items i
-            LEFT JOIN inventory inv ON inv.itemID = i.itemID";
+            LEFT JOIN inventory inv ON inv.itemID = i.itemID
+            ORDER BY i.itemID";
 } else {
     // Fallback when inventory table is missing
-    $sql = "SELECT i.packageName, i.foodDescription, i.price, 0 AS stock_qty
-            FROM items i";
+    $sql = "SELECT i.itemID, i.packageName, i.foodDescription, i.price, 0 AS stock_qty
+            FROM items i
+            ORDER BY i.itemID";
 }
 
 $res = executePreparedQuery($sql, "", []);
@@ -48,11 +52,14 @@ if ($res === false) {
 
 $data = [];
 while ($row = $res->fetch_assoc()) {
+    // Ensure stock_qty is always an integer (handles NULL from LEFT JOIN)
+    $stockQty = isset($row['stock_qty']) && $row['stock_qty'] !== null ? (int)$row['stock_qty'] : 0;
+    
     $data[] = [
         'name' => (string)$row['packageName'],
         'description' => (string)($row['foodDescription'] ?? ''),
         'price' => (float)$row['price'],
-        'stocks' => isset($row['stock_qty']) ? (int)$row['stock_qty'] : 0,
+        'stocks' => $stockQty, // Real-time inventory from database
         'source' => 'carnick',
     ];
 }

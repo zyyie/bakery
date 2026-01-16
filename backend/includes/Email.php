@@ -37,10 +37,25 @@ class Email {
         $this->mailer->Port = $this->config['port'];
         $this->mailer->CharSet = $this->config['charset'];
         
+        // Additional Gmail settings for better reliability
+        $this->mailer->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+        
+        // Enable keep-alive
+        $this->mailer->SMTPKeepAlive = false;
+        
+        // Timeout settings
+        $this->mailer->Timeout = 30;
+        
         // Debugging
         $this->mailer->SMTPDebug = $this->config['debug'];
         $this->mailer->Debugoutput = function($str, $level) {
-            error_log("PHPMailer: $str");
+            error_log("PHPMailer [Level $level]: $str");
         };
     }
 
@@ -139,16 +154,22 @@ class Email {
             $this->mailer->Body = $message;
             $this->mailer->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $message));
 
+            // Enable verbose error reporting
             $result = $this->mailer->send();
+            
             if ($result) {
                 error_log("Password reset code sent successfully to: $toEmail");
+                error_log("PHPMailer SMTP Server: {$this->mailer->Host}:{$this->mailer->Port}");
+                error_log("PHPMailer SMTP Secure: {$this->mailer->SMTPSecure}");
             } else {
-                error_log("Failed to send password reset code. Error: {$this->mailer->ErrorInfo}");
+                error_log("Failed to send password reset code to: $toEmail");
+                error_log("PHPMailer Error Info: {$this->mailer->ErrorInfo}");
             }
             return $result;
         } catch (Exception $e) {
             error_log("Exception sending password reset code to $toEmail: " . $e->getMessage());
             error_log("PHPMailer Error Info: {$this->mailer->ErrorInfo}");
+            error_log("Exception Trace: " . $e->getTraceAsString());
             return false;
         }
     }

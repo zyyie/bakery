@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__) . '/includes/bootstrap.php';
+require_once dirname(__DIR__) . '/../includes/bootstrap.php';
 requireAdminLogin();
 adminRegenerateSession();
 include(dirname(__DIR__) . "/includes/header.php");

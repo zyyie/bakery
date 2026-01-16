@@ -15,7 +15,7 @@ if ($__backendPos !== false) {
         <img src="../frontend/images/logo.png" alt="Bakery Logo" style="height: 50px;">
         <p class="text-muted">PREMIUM GOODS</p>
         <p class="text-muted">Your Business Address Here</p>
-        <p class="text-muted">Phone: 964-9885-950</p>
+        <p class="text-muted">Phone: +639493380766</p>
         <p class="text-muted">Email: karneekbakery@gmail.com</p>
       </div>
       <div class="col-md-4">

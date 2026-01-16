@@ -91,43 +91,6 @@ include(__DIR__ . "/../../includes/header.php");
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="card shadow contact-form-card h-100">
-        <div class="card-body p-5">
-          <div class="text-center mb-4">
-            <h2 class="text-brown fw-bold">Send Project Inquiry</h2>
-            <div class="divider bg-brown mx-auto"></div>
-            <p class="text-muted mt-2">We welcome feedback and collaboration</p>
-          </div>
-          <?php if($success): ?>
-          <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-          <?php endif; ?>
-          <?php if($error): ?>
-          <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-          <?php endif; ?>
-          <form method="POST" action="">
-            <div class="mb-3">
-              <div class="input-group">
-                <span class="input-group-text bg-brown text-white"><i class="fas fa-user"></i></span>
-                <input type="text" class="form-control" name="name" placeholder="Your Full Name" value="<?php echo isset($_SESSION['fullName']) ? e($_SESSION['fullName']) : ''; ?>" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <textarea name="message" class="form-control" rows="5" placeholder="Your Message or Inquiry" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-brown btn-lg w-100">
-              <i class="fas fa-paper-plane me-2"></i>Send Inquiry
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
   </div>
   <div class="row mt-5">
     <div class="col-12">

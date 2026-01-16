@@ -535,134 +535,108 @@ Stack trace:
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
-[15-Jan-2026 01:12:47 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
-[15-Jan-2026 01:46:13 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:15 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:16 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:46:35 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:47:27 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:29 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:30 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:48:31 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:07 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:14 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:49:37 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\dashboard\dashboard.php:3
-#0 C:\xampp\htdocs\bakery\backend\admin\dashboard.php(2): require()
-#1 {main}
-[15-Jan-2026 01:50:56 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:50:57 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:58:33 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:59:01 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 01:59:04 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:05:40 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:07:49 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:07:54 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:08 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:09 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:10 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:08:10 Europe/Berlin] Unhandled exception: Error: Call to undefined function requireAdminLogin() in C:\xampp\htdocs\bakery\backend\admin\reports\api-sales-report.php:3
-#0 {main}
-[15-Jan-2026 02:22:51 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
-[15-Jan-2026 02:23:47 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
 #0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
 #1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
 #2 {main}
+[15-Jan-2026 01:21:40 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:21:45 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:22:42 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 01:23:50 Europe/Berlin] Unhandled exception: ErrorException: include(C:\xampp\htdocs\bakery\backend\admin\auth/includes/header.php): Failed to open stream: No such file or directory in C:\xampp\htdocs\bakery\backend\admin\auth\account.php:85
+#0 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): {closure}(2, 'include(C:\\xamp...', 'C:\\xampp\\htdocs...', 85)
+#1 C:\xampp\htdocs\bakery\backend\admin\auth\account.php(85): include()
+#2 {main}
+[15-Jan-2026 03:38:41 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:116) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:25
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 25)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(25): header('Location: read-...')
+#2 {main}
+[15-Jan-2026 03:39:56 Europe/Berlin] Unhandled exception: ErrorException: Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\bakery\backend\admin\includes\header.php:116) in C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php:25
+#0 [internal function]: {closure}(2, 'Cannot modify h...', 'C:\\xampp\\htdocs...', 25)
+#1 C:\xampp\htdocs\bakery\backend\admin\messages\read-enquiry.php(25): header('Location: read-...')
+#2 {main}
+[15-Jan-2026 05:38:14 Europe/Berlin] Password reset code sent successfully to: eliazamaemalibiran@gmail.com
+[15-Jan-2026 05:38:14 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[15-Jan-2026 05:38:14 Europe/Berlin] PHPMailer SMTP Secure: tls
+[15-Jan-2026 05:38:53 Europe/Berlin] Password reset code sent successfully to: eliazamaemalibiran@gmail.com
+[15-Jan-2026 05:38:53 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[15-Jan-2026 05:38:53 Europe/Berlin] PHPMailer SMTP Secure: tls
+[15-Jan-2026 05:40:01 Europe/Berlin] Password reset code sent successfully to: eliazamaemalibiran@gmail.com
+[15-Jan-2026 05:40:01 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[15-Jan-2026 05:40:01 Europe/Berlin] PHPMailer SMTP Secure: tls
+[15-Jan-2026 08:05:55 Europe/Berlin] Password reset code sent successfully to: eliazamaemalibiran@gmail.com
+[15-Jan-2026 08:05:55 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[15-Jan-2026 08:05:55 Europe/Berlin] PHPMailer SMTP Secure: tls
+[15-Jan-2026 08:16:23 Europe/Berlin] Password reset code sent successfully to: nycoalecbalaogan@gmail.com
+[15-Jan-2026 08:16:23 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[15-Jan-2026 08:16:23 Europe/Berlin] PHPMailer SMTP Secure: tls
+[15-Jan-2026 11:30:47 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 11:30:47 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 11:35:51 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 11:35:51 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 11:52:48 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 11:52:48 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 11:56:17 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 11:56:17 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 11:57:41 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 11:57:41 Europe/Berlin] Execute failed: Duplicate entry '42' for key 'PRIMARY'
+[15-Jan-2026 12:00:06 Europe/Berlin] Inventory Update - itemID: 42, stockQty: 400, minStock: 10
+[15-Jan-2026 12:00:06 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:00:06 Europe/Berlin] Execute failed: Duplicate entry '42' for key 'PRIMARY'
+[15-Jan-2026 12:00:06 Europe/Berlin] Insert failed - itemID: 42, Error: Duplicate entry '42' for key 'PRIMARY'
+[15-Jan-2026 12:00:22 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 700, minStock: 40
+[15-Jan-2026 12:00:22 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:00:22 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:00:22 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:02:12 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 700, minStock: 40
+[15-Jan-2026 12:02:12 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:02:12 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:02:12 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:02:52 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 700, minStock: 40
+[15-Jan-2026 12:02:52 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:02:52 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:02:52 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:04 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 600, minStock: 40
+[15-Jan-2026 12:03:04 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:03:04 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:04 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:07 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 600, minStock: 40
+[15-Jan-2026 12:03:07 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:03:07 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:07 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:18 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 700, minStock: 40
+[15-Jan-2026 12:03:18 Europe/Berlin] Prepare failed: Unknown column 'inventoryID' in 'field list'
+[15-Jan-2026 12:03:18 Europe/Berlin] Execute failed: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:03:18 Europe/Berlin] Insert failed - itemID: 27, Error: Duplicate entry '27' for key 'PRIMARY'
+[15-Jan-2026 12:04:15 Europe/Berlin] Inventory Update - itemID: 24, stockQty: 300, minStock: 10
+[15-Jan-2026 12:05:54 Europe/Berlin] Inventory Update - itemID: 26, stockQty: 200, minStock: 10
+[15-Jan-2026 12:08:40 Europe/Berlin] Inventory Update - itemID: 47, stockQty: 250, minStock: 10
+[15-Jan-2026 12:08:40 Europe/Berlin] Inventory updated - itemID: 47, stockQty: 250 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 12:19:15 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 300, minStock: 40
+[15-Jan-2026 12:19:15 Europe/Berlin] Inventory updated - itemID: 27, stockQty: 300 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 12:26:04 Europe/Berlin] Inventory Update - itemID: 1, stockQty: 600, minStock: 10
+[15-Jan-2026 12:26:04 Europe/Berlin] Inventory updated - itemID: 1, stockQty: 600 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 12:35:22 Europe/Berlin] Inventory Update - itemID: 2, stockQty: 350, minStock: 10
+[15-Jan-2026 12:35:22 Europe/Berlin] Inventory updated - itemID: 2, stockQty: 350 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 12:46:38 Europe/Berlin] Inventory Update - itemID: 25, stockQty: 300, minStock: 10
+[15-Jan-2026 12:46:38 Europe/Berlin] Inventory updated - itemID: 25, stockQty: 300 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 13:00:40 Europe/Berlin] Inventory Update - itemID: 45, stockQty: 348, minStock: 10
+[15-Jan-2026 13:00:40 Europe/Berlin] Inventory updated - itemID: 45, stockQty: 348 (will reflect in school cafeteria API immediately)
+[15-Jan-2026 13:02:03 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 520, minStock: 40
+[15-Jan-2026 13:02:03 Europe/Berlin] Inventory updated - itemID: 27, stockQty: 520 (will reflect in school cafeteria API immediately)

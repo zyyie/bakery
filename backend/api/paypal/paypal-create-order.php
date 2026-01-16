@@ -29,18 +29,60 @@ if (empty($cfg['client_id']) || empty($cfg['client_secret'])) {
     exit;
 }
 
-$cartTotal = 0.0;
+// Calculate cart subtotal
+$cartSubtotal = 0.0;
+$totalQuantity = 0;
 foreach ($_SESSION['cart'] as $itemID => $quantity) {
     $itemID = (int)$itemID;
     $quantity = (int)$quantity;
-    $itemResult = executePreparedQuery('SELECT price FROM items WHERE itemID = ?', 'i', [$itemID]);
+    $itemResult = executePreparedQuery('SELECT price FROM items WHERE itemID = ? AND status = \'Active\'', 'i', [$itemID]);
     if ($itemResult && mysqli_num_rows($itemResult) > 0) {
         $item = mysqli_fetch_assoc($itemResult);
-        $cartTotal += (float)$item['price'] * $quantity;
+        $cartSubtotal += (float)$item['price'] * $quantity;
+        $totalQuantity += $quantity;
     }
 }
 
-$amount = number_format($cartTotal, 2, '.', '');
+// Calculate shipping fee
+$shippingFee = 30.00; // Default
+if ($totalQuantity >= 10 || $cartSubtotal >= 500) {
+    $shippingFee = 0.00;
+} elseif ($totalQuantity >= 5 || $cartSubtotal >= 200) {
+    $shippingFee = 20.00;
+}
+
+// Calculate discount based on coupon
+$discountAmount = 0.0;
+$selectedCouponCode = $_SESSION['selected_coupon'] ?? null;
+$availableCoupons = [
+    'SAVE10' => ['name' => '10% Off', 'type' => 'percentage', 'value' => 10],
+    'SAVE20' => ['name' => '20% Off', 'type' => 'percentage', 'value' => 20],
+    'SAVE50' => ['name' => '₱50 Off', 'type' => 'fixed', 'value' => 50],
+    'FREESHIP50' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 50],
+    'FREESHIP100' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 100],
+    'FREESHIP200' => ['name' => 'Free Shipping', 'type' => 'free_shipping', 'min_order' => 200],
+];
+
+if ($selectedCouponCode && isset($availableCoupons[$selectedCouponCode])) {
+    $coupon = $availableCoupons[$selectedCouponCode];
+    
+    if ($coupon['type'] === 'percentage') {
+        $discountAmount = $cartSubtotal * ($coupon['value'] / 100);
+    } elseif ($coupon['type'] === 'fixed') {
+        $discountAmount = min($coupon['value'], $cartSubtotal);
+    } elseif ($coupon['type'] === 'free_shipping') {
+        // Check if coupon applies (minimum order and quantity requirements)
+        if ($totalQuantity >= 3 && $cartSubtotal >= $coupon['min_order']) {
+            // For free shipping coupons, the discount is the shipping fee
+            $discountAmount = $shippingFee;
+            $shippingFee = 0;
+        }
+    }
+}
+
+// Calculate final total: subtotal - discount + shipping
+$finalTotal = $cartSubtotal - $discountAmount + $shippingFee;
+$amount = number_format(max(0, $finalTotal), 2, '.', '');
 
 $base = ($cfg['mode'] === 'live') ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
@@ -68,13 +110,43 @@ if (!$token) {
     exit;
 }
 
+// Build detailed amount breakdown for PayPal
+$purchaseUnitAmount = [
+    'currency_code' => $cfg['currency'],
+    'value' => $amount,
+    'breakdown' => [
+        'item_total' => [
+            'currency_code' => $cfg['currency'],
+            'value' => number_format($cartSubtotal, 2, '.', ''),
+        ],
+    ],
+];
+
+// Add discount if applicable
+if ($discountAmount > 0) {
+    $purchaseUnitAmount['breakdown']['discount'] = [
+        'currency_code' => $cfg['currency'],
+        'value' => number_format($discountAmount, 2, '.', ''),
+    ];
+}
+
+// Add shipping fee
+if ($shippingFee > 0) {
+    $purchaseUnitAmount['breakdown']['shipping'] = [
+        'currency_code' => $cfg['currency'],
+        'value' => number_format($shippingFee, 2, '.', ''),
+    ];
+} else {
+    $purchaseUnitAmount['breakdown']['shipping'] = [
+        'currency_code' => $cfg['currency'],
+        'value' => '0.00',
+    ];
+}
+
 $orderPayload = [
     'intent' => 'CAPTURE',
     'purchase_units' => [[
-        'amount' => [
-            'currency_code' => $cfg['currency'],
-            'value' => $amount,
-        ],
+        'amount' => $purchaseUnitAmount,
     ]],
 ];
 

@@ -399,71 +399,82 @@ i.fab {
   color: var(--brown-dark);
 }
 
-/* Admin Auth (Login) Styles */
-.auth-body.admin-auth {
-  background: #faf9f7;
-  min-height: 100vh;
+/* Admin Auth/Login Page Styles */
+.auth-body {
+  background-color: #faf9f7;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 .auth-container {
   width: 100%;
-  max-width: 480px;
-  margin: 40px auto;
-  padding: 0 16px;
+  max-width: 450px;
 }
 
 .auth-card {
-  background: #fff;
+  background: white;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(139, 69, 19, 0.12);
-  padding: 32px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
 }
 
 .auth-logo {
-  height: 120px;
-  object-fit: contain;
+  max-width: 200px;
+  height: auto;
 }
 
 .auth-title {
-  color: var(--brown-primary);
-  font-weight: 700;
+  color: #333;
+  font-weight: 600;
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .auth-subtitle {
-  color: #6c757d;
-  font-size: 0.95rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
 }
 
-.auth-form .form-label {
-  color: var(--brown-primary);
-  font-weight: 600;
-}
-
-.auth-form .form-control {
-  border-radius: 10px;
-  padding: 12px 14px;
-}
-
-.auth-form .btn {
-  border-radius: 10px;
-  padding: 12px;
-  letter-spacing: 0.5px;
+.auth-form {
+  margin-top: 1.5rem;
 }
 
 .auth-link {
   color: var(--brown-primary);
   text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
 }
 
 .auth-link:hover {
   color: var(--brown-dark);
-  text-decoration: underline;
+  text-decoration: none;
 }
 
-@media (max-width: 576px) {
-  .auth-card { padding: 24px; }
-  .auth-logo { height: 96px; }
+.btn-brown {
+  background: linear-gradient(135deg, var(--brown-primary), var(--brown-dark));
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.btn-brown:hover {
+  background: linear-gradient(135deg, var(--brown-dark), var(--brown-primary));
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+/* Override dashboard styles for auth pages */
+.auth-body .header-bar,
+.auth-body .stat-card,
+.auth-body .main-content,
+.auth-body .sidebar {
+  display: none !important;
 }

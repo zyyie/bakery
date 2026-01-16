@@ -1,65 +1,55 @@
 <?php
+// Siguraduhin na tama ang path ng bootstrap para makuha ang $conn (database connection)
 require_once dirname(__DIR__, 2) . '/includes/bootstrap.php';
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
-if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
-}
-
+// 1. API KEY CHECK
 $sharedKey = 'CARNICK-CANTEEN-2026';
 $receivedKey = $_GET['api_key'] ?? '';
 
-if (!hash_equals($sharedKey, (string)$receivedKey)) {
+if ($receivedKey !== $sharedKey) {
     http_response_code(401);
     echo json_encode(['error' => 'Invalid API Key']);
     exit;
 }
 
 /**
- * 1. INAYOS NA SQL QUERY
- * - Isinama ang 'i.itemID' para sa tracking.
- * - Nag-LEFT JOIN sa 'item_images' para makuha ang 'image_path'.
- * - Naglagay ng CONDITION na 'img.is_primary = 1' para isang picture lang ang lumabas.
+ * 2. LIVE DATA QUERY
+ * Gagamit tayo ng direktang query sa $conn para iwas sa cache ng executePreparedQuery.
+ * Sinisiguro nito na kung ano ang nasa database ngayon, iyon ang lalabas.
  */
+$conn = $GLOBALS['conn'];
+
 $sql = "SELECT 
-            i.itemID, 
             i.packageName, 
             i.foodDescription, 
             i.price, 
-            inv.stock_qty, 
-            img.image_path
+            COALESCE(inv.stock_qty, 0) AS stock_qty
         FROM items i
-        LEFT JOIN inventory inv ON inv.itemID = i.itemID
-        LEFT JOIN item_images img ON img.itemID = i.itemID AND img.is_primary = 1";
+        LEFT JOIN inventory inv ON i.itemID = inv.itemID
+        ORDER BY i.packageName ASC";
 
-$res = executePreparedQuery($sql, "", []);
+$result = $conn->query($sql);
 
-if ($res === false) {
-    $error = $GLOBALS['db_last_error'] ?? 'Database query failed';
+if (!$result) {
     http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $error]);
+    echo json_encode(['error' => 'Database Query Failed: ' . $conn->error]);
     exit;
 }
 
 $data = [];
-while ($row = $res->fetch_assoc()) {
-    /**
-     * 2. INAYOS NA DATA MAPPING
-     * - Isinama ang 'id' (itemID) para magamit sa cart/checkout.
-     * - Isinama ang 'image_url' para lumitaw ang picture sa side ng Canteen.
-     */
+while ($row = $result->fetch_assoc()) {
     $data[] = [
-        'id'          => (int)$row['itemID'],
         'name'        => (string)$row['packageName'],
         'description' => (string)($row['foodDescription'] ?? ''),
         'price'       => (float)$row['price'],
-        'stocks'      => isset($row['stock_qty']) ? (int)$row['stock_qty'] : 0,
-        'image_url'   => !empty($row['image_path']) ? $row['image_path'] : '', // Ipapasa ang path ng primary image
-        'source'      => 'carnick',
+        'stocks'      => (int)$row['stock_qty'],
+        'source'      => 'carnick'
     ];
 }
 
-echo json_encode($data, JSON_UNESCAPED_UNICODE);
+// 3. CLEAN JSON OUTPUT
+echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+exit();
+

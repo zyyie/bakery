@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__) . '/includes/bootstrap.php';
+require_once dirname(__DIR__) . '/../includes/bootstrap.php';
 requireAdminLogin();
 adminRegenerateSession();
 
@@ -53,65 +54,169 @@ ensure_inventory_schema();
 $success = "";
 $error = "";
 
+// Check for success message from redirect
+if(isset($_GET['success']) && $_GET['success'] == '1'){
+    $success = "Inventory updated successfully!";
+}
+
+// Check if this is an AJAX request
+$isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+
 // Handle form submissions
 if(isset($_POST['action'])){
     switch($_POST['action']){
         case 'update':
-            $itemID = intval($_POST['itemID']);
-            $stockQty = intval($_POST['stockQty']);
-            $minStock = intval($_POST['minStock']);
+            // Get itemID from hidden input (formItemID)
+            $itemID = intval($_POST['itemID'] ?? 0);
+            $stockQty = intval($_POST['stockQty'] ?? 0);
+            $minStock = intval($_POST['minStock'] ?? 0);
             $reorderPoint = 0; // Default value since field is removed from UI
             
+            // Debug logging
+            error_log("Inventory Update - itemID: $itemID, stockQty: $stockQty, minStock: $minStock");
+            
             if($itemID > 0 && $stockQty >= 0){
-                // Check if item exists in inventory
-                $checkQuery = "SELECT inventoryID FROM inventory WHERE itemID = ?";
-                $checkResult = executePreparedQuery($checkQuery, "i", [$itemID]);
+                // Use INSERT ... ON DUPLICATE KEY UPDATE to handle both insert and update
+                // This prevents duplicate key errors and ensures the record is always updated
+                $query = "INSERT INTO inventory (itemID, stock_qty, min_stock_level, reorder_point, last_updated) 
+                         VALUES (?, ?, ?, ?, NOW())
+                         ON DUPLICATE KEY UPDATE 
+                         stock_qty = VALUES(stock_qty), 
+                         min_stock_level = VALUES(min_stock_level), 
+                         reorder_point = VALUES(reorder_point), 
+                         last_updated = NOW()";
+                $result = executePreparedUpdate($query, "iiii", [$itemID, $stockQty, $minStock, $reorderPoint]);
                 
-                if($checkResult && mysqli_num_rows($checkResult) > 0){
-                    // Update existing inventory
-                    $query = "UPDATE inventory SET stock_qty = ?, min_stock_level = ?, reorder_point = ? WHERE itemID = ?";
-                    $result = executePreparedUpdate($query, "iiii", [$stockQty, $minStock, $reorderPoint, $itemID]);
+                // Check for database errors
+                $dbError = $GLOBALS['db_last_error'] ?? null;
+                if($result === false || $dbError){
+                    $error = "Failed to update inventory!" . ($dbError ? " Error: " . $dbError : "");
+                    error_log("Update failed - itemID: $itemID, Error: " . ($dbError ?? "Unknown"));
+                    
+                    if($isAjax){
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'error' => $error]);
+                        exit();
+                    }
                 } else {
-                    // Insert new inventory entry
-                    $query = "INSERT INTO inventory (itemID, stock_qty, min_stock_level, reorder_point) VALUES (?, ?, ?, ?)";
-                    $result = executePreparedUpdate($query, "iiii", [$itemID, $stockQty, $minStock, $reorderPoint]);
-                }
-                
-                if($result !== false){
-                    $success = "Inventory updated successfully!";
-                } else {
-                    $error = "Failed to update inventory!";
+                    // Get updated timestamp
+                    $timestampQuery = "SELECT last_updated FROM inventory WHERE itemID = ?";
+                    $timestampResult = executePreparedQuery($timestampQuery, "i", [$itemID]);
+                    $timestampRow = $timestampResult ? mysqli_fetch_assoc($timestampResult) : null;
+                    $lastUpdated = $timestampRow['last_updated'] ?? date('Y-m-d H:i:s');
+                    
+                    // Log successful update for API verification
+                    error_log("Inventory updated - itemID: $itemID, stockQty: $stockQty (will reflect in school cafeteria API immediately)");
+                    
+                    if($isAjax){
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'success' => true,
+                            'message' => 'Inventory updated successfully! Changes will reflect in the school cafeteria API immediately.',
+                            'data' => [
+                                'itemID' => $itemID,
+                                'stockQty' => $stockQty,
+                                'minStock' => $minStock,
+                                'lastUpdated' => $lastUpdated
+                            ]
+                        ]);
+                        exit();
+                    } else {
+                        // Redirect to prevent form resubmission and show updated data
+                        $redirectUrl = $_SERVER['PHP_SELF'] . ($selectedCategoryID > 0 ? '?categoryID=' . $selectedCategoryID : '');
+                        header("Location: " . $redirectUrl . "&success=1");
+                        exit();
+                    }
                 }
             } else {
-                $error = "Invalid data provided!";
+                $error = "Invalid data provided! itemID: $itemID, stockQty: $stockQty";
+                error_log("Invalid data - itemID: $itemID, stockQty: $stockQty");
+                
+                if($isAjax){
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'error' => $error]);
+                    exit();
+                }
             }
             break;
             
         case 'add':
-            $itemID = intval($_POST['itemID']);
-            $stockQty = intval($_POST['stockQty']);
+            // Get itemID from select dropdown (itemIDSelect) or hidden input
+            $itemID = intval($_POST['itemID'] ?? $_POST['itemIDSelect'] ?? 0);
+            $stockQty = intval($_POST['stockQty'] ?? 0);
             $minStock = intval($_POST['minStock'] ?? 10);
             $reorderPoint = 0; // Default value since field is removed from UI
             
             if($itemID > 0 && $stockQty >= 0){
                 // Check if item already exists in inventory
-                $checkQuery = "SELECT inventoryID FROM inventory WHERE itemID = ?";
+                $checkQuery = "SELECT itemID FROM inventory WHERE itemID = ?";
                 $checkResult = executePreparedQuery($checkQuery, "i", [$itemID]);
                 
                 if($checkResult && mysqli_num_rows($checkResult) > 0){
-                    $error = "Item already exists in inventory!";
+                    $error = "Item already exists in inventory! Use the Edit button to update it.";
+                    
+                    if($isAjax){
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'error' => $error]);
+                        exit();
+                    }
                 } else {
-                    $query = "INSERT INTO inventory (itemID, stock_qty, min_stock_level, reorder_point) VALUES (?, ?, ?, ?)";
+                    // Use INSERT IGNORE to prevent duplicate key errors, or regular INSERT
+                    $query = "INSERT INTO inventory (itemID, stock_qty, min_stock_level, reorder_point, last_updated) VALUES (?, ?, ?, ?, NOW())";
                     $result = executePreparedUpdate($query, "iiii", [$itemID, $stockQty, $minStock, $reorderPoint]);
                     
-                    if($result !== false){
-                        $success = "Item added to inventory successfully!";
+                    // Check for database errors
+                    $dbError = $GLOBALS['db_last_error'] ?? null;
+                    if($result === false || $dbError){
+                        // Check if it's a duplicate key error
+                        if($dbError && (strpos($dbError, 'Duplicate entry') !== false || strpos($dbError, 'PRIMARY') !== false)){
+                            $error = "Item already exists in inventory! Use the Edit button to update it.";
+                        } else {
+                            $error = "Failed to add item to inventory!" . ($dbError ? " Error: " . $dbError : "");
+                        }
+                        error_log("Add failed - itemID: $itemID, Error: " . ($dbError ?? "Unknown"));
+                        
+                        if($isAjax){
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => false, 'error' => $error]);
+                            exit();
+                        }
                     } else {
-                        $error = "Failed to add item to inventory!";
+                        // Get updated timestamp
+                        $timestampQuery = "SELECT last_updated FROM inventory WHERE itemID = ?";
+                        $timestampResult = executePreparedQuery($timestampQuery, "i", [$itemID]);
+                        $timestampRow = $timestampResult ? mysqli_fetch_assoc($timestampResult) : null;
+                        $lastUpdated = $timestampRow['last_updated'] ?? date('Y-m-d H:i:s');
+                        
+                        if($isAjax){
+                            header('Content-Type: application/json');
+                            echo json_encode([
+                                'success' => true,
+                                'message' => 'Item added to inventory successfully!',
+                                'data' => [
+                                    'itemID' => $itemID,
+                                    'stockQty' => $stockQty,
+                                    'minStock' => $minStock,
+                                    'lastUpdated' => $lastUpdated
+                                ]
+                            ]);
+                            exit();
+                        } else {
+                            // Redirect to prevent form resubmission and show updated data
+                            $redirectUrl = $_SERVER['PHP_SELF'] . ($selectedCategoryID > 0 ? '?categoryID=' . $selectedCategoryID : '');
+                            header("Location: " . $redirectUrl . "&success=1");
+                            exit();
+                        }
                     }
                 }
             } else {
                 $error = "Invalid data provided!";
+                
+                if($isAjax){
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'error' => $error]);
+                    exit();
+                }
             }
             break;
         case 'sync':
@@ -265,7 +370,7 @@ include(dirname(__DIR__) . "/includes/header.php");
                     </thead>
                     <tbody>
                         <?php foreach($categoryData['products'] as $row): ?>
-                        <tr>
+                        <tr data-item-id="<?php echo $row['itemID']; ?>">
                             <td>
                                 <?php 
                                 // Use depth 3 for this page (admin/catalog is 3 levels deep from project root)
@@ -282,15 +387,15 @@ include(dirname(__DIR__) . "/includes/header.php");
                                 <br><small class="text-muted">ID: <?php echo $row['itemID']; ?></small>
                             </td>
                             <td>
-                                <span class="badge bg-<?php echo ($row['stock_qty'] ?? 0) <= ($row['min_stock_level'] ?? 10) ? 'danger' : 'success'; ?> fs-6 px-3 py-2">
+                                <span class="badge stock-badge bg-<?php echo ($row['stock_qty'] ?? 0) <= ($row['min_stock_level'] ?? 10) ? 'danger' : 'success'; ?> fs-6 px-3 py-2" data-stock="<?php echo $row['stock_qty'] ?? 0; ?>">
                                     <?php echo $row['stock_qty'] ?? 0; ?>
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-info text-dark"><?php echo $row['min_stock_level'] ?? 0; ?></span>
+                                <span class="badge min-stock-badge bg-info text-dark" data-min-stock="<?php echo $row['min_stock_level'] ?? 0; ?>"><?php echo $row['min_stock_level'] ?? 0; ?></span>
                             </td>
                             <td>
-                                <small class="text-muted">
+                                <small class="text-muted last-updated" data-last-updated="<?php echo $row['last_updated'] ?? ''; ?>">
                                     <?php echo $row['last_updated'] ? date('M d, Y H:i', strtotime($row['last_updated'])) : 'Never'; ?>
                                 </small>
                             </td>
@@ -337,7 +442,7 @@ include(dirname(__DIR__) . "/includes/header.php");
                     <div class="row">
                         <div class="col-md-6 mb-3" id="itemSelectContainer">
                             <label class="form-label">Select Item</label>
-                            <select class="form-select" name="itemID" id="itemSelect" required>
+                            <select class="form-select" name="itemIDSelect" id="itemSelect" required>
                                 <option value="">Choose an item...</option>
                                 <?php
                                 $itemsQuery = "SELECT itemID, packageName FROM items WHERE itemID NOT IN (SELECT COALESCE(itemID, 0) FROM inventory WHERE itemID IS NOT NULL) ORDER BY packageName";
@@ -412,28 +517,186 @@ document.getElementById('addItemModal').addEventListener('hidden.bs.modal', func
     document.getElementById('itemSelectContainer').style.display = 'block';
     document.getElementById('itemDisplayContainer').style.display = 'none';
     document.getElementById('itemSelect').required = true;
+    document.getElementById('itemSelect').setAttribute('name', 'itemIDSelect');
     document.getElementById('formItemID').value = '';
+    document.getElementById('formItemID').removeAttribute('name');
     document.querySelector('#addItemModal .modal-title').textContent = 'Add Item to Inventory';
     document.getElementById('submitBtn').innerHTML = '<i class="fas fa-plus me-2"></i>Add to Inventory';
 });
 
-// Handle form submission
+// Handle form submission with AJAX for real-time UI update
 document.getElementById('inventoryForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent default form submission
+    
     const action = document.getElementById('formAction').value;
+    const formItemID = document.getElementById('formItemID');
+    const itemSelect = document.getElementById('itemSelect');
+    const submitBtn = document.getElementById('submitBtn');
+    const originalBtnText = submitBtn.innerHTML;
+    
+    // Get form data
+    const formData = new FormData(this);
+    
+    // Ensure correct itemID is set
     if(action === 'update') {
-        // For update, disable select so it doesn't submit, use hidden itemID
-        document.getElementById('itemSelect').disabled = true;
-        document.getElementById('formItemID').disabled = false;
-    } else {
-        // For add, use select value and clear/disable hidden input
-        const selectValue = document.getElementById('itemSelect').value;
-        if(selectValue) {
-            document.getElementById('formItemID').value = selectValue;
+        if(!formItemID.value) {
+            alert('Error: Item ID is missing!');
+            return false;
         }
-        document.getElementById('itemSelect').disabled = false;
-        document.getElementById('formItemID').disabled = false;
+        formData.set('itemID', formItemID.value);
+    } else {
+        const selectValue = itemSelect.value;
+        if(selectValue) {
+            formData.set('itemID', selectValue);
+        } else {
+            alert('Please select an item!');
+            return false;
+        }
     }
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+    
+    // Send AJAX request
+    fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            // Get updated values from response or form
+            const itemID = data.data ? data.data.itemID : parseInt(formData.get('itemID'));
+            const stockQty = data.data ? data.data.stockQty : parseInt(formData.get('stockQty'));
+            const minStock = data.data ? data.data.minStock : parseInt(formData.get('minStock'));
+            const lastUpdated = data.data ? data.data.lastUpdated : null;
+            
+            // Update UI directly
+            updateInventoryRow(itemID, stockQty, minStock, lastUpdated);
+            
+            // Show success message
+            showAlert('success', data.message || (action === 'update' ? 'Inventory updated successfully!' : 'Item added to inventory successfully!'));
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
+            if(modal) {
+                modal.hide();
+            }
+            
+            // Reset form
+            document.getElementById('inventoryForm').reset();
+            document.getElementById('formAction').value = 'add';
+            document.getElementById('itemSelectContainer').style.display = 'block';
+            document.getElementById('itemDisplayContainer').style.display = 'none';
+            document.getElementById('itemSelect').required = true;
+            document.getElementById('itemSelect').setAttribute('name', 'itemIDSelect');
+            document.getElementById('formItemID').value = '';
+            document.getElementById('formItemID').removeAttribute('name');
+            document.querySelector('#addItemModal .modal-title').textContent = 'Add Item to Inventory';
+            submitBtn.innerHTML = '<i class="fas fa-plus me-2"></i>Add to Inventory';
+        } else {
+            // Show error message
+            showAlert('danger', data.error || 'Failed to update inventory!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('danger', 'An error occurred. Please try again.');
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnText;
+    });
 });
+
+// Function to update inventory row in UI
+function updateInventoryRow(itemID, stockQty, minStock, lastUpdated = null) {
+    const row = document.querySelector(`tr[data-item-id="${itemID}"]`);
+    if(!row) {
+        console.warn('Row not found for itemID:', itemID);
+        return;
+    }
+    
+    // Update stock badge
+    const stockBadge = row.querySelector('.stock-badge');
+    if(stockBadge) {
+        stockBadge.textContent = stockQty;
+        stockBadge.setAttribute('data-stock', stockQty);
+        // Update badge color based on stock level
+        if(stockQty <= minStock) {
+            stockBadge.className = 'badge stock-badge bg-danger fs-6 px-3 py-2';
+        } else {
+            stockBadge.className = 'badge stock-badge bg-success fs-6 px-3 py-2';
+        }
+    }
+    
+    // Update min stock badge
+    const minStockBadge = row.querySelector('.min-stock-badge');
+    if(minStockBadge) {
+        minStockBadge.textContent = minStock;
+        minStockBadge.setAttribute('data-min-stock', minStock);
+    }
+    
+    // Update last updated timestamp
+    const lastUpdatedEl = row.querySelector('.last-updated');
+    if(lastUpdatedEl) {
+        let formattedDate;
+        if(lastUpdated) {
+            const date = new Date(lastUpdated);
+            formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            lastUpdatedEl.textContent = formattedDate + ' ' + formattedTime;
+            lastUpdatedEl.setAttribute('data-last-updated', lastUpdated);
+        } else {
+            const now = new Date();
+            formattedDate = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const formattedTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            lastUpdatedEl.textContent = formattedDate + ' ' + formattedTime;
+            lastUpdatedEl.setAttribute('data-last-updated', now.toISOString());
+        }
+    }
+    
+    // Update edit button to reflect new values
+    const editBtn = row.querySelector('button.btn-warning');
+    if(editBtn) {
+        editBtn.setAttribute('onclick', `editInventory(${itemID}, ${stockQty}, ${minStock})`);
+    }
+}
+
+// Function to show alert messages
+function showAlert(type, message) {
+    // Remove existing alerts
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => alert.remove());
+    
+    // Create new alert
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.setAttribute('role', 'alert');
+    alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    // Insert at the top of the content area
+    const headerBar = document.querySelector('.header-bar');
+    if(headerBar && headerBar.nextElementSibling) {
+        headerBar.nextElementSibling.insertBefore(alertDiv, headerBar.nextElementSibling.firstChild);
+    } else {
+        document.querySelector('.header-bar').after(alertDiv);
+    }
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        if(alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
 </script>
 
 <?php include(dirname(__DIR__) . "/includes/footer.php"); ?>

@@ -301,6 +301,49 @@ if(isset($_POST['placeOrder'])){
     if ($error) {
       // Do not place order if stock is insufficient
     } else {
+    // Calculate order totals with coupon (same logic as display)
+    $cartSubtotalFinal = 0.0;
+    $totalQuantityFinal = 0;
+    foreach($cart as $itemID => $quantity){
+      $itemID = intval($itemID);
+      $quantity = intval($quantity);
+      $itemResult = executePreparedQuery("SELECT price FROM items WHERE itemID = ? AND status = 'Active'", "i", [$itemID]);
+      if($itemResult && mysqli_num_rows($itemResult) > 0){
+        $row = mysqli_fetch_assoc($itemResult);
+        $cartSubtotalFinal += floatval($row['price']) * $quantity;
+        $totalQuantityFinal += $quantity;
+      }
+    }
+    
+    // Calculate shipping fee
+    $shippingFeeFinal = 30.00;
+    if ($totalQuantityFinal >= 10 || $cartSubtotalFinal >= 500) {
+      $shippingFeeFinal = 0.00;
+    } elseif ($totalQuantityFinal >= 5 || $cartSubtotalFinal >= 200) {
+      $shippingFeeFinal = 20.00;
+    }
+    
+    // Calculate discount from coupon
+    $discountAmountFinal = 0.0;
+    $selectedCouponCodeFinal = $_SESSION['selected_coupon'] ?? null;
+    if($selectedCouponCodeFinal && isset($availableCoupons[$selectedCouponCodeFinal])){
+      $couponFinal = $availableCoupons[$selectedCouponCodeFinal];
+      if($couponFinal['type'] === 'percentage'){
+        $discountAmountFinal = $cartSubtotalFinal * ($couponFinal['value'] / 100);
+      } elseif($couponFinal['type'] === 'fixed'){
+        $discountAmountFinal = min($couponFinal['value'], $cartSubtotalFinal);
+      } elseif($couponFinal['type'] === 'free_shipping'){
+        // Check if coupon applies
+        if($totalQuantityFinal >= 3 && $cartSubtotalFinal >= $couponFinal['min_order']){
+          $discountAmountFinal = $shippingFeeFinal; // Discount equals shipping fee
+          $shippingFeeFinal = 0;
+        }
+      }
+    }
+    
+    // Calculate grand total
+    $grandTotalFinal = $cartSubtotalFinal - $discountAmountFinal + $shippingFeeFinal;
+    
     // Generate order number
     $orderNumber = rand(100000000, 999999999);
 
@@ -328,6 +371,10 @@ if(isset($_POST['placeOrder'])){
       ['name'=>'paymentMethod','type'=>'s','value'=>$paymentMethod],
       ['name'=>'paypalOrderID','type'=>'s','value'=>$paypalOrderID],
       ['name'=>'orderStatus','type'=>'s','value'=>'Still Pending'],
+      ['name'=>'subtotal','type'=>'d','value'=>$cartSubtotalFinal],
+      ['name'=>'shipping_fee','type'=>'d','value'=>$shippingFeeFinal],
+      ['name'=>'discount_total','type'=>'d','value'=>$discountAmountFinal],
+      ['name'=>'grand_total','type'=>'d','value'=>$grandTotalFinal],
     ];
     $orderCols = [];
     $types = '';
@@ -408,8 +455,9 @@ if(isset($_POST['placeOrder'])){
         mysqli_rollback($conn);
       } else {
         mysqli_commit($conn);
-        // Clear cart
+        // Clear cart and coupon
         unset($_SESSION['cart']);
+        unset($_SESSION['selected_coupon']);
         $success = "Order placed successfully! Order Number: $orderNumber";
       }
     } else {
@@ -586,7 +634,6 @@ include(__DIR__ . "/../../includes/header.php");
         </div>
         <div class="cart-summary-body">
           <?php
-          $cartSubtotal = 0;
           // Display cart items - ensure we're using the actual cart from session
           $cart = $_SESSION['cart'] ?? [];
           if(empty($cart)) {
@@ -595,9 +642,7 @@ include(__DIR__ . "/../../includes/header.php");
             exit();
           }
           
-          // Debug: Log cart contents (remove in production)
-          // error_log("Checkout Cart: " . print_r($cart, true));
-          
+          // Display items - totals are calculated using $cartSubtotalDynamic above for consistency
           foreach($cart as $itemID => $quantity):
             $itemID = intval($itemID);
             $quantity = intval($quantity);
@@ -612,7 +657,6 @@ include(__DIR__ . "/../../includes/header.php");
               $itemImage = product_image_url($item, 1);
               $unitPrice = floatval($item['price']);
               $totalPrice = $unitPrice * $quantity;
-              $cartSubtotal += $totalPrice;
           ?>
           <div class="cart-item">
             <img src="<?php echo $itemImage; ?>" alt="<?php echo htmlspecialchars($item['packageName'], ENT_QUOTES, 'UTF-8'); ?>" class="cart-item-image">
@@ -630,7 +674,7 @@ include(__DIR__ . "/../../includes/header.php");
           
           <div class="cart-summary-row">
             <span class="cart-summary-label">Subtotal</span>
-            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal, 2); ?></span>
+            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotalDynamic, 2); ?></span>
           </div>
           
           <?php if($discountAmount > 0 && $selectedCoupon): ?>
@@ -670,7 +714,7 @@ include(__DIR__ . "/../../includes/header.php");
           
           <div class="cart-summary-row cart-summary-total">
             <span class="cart-summary-label">Total</span>
-            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotal - $discountAmount + $shippingFee, 2); ?></span>
+            <span class="cart-summary-value">₱<?php echo number_format($cartSubtotalDynamic - $discountAmount + $shippingFee, 2); ?></span>
           </div>
           
           <div class="payment-section">

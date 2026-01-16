@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // Load product images
-  fetch(`/bakery/backend/api/restful/item-details.php?id=${itemID}`)
+  fetch(`api/item-details.php?id=${itemID}`)
     .then(res => res.json())
     .then(data => {
       productImages = data.images || [data.imageUrl || '<?php echo product_image_url($item, 1); ?>'];

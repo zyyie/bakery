@@ -1,5 +1,7 @@
 <?php
-require_once dirname(__DIR__) . '/includes/bootstrap.php';
+session_start();
+require_once __DIR__ . '/../config/connect.php';
+require_once dirname(__DIR__) . '/../includes/bootstrap.php';
 
 // Auto-deliver orders: Check and update orders with delivery date today or past
 $today = date('Y-m-d');

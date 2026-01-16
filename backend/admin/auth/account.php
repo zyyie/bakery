@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $adminRow) {
     }
 }
 
-include dirname(__DIR__) . '/includes/header.php';
+include(dirname(__DIR__) . "/includes/header.php");
 ?>
 
 <div class="header-bar">
@@ -131,4 +131,4 @@ include dirname(__DIR__) . '/includes/header.php';
   </div>
 </div>
 
-<?php include dirname(__DIR__) . '/includes/footer.php'; ?>
+<?php include(dirname(__DIR__) . "/includes/footer.php");

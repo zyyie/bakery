@@ -89,7 +89,7 @@ include(__DIR__ . "/../../includes/header.php");
   }
 
   Promise.all(
-    favorites.map(id => fetch(`/bakery/backend/api/restful/item-details.php?id=${encodeURIComponent(id)}`).then(r => r.json()))
+    favorites.map(id => fetch(`api/item-details.php?id=${encodeURIComponent(id)}`).then(r => r.json()))
   )
   .then(items => {
     const valid = items.filter(it => it && it.itemID);

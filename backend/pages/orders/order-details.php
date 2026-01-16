@@ -213,7 +213,7 @@ include(__DIR__ . "/../../includes/header.php");
       <table class="table table-striped align-middle">
         <thead>
           <tr>
-            <th>S.NO</th>
+            <th>Order No.</th>
             <th>Product Image</th>
             <th>Product Name</th>
             <th>Unit Price</th>

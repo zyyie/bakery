@@ -121,7 +121,7 @@ $recentMessages = executePreparedQuery(
             <i class="fas fa-shopping-cart"></i>
           </div>
         </div>
-        <a href="new-orders.php" class="stat-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
+        <a href="../orders/new-orders.php" class="stat-link">View Details <i class="fas fa-arrow-right ms-1"></i></a>
       </div>
     </div>
   </div>

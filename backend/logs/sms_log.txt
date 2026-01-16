@@ -106,136 +106,41 @@
 }
 [2026-01-14 21:39:22] WARNING: Receiver number not provided, assuming message is for us
 [2026-01-14 21:39:22] STORED: From +639930152544 TO +639493380766: zyyie
-[2026-01-15 02:45:39] SMS_CONNECTIVITY: FAILED to 192.168.18.112:8080 - A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond (10060)
-[2026-01-15 02:45:39] SMS_SEND_OTP: URL=http://192.168.18.112:8080/messages
-[2026-01-15 02:45:39] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 891725. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:45:39] SMS_SEND_OTP: STATUS=HTTP/1.1 (no status)
-[2026-01-15 02:45:39] SMS_SEND_OTP: RESPONSE=(null)
-[2026-01-15 02:45:39] SMS_SEND_OTP: ERROR=file_get_contents(http://192.168.18.112:8080/messages): Failed to open stream: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
-[2026-01-15 02:47:59] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:47:59] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:47:59] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 113487. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:47:59] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 02:47:59] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"xXkhUc-bYcAGuGtiLVnqc","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T09:48:01.374+08:00"}}
-[2026-01-15 02:48:34] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:48:34] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:48:34] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639493380766"],"textMessage":{"text":"Your OTP is 295254. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:48:34] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 02:48:34] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"GXW_5U1GKPcKGckBdXrOm","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639493380766","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T09:48:35.917+08:00"}}
-[2026-01-15 02:49:48] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:49:48] SMS_SEND_OTP: RAW_INPUT={"phone":"+639930152544"}
-[2026-01-15 02:49:48] SMS_SEND_OTP: RECIPIENT_RAW=+639930152544
-[2026-01-15 02:49:48] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639930152544
-[2026-01-15 02:49:48] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:49:48] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639930152544"],"textMessage":{"text":"Your OTP is 522590. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:49:48] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 02:49:48] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"nENVg1_lNU0oKo2uut4Ex","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639930152544","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T09:49:50.856+08:00"}}
-[2026-01-15 02:50:49] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:50:49] SMS_SEND_OTP: RAW_INPUT={"phone":"+639693229575"}
-[2026-01-15 02:50:49] SMS_SEND_OTP: RECIPIENT_RAW=+639693229575
-[2026-01-15 02:50:49] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639693229575
-[2026-01-15 02:50:49] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:50:49] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639693229575"],"textMessage":{"text":"Your OTP is 358903. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:50:49] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 02:50:49] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"lluyh4BH5sGbI_ZSF-7in","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639693229575","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T09:50:51.048+08:00"}}
-[2026-01-15 02:51:54] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:51:54] SMS_SEND_OTP: RAW_INPUT={"phone":"+639693229575"}
-[2026-01-15 02:51:54] SMS_SEND_OTP: RECIPIENT_RAW=+639693229575
-[2026-01-15 02:51:54] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639693229575
-[2026-01-15 02:51:54] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:51:54] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639693229575"],"textMessage":{"text":"Your OTP is 936059. Do not share this code with anyone."},"withDeliveryReport":true,"priority":"high","deliveryAttempts":3}
-[2026-01-15 02:51:54] SMS_SEND_OTP: STATUS=HTTP/1.1 400 Bad Request
-[2026-01-15 02:51:54] SMS_SEND_OTP: RESPONSE={"message":"Failed to convert request body to class me.capcom.smsgateway.modules.localserver.domain.PostMessageRequest: Illegal json parameter found: java.lang.NumberFormatException: For input string: \"high\": For input string: \"high\""}
-[2026-01-15 02:52:18] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:52:18] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 02:52:18] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 02:52:18] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 02:52:18] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:52:18] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 184747. Do not share this code with anyone."},"withDeliveryReport":true,"priority":"high","deliveryAttempts":3}
-[2026-01-15 02:52:18] SMS_SEND_OTP: STATUS=HTTP/1.1 400 Bad Request
-[2026-01-15 02:52:18] SMS_SEND_OTP: RESPONSE={"message":"Failed to convert request body to class me.capcom.smsgateway.modules.localserver.domain.PostMessageRequest: Illegal json parameter found: java.lang.NumberFormatException: For input string: \"high\": For input string: \"high\""}
-[2026-01-15 02:53:41] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 02:53:41] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 02:53:41] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 02:53:41] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 02:53:41] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 02:53:41] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 826388. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 02:53:41] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 02:53:41] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"dghQbiKtG4P4KmZoGpIYi","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T09:53:43.716+08:00"}}
-[2026-01-15 03:18:57] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 03:18:57] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 03:18:57] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 03:18:57] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 03:18:57] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 03:18:57] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 786099. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 03:18:57] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 03:18:57] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"y1ngJZqTeCzF0_Z8mmSC3","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T10:19:00.088+08:00"}}
-[2026-01-15 03:23:49] INCOMING: {
+[2026-01-15 06:03:28] INCOMING: {
   "from":"123456789",
   "text":"test message",
-  "sentStamp":1768443831437,
-  "receivedStamp":1768443831437,
+  "sentStamp":1768453408019,
+  "receivedStamp":1768453408019,
   "sim":"sim1"
 }
-[2026-01-15 03:23:49] WARNING: Receiver number not provided, assuming message is for us
-[2026-01-15 03:23:49] STORED: From +123456789 TO +639493380766: test message
-[2026-01-15 03:23:51] INCOMING: {
-  "from":"123456789",
-  "text":"test message",
-  "sentStamp":1768443832915,
-  "receivedStamp":1768443832916,
-  "sim":"sim1"
+[2026-01-15 06:03:28] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-15 06:03:28] STORED: From +123456789 TO +639493380766: test message
+[2026-01-15 06:12:55] OTP SEND: Phone=+639162606403, Status=FAILED, Error=file_get_contents(http://10.54.202.176:8080/messages): Failed to open stream: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond, HTTP=, URL=http://10.54.202.176:8080/messages
+[2026-01-15 06:17:14] OTP SEND: Phone=+639162606403, Status=FAILED, Error=file_get_contents(http://10.54.202.176:8080/messages): Failed to open stream: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond, HTTP=, URL=http://10.54.202.176:8080/messages
+[2026-01-15 06:22:22] OTP SEND: Phone=+639618708063, Status=FAILED, Error=Failed to connect to SMS gateway. Please check if SMS Gateway is running., HTTP=0, URL=http://10.54.202.176:8080/messages
+[2026-01-15 06:31:47] OTP SEND: Phone=+639618708063, Status=SUCCESS, HTTP=202, URL=http://10.179.50.3:8080/messages
+[2026-01-15 06:31:47] Response: {"deviceId":"0000000035d4ad900000019b9c03c191","id":"6DaNyapPN_3KznQCJWv08","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639618708063","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T13:31:47.220+08:00"}}
+[2026-01-15 06:32:16] OTP SEND: Phone=+639162606403, Status=SUCCESS, HTTP=202, URL=http://10.179.50.3:8080/messages
+[2026-01-15 06:32:16] Response: {"deviceId":"0000000035d4ad900000019b9c03c191","id":"pzwgk0oMPCiu1PT_FvJK9","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T13:32:15.851+08:00"}}
+[2026-01-15 08:07:15] OTP SEND: Phone=+639162606403, Status=FAILED, Error=Failed to connect to SMS gateway. Please check if SMS Gateway is running., HTTP=0, URL=http://10.179.50.3:8080/messages
+[2026-01-15 08:07:43] OTP SEND: Phone=+639162606403, Status=FAILED, Error=Failed to connect to SMS gateway. Please check if SMS Gateway is running., HTTP=0, URL=http://10.179.50.3:8080/messages
+[2026-01-15 08:14:55] OTP SEND: Phone=+639704953895, Status=SUCCESS, HTTP=202, URL=http://10.179.50.3:8080/messages
+[2026-01-15 08:14:55] Response: {"deviceId":"0000000035d4ad900000019b9c03c191","id":"ptJ-LSKi_6At0UGOl0vbW","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639704953895","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T15:14:54.365+08:00"}}
+[2026-01-15 08:18:52] INCOMING: {
+  "from":"+639704953895",
+  "text":"Hello!!! ",
+  "sentStamp":1768458727000,
+  "receivedStamp":1768458728947,
+  "sim":"sim2"
 }
-[2026-01-15 03:23:51] WARNING: Receiver number not provided, assuming message is for us
-[2026-01-15 03:23:51] STORED: From +123456789 TO +639493380766: test message
-[2026-01-15 03:23:51] INCOMING: {
-  "from":"123456789",
-  "text":"test message",
-  "sentStamp":1768443833341,
-  "receivedStamp":1768443833341,
-  "sim":"sim1"
+[2026-01-15 08:18:52] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-15 08:18:52] STORED: From +639704953895 TO +639493380766: Hello!!! 
+[2026-01-15 08:29:28] INCOMING: {
+  "from":"+639704953895",
+  "text":"Hello sir",
+  "sentStamp":1768462165000,
+  "receivedStamp":1768462167456,
+  "sim":"sim2"
 }
-[2026-01-15 03:23:51] WARNING: Receiver number not provided, assuming message is for us
-[2026-01-15 03:23:51] STORED: From +123456789 TO +639493380766: test message
-[2026-01-15 03:23:51] INCOMING: {
-  "from":"123456789",
-  "text":"test message",
-  "sentStamp":1768443833465,
-  "receivedStamp":1768443833466,
-  "sim":"sim1"
-}
-[2026-01-15 03:23:51] WARNING: Receiver number not provided, assuming message is for us
-[2026-01-15 03:23:51] STORED: From +123456789 TO +639493380766: test message
-[2026-01-15 03:23:52] INCOMING: {
-  "from":"123456789",
-  "text":"test message",
-  "sentStamp":1768443833862,
-  "receivedStamp":1768443833862,
-  "sim":"sim1"
-}
-[2026-01-15 03:23:52] WARNING: Receiver number not provided, assuming message is for us
-[2026-01-15 03:23:52] STORED: From +123456789 TO +639493380766: test message
-[2026-01-15 03:24:09] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 03:24:09] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 03:24:09] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 03:24:09] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 03:24:09] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 03:24:09] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 848170. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 03:24:09] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 03:24:09] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"O8uxhrJnXHzAckLZ75e38","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T10:24:11.716+08:00"}}
-[2026-01-15 03:27:23] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 03:27:23] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 03:27:23] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 03:27:23] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 03:27:23] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 03:27:23] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 652583. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 03:27:23] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 03:27:23] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"XaGhjyHm-cwkta8QedWBM","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T10:27:25.272+08:00"}}
-[2026-01-15 03:29:06] SMS_CONNECTIVITY: OK to 192.168.1.101:8080
-[2026-01-15 03:29:06] SMS_SEND_OTP: RAW_INPUT={"phone":"+639162606403"}
-[2026-01-15 03:29:06] SMS_SEND_OTP: RECIPIENT_RAW=+639162606403
-[2026-01-15 03:29:06] SMS_SEND_OTP: RECIPIENT_NORMALIZED=+639162606403
-[2026-01-15 03:29:06] SMS_SEND_OTP: URL=http://192.168.1.101:8080/messages
-[2026-01-15 03:29:06] SMS_SEND_OTP: PAYLOAD={"phoneNumbers":["+639162606403"],"textMessage":{"text":"Your OTP is 460542. Do not share this code with anyone."},"withDeliveryReport":true}
-[2026-01-15 03:29:06] SMS_SEND_OTP: STATUS=HTTP/1.1 202 Accepted
-[2026-01-15 03:29:06] SMS_SEND_OTP: RESPONSE={"deviceId":"0000000035d4ad900000019b9c03c191","id":"ugxGNUvvqr16WybjeF-zx","isEncrypted":false,"isHashed":false,"recipients":[{"phoneNumber":"+639162606403","state":"Pending"}],"state":"Pending","states":{"Pending":"2026-01-15T10:29:09.038+08:00"}}
+[2026-01-15 08:29:28] WARNING: Receiver number not provided, assuming message is for us
+[2026-01-15 08:29:28] STORED: From +639704953895 TO +639493380766: Hello sir
