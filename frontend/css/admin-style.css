@@ -19,6 +19,36 @@ body {
   box-shadow: 2px 0 10px rgba(139, 69, 19, 0.2);
 }
 
+/* Fixed sidebar on desktop/tablet (md and up) - NOT on mobile */
+@media (min-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 16.666667%; /* col-md-2 width */
+  }
+
+  /* Adjust main content to account for fixed sidebar */
+  .main-content {
+    margin-left: 16.666667%; /* col-md-2 width */
+  }
+}
+
+/* Mobile: sidebar should scroll normally */
+@media (max-width: 767.98px) {
+  .sidebar {
+    position: relative;
+    min-height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
 .sidebar .logo-section {
   padding: 20px;
   text-align: center;

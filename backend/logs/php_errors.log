@@ -640,3 +640,8 @@ Stack trace:
 [15-Jan-2026 13:00:40 Europe/Berlin] Inventory updated - itemID: 45, stockQty: 348 (will reflect in school cafeteria API immediately)
 [15-Jan-2026 13:02:03 Europe/Berlin] Inventory Update - itemID: 27, stockQty: 520, minStock: 40
 [15-Jan-2026 13:02:03 Europe/Berlin] Inventory updated - itemID: 27, stockQty: 520 (will reflect in school cafeteria API immediately)
+[16-Jan-2026 06:16:56 Europe/Berlin] Password reset code sent successfully to: nycoalecbalaogan@gmail.com
+[16-Jan-2026 06:16:56 Europe/Berlin] PHPMailer SMTP Server: smtp.gmail.com:587
+[16-Jan-2026 06:16:56 Europe/Berlin] PHPMailer SMTP Secure: tls
+[16-Jan-2026 07:22:11 Europe/Berlin] Inventory Update - itemID: 43, stockQty: 300, minStock: 10
+[16-Jan-2026 07:22:11 Europe/Berlin] Inventory updated - itemID: 43, stockQty: 300 (will reflect in school cafeteria API immediately)

@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . '/includes/bootstrap.php';
-require_once dirname(__DIR__) . '/../includes/bootstrap.php';
+// Include main bootstrap to get product_image_url function
+require_once dirname(__DIR__, 2) . '/includes/bootstrap.php';
 requireAdminLogin();
 adminRegenerateSession();
 include(dirname(__DIR__) . "/includes/header.php");
@@ -48,14 +49,14 @@ $result = executeQuery($query);
           <td><?php echo $count++; ?></td>
           <td>
             <?php 
-            // Use depth 2 for admin pages (admin is 2 levels deep from root)
-            $imageUrl = function_exists('product_image_url') ? product_image_url($row, 2) : '../../frontend/images/placeholder.jpg';
+            // Use depth 3 for admin/catalog pages (3 levels deep from root: backend/admin/catalog/)
+            $imageUrl = function_exists('product_image_url') ? product_image_url($row, 3) : '../../../frontend/images/placeholder.jpg';
             ?>
-            <img src="<?php echo $imageUrl; ?>" 
+            <img src="<?php echo htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'); ?>" 
                  alt="<?php echo htmlspecialchars($row['packageName'], ENT_QUOTES, 'UTF-8'); ?>" 
                  style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;" 
                  class="border"
-                 onerror="this.src='../../frontend/images/placeholder.jpg'">
+                 onerror="this.src='../../../frontend/images/placeholder.jpg'">
           </td>
           <td><?php echo $row['packageName']; ?></td>
           <td>
